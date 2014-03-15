@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire", "MCFire\MCFire.csproj", "{E973C683-9B54-4534-B22A-1ABCA6C1D254}"
 	ProjectSection(ProjectDependencies) = postProject
+		{9C33F118-93F6-436D-8D25-C86624A8BEBE} = {9C33F118-93F6-436D-8D25-C86624A8BEBE}
+		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75} = {09F88847-C30F-4F1D-BC59-CFE55D4B8B75}
 		{DBB782BB-236C-4095-8818-191A39137D50} = {DBB782BB-236C-4095-8818-191A39137D50}
 	EndProjectSection
 EndProject
@@ -14,6 +16,10 @@ Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "MCFire.Deploy", "MCFire.Dep
 	ProjectSection(ProjectDependencies) = postProject
 		{E973C683-9B54-4534-B22A-1ABCA6C1D254} = {E973C683-9B54-4534-B22A-1ABCA6C1D254}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Modules.Files", "MCFire.Modules.Files\MCFire.Modules.Files.csproj", "{9C33F118-93F6-436D-8D25-C86624A8BEBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Modules.Infrastructure", "MCFire.Modules.Infrastructure\MCFire.Modules.Infrastructure.csproj", "{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +38,15 @@ Global
 		{F28E819E-C979-4B9E-86A5-76E781028486}.Debug|Any CPU.ActiveCfg = SingleImage
 		{F28E819E-C979-4B9E-86A5-76E781028486}.Release|Any CPU.ActiveCfg = SingleImage
 		{F28E819E-C979-4B9E-86A5-76E781028486}.Release|Any CPU.Build.0 = SingleImage
+		{F28E819E-C979-4B9E-86A5-76E781028486}.Release|Any CPU.Deploy.0 = SingleImage
+		{9C33F118-93F6-436D-8D25-C86624A8BEBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C33F118-93F6-436D-8D25-C86624A8BEBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C33F118-93F6-436D-8D25-C86624A8BEBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C33F118-93F6-436D-8D25-C86624A8BEBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

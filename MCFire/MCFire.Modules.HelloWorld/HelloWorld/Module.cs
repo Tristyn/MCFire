@@ -2,14 +2,10 @@
 using Gemini.Framework;
 using Gemini.Framework.Results;
 using Gemini.Modules.MainMenu.Models;
-using MCFire.Modules.HelloWorld.HelloWorld;
 using MCFire.Modules.HelloWorld.HelloWorld.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MCFire.Modules.HelloWorld.HelloWorld
 {
@@ -29,12 +25,7 @@ namespace MCFire.Modules.HelloWorld.HelloWorld
         {
             MainMenu.All.First(menuItem => menuItem.Name == "View")
                 .Add(new MenuItem("Hello World", OpenHelloWorld));
-        }
-
-        public override void PostInitialize()
-        {
             Shell.OpenDocument(IoC.Get<HelloWorldViewModel>());
-            
         }
 
         private IEnumerable<IResult> OpenHelloWorld()
