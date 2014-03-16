@@ -82,7 +82,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HelloWorld\Module.cs" />
+    <Compile Include="HelloWorld\ViewModels\HelloWorldCommandViewModel.cs" />
     <Compile Include="HelloWorld\ViewModels\HelloWorldViewModel.cs" />
+    <Compile Include="HelloWorld\Views\HelloWorldCommandView.xaml.cs">
+      <DependentUpon>HelloWorldCommandView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HelloWorld\Views\HelloWorldView.xaml.cs">
       <DependentUpon>HelloWorldView.xaml</DependentUpon>
     </Compile>
@@ -93,10 +97,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="HelloWorld\Views\HelloWorldCommandView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HelloWorld\Views\HelloWorldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MCFire.Modules.Infrastructure\MCFire.Modules.Infrastructure.csproj">
+      <Project>{09f88847-c30f-4f1d-bc59-cfe55d4b8b75}</Project>
+      <Name>MCFire.Modules.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
