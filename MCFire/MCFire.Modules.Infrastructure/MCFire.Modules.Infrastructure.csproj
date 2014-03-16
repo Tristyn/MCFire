@@ -47,6 +47,7 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="IFolderItem.cs" />
     <Compile Include="IFormat.cs" />
+    <Compile Include="IWindowCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

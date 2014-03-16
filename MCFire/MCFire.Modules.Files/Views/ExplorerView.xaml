@@ -12,18 +12,12 @@
              FontFamily="Segoe UI">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top">
-            <Button x:Name="NewFolder" Visibility="Visible" IsEnabled="True" Width="50">
-                <!--<Path Fill="#FF008000">
-                    <Path.Data>
-                        <PathGeometry Figures="m 30 25.362188 0 30.000001 -30 0 0 20 30 0 0 29.999991 20 0 0 -29.999991 30 0 0 -20 -30 0 0 -30.000001 -20 0 z" FillRule="nonzero"/>
-                    </Path.Data>
-                </Path>-->
-            </Button>
+            <Button x:Name="NewFolder" Visibility="Visible" IsEnabled="True" />
         </StackPanel>
         <TreeView x:Name="RootFolders" ClipToBounds="True">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
-                    <ContentControl x:Name="FolderItemViewModel" cal:View.Model="{Binding}"/>
+                    <ContentControl cal:View.Model="{Binding}"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

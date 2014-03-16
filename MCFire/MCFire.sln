@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Modules.Files", "MCF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Modules.Infrastructure", "MCFire.Modules.Infrastructure\MCFire.Modules.Infrastructure.csproj", "{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Modules.Metro", "MCFire.Modules.Metro\MCFire.Modules.Metro.csproj", "{07FA6A9D-DE6D-4ECF-8CE5-9299CCDFB483}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09F88847-C30F-4F1D-BC59-CFE55D4B8B75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07FA6A9D-DE6D-4ECF-8CE5-9299CCDFB483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07FA6A9D-DE6D-4ECF-8CE5-9299CCDFB483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07FA6A9D-DE6D-4ECF-8CE5-9299CCDFB483}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07FA6A9D-DE6D-4ECF-8CE5-9299CCDFB483}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

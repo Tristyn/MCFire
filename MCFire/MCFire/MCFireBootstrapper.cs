@@ -17,7 +17,7 @@ namespace MCFire
             // get the application assembly, and the Metro assembly.
             var assemblies = new List<Assembly>(base.SelectAssemblies())
             {
-                typeof (Gemini.Modules.Metro.ViewModels.MainWindowViewModel).Assembly
+                typeof (MCFire.Modules.Metro.ViewModels.MainWindowViewModel).Assembly
             };
 
             // get assemblies in mods folder
@@ -29,6 +29,24 @@ namespace MCFire
                 foreach (var directoryInfo in WalkDirectoryTree(new DirectoryInfo(modsPath)))
                 {
                     var catalog = new DirectoryCatalog(directoryInfo.FullName);
+
+/*
+░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
+░░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄░░░░
+░░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█░░░
+░░░█░░░░░░▄██▀▄▄░░░░░▄▄▄░░░░█░░
+░▄▀▒▄▄▄▒░█▀▀▀▀▄▄█░░░██▄▄█░░░░█░
+█░▒█▒▄░▀▄▄▄▀░░░░░░░░█░░░▒▒▒▒▒░█
+█░▒█░█▀▄▄░░░░░█▀░░░░▀▄░░▄▀▀▀▄▒█
+░█░▀▄░█▄░█▀▄▄░▀░▀▀░▄▄▀░░░░█░░█░
+░░█░░░▀▄▀█▄▄░█▀▀▀▄▄▄▄▀▀█▀██░█░░
+░░░█░░░░██░░▀█▄▄▄█▄▄█▄████░█░░░
+░░░░█░░░░▀▀▄░█░░░█░█▀██████░█░░
+░░░░░▀▄░░░░░▀▀▄▄▄█▄█▄█▄█▄▀░░█░░
+░░░░░░░▀▄▄░▒▒▒▒░░░░░░░░░░▒░░░█░
+░░░░░░░░░░▀▀▄▄░▒▒▒▒▒▒▒▒▒▒░░░░█░
+░░░░░░░░░░░░░░▀▄▄▄▄▄░░░░░░░░█░░
+*/
 
                     // hack out the mods assemblies with this horrible code.
                     assemblies.AddRange(catalog.Parts
@@ -47,13 +65,14 @@ namespace MCFire
         }
 
         /// <summary>
-        /// returns all subdirectories in the root directory.
-        /// root directory is included.
+        /// Returns all subdirectories in the root directory.
+        /// Root directory is included.
+        /// The folders are organized in alphabetical order, with child folders prioritized.
         /// </summary>
         /// <param name="root">The directory to begin the search.</param>
         private static IEnumerable<DirectoryInfo> WalkDirectoryTree(DirectoryInfo root)
         {
-            var directories = new List<DirectoryInfo> { root };
+            var directories = new List<DirectoryInfo>();
 
             try
             {
@@ -69,6 +88,8 @@ namespace MCFire
             catch (DirectoryNotFoundException) { }
             catch (SecurityException) { }
             catch (UnauthorizedAccessException) { }
+
+            directories.Add(root);
 
             return directories;
         }

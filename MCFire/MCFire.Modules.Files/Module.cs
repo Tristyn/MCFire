@@ -22,7 +22,6 @@ namespace MCFire.Modules.Files
 
             IoC.Get<FolderService>()
                 .GetOrCreateFolder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
-            Shell.ShowTool(IoC.Get<ExplorerViewModel>());
         }
 
         private static IEnumerable<IResult> OpenFileExplorer()

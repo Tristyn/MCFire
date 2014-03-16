@@ -49,7 +49,6 @@ namespace MCFire.Modules.Files.ViewModels
             };
             if (dialog.ShowDialog() == DialogResult.OK)
                 _folderService.GetOrCreateFolder(dialog.SelectedPath);
-
         }
 
         private void AddFolderViewModelHandler(object sender, FolderEventArgs e)
