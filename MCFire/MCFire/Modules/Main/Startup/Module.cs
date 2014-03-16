@@ -1,7 +1,7 @@
-﻿using Gemini.Framework;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
+using Gemini.Framework;
 
-namespace MCFire
+namespace MCFire.Modules.Main.Startup
 {
     [Export(typeof(IModule))]
     class Module : ModuleBase

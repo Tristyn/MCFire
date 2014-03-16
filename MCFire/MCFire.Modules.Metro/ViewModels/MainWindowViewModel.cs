@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.Composition;
-using System.Linq;
-using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 using MCFire.Modules.Infrastructure;
@@ -12,29 +11,25 @@ namespace MCFire.Modules.Metro.ViewModels
     {
         private BindableCollection<IWindowCommand> _commands;
 
-        [Import]
-        public IWindowCommand Command
+        /// <summary>
+        /// Having two properties for one field instead of an importing constructor is a hack, so that an annoying Mef exception is not thrown.
+        /// </summary>
+        [ImportMany]
+        // ReSharper disable once UnusedMember.Local
+        private IEnumerable<IWindowCommand> CommandImports
         {
-            get { return Commands.First(); }
-            set
-            {
-                Commands = new BindableCollection<IWindowCommand>(new[] { value });
-            }
+            set { Commands = new BindableCollection<IWindowCommand>(value); }
         }
 
         public BindableCollection<IWindowCommand> Commands
         {
             get { return _commands; }
-            set
+            private set
             {
                 if (_commands == value) return;
                 _commands = value;
                 NotifyOfPropertyChange(() => Commands);
             }
-        }
-
-        public MainWindowViewModel()
-        {
         }
     }
 }

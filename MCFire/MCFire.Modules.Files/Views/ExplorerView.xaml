@@ -6,14 +6,12 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:viewModels="clr-namespace:MCFire.Modules.Files.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             x:Name="Control"
-             FontSize="12"
-             FontFamily="Segoe UI">
+             d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top">
-            <Button x:Name="NewFolder" Visibility="Visible" IsEnabled="True" />
-        </StackPanel>
+        <!-- TODO: implement injected buttons, square like VS -->
+        <!--<StackPanel DockPanel.Dock="Top">
+            <Button x:Name="NewFolder" Visibility="Visible" IsEnabled="True">asd</Button>
+        </StackPanel>-->
         <TreeView x:Name="RootFolders" ClipToBounds="True">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">

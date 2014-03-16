@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Enchantment_Table.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Enchantment_Table.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro">
@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MCFireBootstrapper.cs" />
-    <Compile Include="Module.cs" />
+    <Compile Include="Modules\Main\Startup\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -140,10 +140,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Enchantment_Table.ico" />
+    <Resource Include="Resources\Enchantment_Table.ico" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="splash.png" />
+    <SplashScreen Include="Resources\splash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
