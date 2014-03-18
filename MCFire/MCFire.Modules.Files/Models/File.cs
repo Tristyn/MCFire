@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Models
@@ -13,13 +14,13 @@ namespace MCFire.Modules.Files.Models
         [NotNull]
         IFolder _parent;
         [NotNull]
-        FileInfo _info;
+        protected FileInfo _info;
 
         #endregion
 
         #region Constructors
 
-        protected File([NotNull] IFolder parent, [NotNull] FileInfo info)
+        public File([NotNull] IFolder parent, [NotNull] FileInfo info)
         {
             if (parent == null) throw new ArgumentNullException("parent");
             if (info == null) throw new ArgumentNullException("info");
@@ -55,9 +56,13 @@ namespace MCFire.Modules.Files.Models
             throw new NotImplementedException();
         }
 
-        public Task Refresh()
+        public virtual Task Refresh()
         {
-            return Task.Run(() => _info.Refresh());
+            return Task.Run(() =>
+            {
+                _info.Refresh(); 
+                OnFileRefreshed(new FileRefreshedEventArgs(this));
+            });
         }
 
         public virtual Task Open()
@@ -73,6 +78,12 @@ namespace MCFire.Modules.Files.Models
         public override string ToString()
         {
             return Name;
+        }
+
+        protected virtual void OnFileRefreshed(FileRefreshedEventArgs e)
+        {
+            var handler = FileRefreshed;
+            if (handler != null) handler(this, e);
         }
 
         #endregion
@@ -95,6 +106,8 @@ namespace MCFire.Modules.Files.Models
         public string Extension { get { return _info.Extension; } }
 
         public IFolder Parent { get { return _parent; } }
+
+        public event EventHandler<FileRefreshedEventArgs> FileRefreshed;
 
         #endregion
     }

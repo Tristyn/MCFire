@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Framework;
+using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Models
 {
     public sealed class Folder : IFolder
     {
+        //TODO: whenever a SecurityException is thrown, set a security bool to false
         #region Fields
 
         [CanBeNull]
@@ -18,27 +22,31 @@ namespace MCFire.Modules.Files.Models
         List<IFolder> _folders;
         [CanBeNull]
         List<IFile> _files;
-        [CanBeNull] List<IFolderItem> _children;
+        [CanBeNull]
+        List<IFolderItem> _children;
         [NotNull]
         DirectoryInfo _info;
-
+        [NotNull]
+        readonly FileFactory _fileFactory;
 
         #endregion
 
         #region Constructor
 
-        public Folder([CanBeNull] Folder parent, [NotNull] string path)
-            : this(parent, new DirectoryInfo(path.ToLower()))
+        public Folder([CanBeNull] IFolder parent, [NotNull] string path, FileFactory fileFactory)
+            : this(parent, new DirectoryInfo(path.ToLower()), fileFactory)
         {
 
         }
 
-        public Folder([CanBeNull] Folder parent, [NotNull] DirectoryInfo directory)
+        public Folder([CanBeNull] IFolder parent, [NotNull] DirectoryInfo directory, [NotNull] FileFactory fileFactory)
         {
             if (directory == null) throw new ArgumentNullException("directory");
+            if (fileFactory == null) throw new ArgumentNullException("fileFactory");
 
             _parent = parent;
             _info = directory;
+            _fileFactory = fileFactory;
         }
 
         #endregion
@@ -65,9 +73,83 @@ namespace MCFire.Modules.Files.Models
             throw new NotImplementedException();
         }
 
-        public Task Refresh()
+        public async Task Refresh()
         {
-            return Task.Run(() => _info.Refresh());
+            _info.Refresh();
+
+            // get the FileInfos that have been created since the last refresh.
+            List<FileInfo> currentFiles;
+            try
+            {
+                currentFiles = _info.Exists ? _info.EnumerateFiles().ToList() : new List<FileInfo>();
+            }
+            catch (DirectoryNotFoundException) { currentFiles = new List<FileInfo>(); }
+            catch (SecurityException) { currentFiles = new List<FileInfo>(); }
+            var oldFileNames = _files != null ? _files.Select(file => file.Name.ToLower()).ToList() : new List<string>();
+            var newFiles = currentFiles
+                .Where(file => currentFiles
+                .Select(currentFile => currentFile.Name.ToLower())
+                .Except(oldFileNames)
+                .Contains(file.Name.ToLower())).ToList();
+
+            // get the DirectoryInfos that have been created since the last refresh.
+            List<DirectoryInfo> currentFolders;
+            try
+            {
+                currentFolders = _info.Exists ? _info.EnumerateDirectories().ToList() : new List<DirectoryInfo>();
+            }
+            catch (DirectoryNotFoundException) { currentFolders = new List<DirectoryInfo>(); }
+            catch (SecurityException) { currentFolders = new List<DirectoryInfo>(); }
+            var oldFolderNames = _files != null ? _files.Select(file => file.Name.ToLower()).ToList() : new List<string>();
+            var newFolders = currentFolders
+                .Where(folder => currentFolders
+                .Select(currentFolder => currentFolder.Name.ToLower())
+                .Except(oldFolderNames)
+                .Contains(folder.Name.ToLower())).ToList();
+
+            // refresh old children
+            await RefreshChildren();
+
+            // create new files
+            if (newFiles.Any())
+            {
+                if (_files == null)
+                    _files = new List<IFile>();
+
+                foreach (var fileInfo in newFiles)
+                {
+                    _files.Add(_fileFactory.GetFile(this, fileInfo));
+                }
+            }
+
+            // create new folders
+            if (newFolders.Any())
+            {
+                if (_folders == null)
+                    _folders = new List<IFolder>();
+
+                foreach (var folderInfo in newFolders)
+                {
+                    _folders.Add(new Folder(this, folderInfo, _fileFactory));
+                }
+            }
+
+            OnRefreshed(new FolderRefreshedEventArgs(this));
+        }
+
+        private async Task RefreshChildren()
+        {
+            if (_files != null)
+                foreach (var file in _files)
+                {
+                    await file.Refresh();
+                }
+
+            if (_folders != null)
+                foreach (var folder in _folders)
+                {
+                    await folder.Refresh();
+                }
         }
 
         public Task<bool> CreateFile(string name)
@@ -107,6 +189,12 @@ namespace MCFire.Modules.Files.Models
             return Name;
         }
 
+        private void OnRefreshed(FolderRefreshedEventArgs e)
+        {
+            var handler = Refreshed;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         #region Properties
@@ -132,7 +220,6 @@ namespace MCFire.Modules.Files.Models
             get { return Folders.Any() || Files.Any(); }
         }
 
-        [NotNull]
         public IEnumerable<IFolder> Folders
         {
             get
@@ -142,7 +229,7 @@ namespace MCFire.Modules.Files.Models
                 _folders = new List<IFolder>();
                 foreach (var directoryInfo in _info.EnumerateDirectories())
                 {
-                    _folders.Add(new Folder(this, directoryInfo));
+                    _folders.Add(new Folder(this, directoryInfo, _fileFactory));
                 }
 
                 return _folders;
@@ -157,7 +244,6 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        [NotNull]
         public IEnumerable<IFile> Files
         {
             get
@@ -168,10 +254,9 @@ namespace MCFire.Modules.Files.Models
                 foreach (var fileInfo in _info.EnumerateFiles())
                 {
                     // add a originalFile to _files, using fileInfo and the shared originalFile factory
-                    throw new NotImplementedException();
+                    _files.Add(_fileFactory.GetFile(this, fileInfo));
                 }
                 return _files;
-
             }
         }
 
@@ -183,16 +268,15 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        [NotNull]
         public IEnumerable<IFolderItem> Children
         {
             get
             {
-                // TODO: when files are implemented properly, uncomment the below line and use that.
-                // return _children ?? (_children = new List<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
-                return _children ?? (_children = new List<IFolderItem>(Folders));
+                return _children ?? (_children = new List<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
             }
         }
+
+        public event EventHandler<FolderRefreshedEventArgs> Refreshed;
 
         #endregion
     }

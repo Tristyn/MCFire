@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Files.Models;
 
@@ -29,6 +30,17 @@ namespace MCFire.Modules.Files.Services
 
         #region Methods
 
+        /// <summary>
+        /// Refreshes RootFolders and all child IFolderItems
+        /// </summary>
+        async Task Refresh()
+        {
+            foreach (var folder in RootFolders)
+            {
+                await folder.Refresh();
+            }
+        }
+
         public Folder GetOrCreateFolder(string path)
         {
             // try to return existing folder
@@ -36,7 +48,7 @@ namespace MCFire.Modules.Files.Services
             if (first != null) return first;
 
             // create new folder
-            var newFolder = new Folder(null, path);
+            var newFolder = new Folder(null, path, _fileFactory);
             RootFolders.Add(newFolder);
             OnRootFolderAdded(new FolderEventArgs(newFolder));
             return newFolder;

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using MCFire.Modules.Infrastructure;
+using File = MCFire.Modules.Files.Models.File;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Files.Services
 {
     [Export]
-    public class Format : IFormat
+    public class Format : IFormat<File>
     {
         #region Fields
 
@@ -25,7 +27,7 @@ namespace MCFire.Modules.Infrastructure
 
         public Format()
         {
-// ReSharper disable once DoNotCallOverridableMethodsInConstructor
+            // ReSharper disable once DoNotCallOverridableMethodsInConstructor
             _extensions = DefaultExtensions.ToList();
         }
 
@@ -41,12 +43,17 @@ namespace MCFire.Modules.Infrastructure
             if (!String.Equals(parent.Path, info.DirectoryName, StringComparison.CurrentCultureIgnoreCase))
                 throw new ArgumentException("parent.Path must equal info.DirectoryInfo");
 
-            return ConstructFile(parent,info);
+            return ConstructFile(parent, info);
         }
 
-        protected virtual IFile ConstructFile(IFolder parent, FileInfo info)
+        File IFormat<File>.CreateFile(IFolder parent, FileInfo info)
         {
-            throw new NotImplementedException();
+            return CreateFile(parent, info) as File;
+        }
+
+        protected virtual File ConstructFile(IFolder parent, FileInfo info)
+        {
+            return new File(parent, info);
         }
 
         public bool TryAddExtension(string extension)

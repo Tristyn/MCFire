@@ -17,6 +17,7 @@ namespace MCFire.Modules.Files.ViewModels
             {
                 if (value == Model) return;
                 _model = value;
+                
                 // reset children
                 _children = null;
                 NotifyOfPropertyChange(() => Model);
@@ -41,14 +42,13 @@ namespace MCFire.Modules.Files.ViewModels
             get
             {
                 var folder = _model as IFolder;
-                if (folder == null || _children != null) return _children;
-
-                _children = new BindableCollection<FolderItemViewModel>();
+                if (_children == null)
+                    _children = new BindableCollection<FolderItemViewModel>();
+                if (folder == null) return _children;
                 foreach (var childFolder in folder.Children)
                 {
                     _children.Add(new FolderItemViewModel { _model = childFolder });
                 }
-
                 return _children;
             }
         }

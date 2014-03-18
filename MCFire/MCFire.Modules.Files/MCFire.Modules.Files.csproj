@@ -82,7 +82,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\FileRefreshedEventArgs.cs" />
+    <Compile Include="Framework\FolderRefreshedEventArgs.cs" />
     <Compile Include="Framework\FolderEventArgs.cs" />
+    <Compile Include="Framework\FolderItemRefreshedEventArgs.cs" />
     <Compile Include="Framework\IInjectedButton.cs" />
     <Compile Include="Framework\IViewBuilder.cs" />
     <Compile Include="Models\File.cs" />
@@ -94,8 +97,8 @@
     <Compile Include="Services\ExplorerComposer.cs" />
     <Compile Include="Services\FileFactory.cs" />
     <Compile Include="Services\FolderService.cs" />
+    <Compile Include="Services\Format.cs" />
     <Compile Include="Services\TextFormat.cs" />
-    <Compile Include="Services\UnknownFormat.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\FolderItemViewModel.cs" />
     <Compile Include="Views\ExplorerView.xaml.cs">

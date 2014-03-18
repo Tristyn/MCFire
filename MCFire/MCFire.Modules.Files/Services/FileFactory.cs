@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure;
+using File = MCFire.Modules.Files.Models.File;
 
 namespace MCFire.Modules.Files.Services
 {
     [Export]
     public sealed class FileFactory
     {
-        // TODO: merge this class with the FileManager class
+        // TODO: merge this class with the FolderService class
         #region Fields
 
         [NotNull]
         readonly List<IFormat> _formats;
         [NotNull]
         readonly Dictionary<string, IFormat> _extensionDictionary = new Dictionary<string, IFormat>();
-        [NotNull]
-        readonly UnknownFormat _unknownFormat;
 
         #endregion
 
@@ -27,13 +28,13 @@ namespace MCFire.Modules.Files.Services
         [ImportingConstructor]
         public FileFactory([ImportMany] IEnumerable<IFormat> formats)
         {
-            //_unknownFormat = new UnknownFormat(logger, file => DetermineFormat(file.Extension));
+            //_unknownFormat = new UnknownFormat(logger, oldFile => DetermineFormat(oldFile.Extension));
             _formats = formats.ToList();
 
             // resolve extensions
             foreach (var format in _formats)
             {
-                foreach (var extension in format.DefaultExtensions)
+                foreach (var extension in format.DefaultExtensions.Select(ext => ext.ToLower()))
                 {
                     // set extension if it hasn't been set yet
                     if (!_extensionDictionary.ContainsKey(extension))
@@ -45,21 +46,12 @@ namespace MCFire.Modules.Files.Services
                     // resolve extension by hierarchy
                     var setType = _extensionDictionary[extension].GetType();
                     var currentType = format.GetType();
-                    // override extension if current format derives from the set format
-                    if (setType.IsAssignableFrom(currentType))
-                    {
-                        _extensionDictionary[extension] = format;
-                        continue;
-                    }
 
-                    // continue if set format derives from current format
-                    if (currentType.IsAssignableFrom(setType)) continue;
+                    // if current format doesn't derive from the set format, continue
+                    if (!setType.IsAssignableFrom(currentType)) continue;
 
-                    // if formats are from different hierarchies
-                    Console.WriteLine("FileManager - Detected contention over {0} extension between {1} and {2}. Prioritizing {1} format.",
-                        extension, setType, currentType);
-                    // TODO: the desired action here is that the original format is selected, because mod assemblies are prioritized.
-                    // TODO: do prioritized assemblies also prioritize their exports in an [ImportMany] situation?
+                    // current format inherits set format, set extension to current format
+                    _extensionDictionary[extension] = format;
                 }
 
                 // find base format or null
@@ -78,13 +70,33 @@ namespace MCFire.Modules.Files.Services
 
         #region Methods
 
-        private IFormat DetermineFormat([NotNull] string extension)
+        public IFile GetFile(IFolder parent, FileInfo info)
+        {
+            var format = DetermineFormat(info.Extension);
+            if (format != null)
+                return format.CreateFile(parent, info);
+
+            return new UnknownFile(parent, info, FindReplacementFile);
+        }
+
+        [CanBeNull]
+        IFormat DetermineFormat([NotNull] string extension)
         {
             if (extension == null) throw new ArgumentNullException("extension");
-
+            extension = extension.ToLower();
             // recheck extension dictionary for format incase it changed, if it hasn't, use a UI to determine it
             IFormat format;
-            return _extensionDictionary.TryGetValue(extension, out format) ? format : _unknownFormat;
+            return _extensionDictionary.TryGetValue(extension.ToLower(), out format) ? format : null;
+        }
+
+        IFile FindReplacementFile(IFile oldFile, FileInfo oldInfo)
+        {
+            var format = DetermineFormat(oldFile.Extension);
+            if (format != null)
+                return format.CreateFile(oldFile.Parent, oldInfo);
+
+            // TODO: display dialog here asking which format to use
+            throw new NotImplementedException("Asking the user what format to use has not been implemented yet.");
         }
 
         #endregion

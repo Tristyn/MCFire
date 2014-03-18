@@ -17,10 +17,7 @@ namespace MCFire
         protected override IEnumerable<Assembly> SelectAssemblies()
         {
             // get the application assembly, and the Metro assembly.
-            var assemblies = new List<Assembly>(base.SelectAssemblies())
-            {
-                typeof (MCFire.Modules.Metro.ViewModels.MainWindowViewModel).Assembly
-            };
+            var assemblies = new List<Assembly>();
 
             // get assemblies in mods folder
             try
@@ -56,13 +53,14 @@ namespace MCFire
                         .Where(assembly => !assemblies.Contains(assembly)));
                 }
             }
-            catch (SecurityException) { Console.WriteLine("Could not create mods folder. Security exception."); }
-            catch (PathTooLongException) { Console.WriteLine("Could not create mods folder. Path too long."); }
-            catch (UnauthorizedAccessException) { Console.WriteLine("Could not create mods folder. Unauthorized access."); }
-            catch (DirectoryNotFoundException) { Console.WriteLine("Could not create mods folder. Directory unavailable."); }
+            catch (SecurityException) { }
+            catch (PathTooLongException) { }
+            catch (UnauthorizedAccessException) { }
+            catch (DirectoryNotFoundException) { }
 
-            // reverse assemblies, so mods are prioritized.
-            assemblies.Reverse();
+            // add priority MCFire assemblies.
+            assemblies.AddRange(base.SelectAssemblies());
+            assemblies.Add(typeof(Modules.Metro.ViewModels.MainWindowViewModel).Assembly);
             return assemblies;
         }
 
@@ -83,7 +81,6 @@ namespace MCFire
                 foreach (var dirInfo in subDirs)
                 {
                     // yes i know this is quadratic. it works
-
                     directories.AddRange(WalkDirectoryTree(dirInfo));
                 }
             }
