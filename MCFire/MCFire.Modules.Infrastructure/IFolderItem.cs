@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MCFire.Modules.Infrastructure.Events;
 
 namespace MCFire.Modules.Infrastructure
 {
@@ -20,6 +22,8 @@ namespace MCFire.Modules.Infrastructure
         string Name { get; set; }
         [NotNull]
         string Path { get; }
+
+        event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
 
         #endregion
     }

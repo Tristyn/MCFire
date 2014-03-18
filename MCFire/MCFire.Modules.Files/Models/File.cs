@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Infrastructure.Events;
 
 namespace MCFire.Modules.Files.Models
 {
@@ -14,7 +15,7 @@ namespace MCFire.Modules.Files.Models
         [NotNull]
         IFolder _parent;
         [NotNull]
-        protected FileInfo _info;
+        protected FileInfo Info;
 
         #endregion
 
@@ -29,7 +30,7 @@ namespace MCFire.Modules.Files.Models
                 throw new ArgumentException("parent path != FileInfo path");
 
             _parent = parent;
-            _info = info;
+            Info = info;
         }
 
         #endregion
@@ -60,8 +61,8 @@ namespace MCFire.Modules.Files.Models
         {
             return Task.Run(() =>
             {
-                _info.Refresh(); 
-                OnFileRefreshed(new FileRefreshedEventArgs(this));
+                Info.Refresh(); 
+                OnRefreshed(new FolderItemRefreshedEventArgs(this));
             });
         }
 
@@ -80,9 +81,9 @@ namespace MCFire.Modules.Files.Models
             return Name;
         }
 
-        protected virtual void OnFileRefreshed(FileRefreshedEventArgs e)
+        protected virtual void OnRefreshed(FolderItemRefreshedEventArgs e)
         {
-            var handler = FileRefreshed;
+            var handler = Refreshed;
             if (handler != null) handler(this, e);
         }
 
@@ -97,17 +98,17 @@ namespace MCFire.Modules.Files.Models
 
         public string Name
         {
-            get { return _info.Name; }
+            get { return Info.Name; }
             set { throw new NotImplementedException(); }
         }
 
-        public string Path { get { return _info.FullName; } }
+        public string Path { get { return Info.FullName; } }
 
-        public string Extension { get { return _info.Extension; } }
+        public string Extension { get { return Info.Extension; } }
 
         public IFolder Parent { get { return _parent; } }
 
-        public event EventHandler<FileRefreshedEventArgs> FileRefreshed;
+        public event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
 
         #endregion
     }

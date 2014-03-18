@@ -1,14 +1,17 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.Runtime.Serialization;
 using Caliburn.Micro;
 using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
 {
     [Export]
-    public class FolderItemViewModel : PropertyChangedBase
+    public class FolderItemViewModel : PropertyChangedBase, IFolderItemViewModel
     {
         IFolderItem _model;
-        BindableCollection<FolderItemViewModel> _children;
+        BindableCollection<IFolderItemViewModel> _children;
 
         public IFolderItem Model
         {
@@ -17,7 +20,7 @@ namespace MCFire.Modules.Files.ViewModels
             {
                 if (value == Model) return;
                 _model = value;
-                
+
                 // reset children
                 _children = null;
                 NotifyOfPropertyChange(() => Model);
@@ -37,13 +40,13 @@ namespace MCFire.Modules.Files.ViewModels
             //}
         }
 
-        public BindableCollection<FolderItemViewModel> Children
+        public BindableCollection<IFolderItemViewModel> Children
         {
             get
             {
                 var folder = _model as IFolder;
                 if (_children == null)
-                    _children = new BindableCollection<FolderItemViewModel>();
+                    _children = new BindableCollection<IFolderItemViewModel>();
                 if (folder == null) return _children;
                 foreach (var childFolder in folder.Children)
                 {

@@ -2,11 +2,12 @@
 					 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					 xmlns:mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-					 xmlns:cal="http://www.caliburnproject.org"
-					 Title="{Binding Title}" Icon="{Binding Icon}" 
+					 xmlns:cal="http://www.caliburnproject.org" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+                     Title="{Binding Title}" Icon="{Binding Icon}" 
 					 Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
 					 WindowStartupLocation="CenterScreen"
-					 WindowState="{Binding WindowState}">
+					 WindowState="{Binding WindowState}" d:DataContext="{d:DesignData IMainWindow}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -22,7 +23,7 @@
 
     <mahapps:MetroWindow.WindowCommands>
         <mahapps:WindowCommands>
-            <ItemsControl ItemsSource="{Binding Commands}" Foreground="#00000000" Padding="0,5,0,0">
+            <ItemsControl ItemsSource="{Binding Commands}" Padding="0,5,0,0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ContentControl cal:View.Model="{Binding}"/>
@@ -33,6 +34,6 @@
     </mahapps:MetroWindow.WindowCommands>
 
     <Grid>
-        <ContentControl cal:View.Model="{Binding Shell}" />
+        <ContentControl cal:View.Model="{Binding Shell}"/>
     </Grid>
 </mahapps:MetroWindow>

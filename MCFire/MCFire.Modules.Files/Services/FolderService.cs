@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading.Tasks;
 using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Files.Models;
 
@@ -29,17 +28,6 @@ namespace MCFire.Modules.Files.Services
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Refreshes RootFolders and all child IFolderItems
-        /// </summary>
-        async Task Refresh()
-        {
-            foreach (var folder in RootFolders)
-            {
-                await folder.Refresh();
-            }
-        }
 
         public Folder GetOrCreateFolder(string path)
         {

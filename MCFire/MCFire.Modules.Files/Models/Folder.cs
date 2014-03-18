@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Infrastructure.Events;
 
 namespace MCFire.Modules.Files.Models
 {
@@ -134,7 +134,7 @@ namespace MCFire.Modules.Files.Models
                 }
             }
 
-            OnRefreshed(new FolderRefreshedEventArgs(this));
+            OnRefreshed(new FolderItemRefreshedEventArgs(this));
         }
 
         private async Task RefreshChildren()
@@ -189,7 +189,7 @@ namespace MCFire.Modules.Files.Models
             return Name;
         }
 
-        private void OnRefreshed(FolderRefreshedEventArgs e)
+        private void OnRefreshed(FolderItemRefreshedEventArgs e)
         {
             var handler = Refreshed;
             if (handler != null) handler(this, e);
@@ -276,7 +276,7 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        public event EventHandler<FolderRefreshedEventArgs> Refreshed;
+        public event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
 
         #endregion
     }

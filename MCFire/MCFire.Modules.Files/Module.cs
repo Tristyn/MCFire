@@ -18,7 +18,6 @@ namespace MCFire.Modules.Files
         {
             MainMenu.All.First(item => item.Name == "View")
                 .Add(new MenuItem("File Explorer", OpenFileExplorer));
-            MainWindow.Title = "FileManager Demo";
 
             IoC.Get<FolderService>()
                 .GetOrCreateFolder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));

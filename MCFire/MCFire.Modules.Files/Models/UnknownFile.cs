@@ -20,7 +20,7 @@ namespace MCFire.Modules.Files.Models
 
         public override async Task Open()
         {
-            var replacementFile = _getReplacementFileFunc(this, _info);
+            var replacementFile = _getReplacementFileFunc(this, Info);
             if (!await Parent.ReplaceFileWith(this, replacementFile))
                 return;
 

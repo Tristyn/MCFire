@@ -6,7 +6,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure;
-using File = MCFire.Modules.Files.Models.File;
 
 namespace MCFire.Modules.Files.Services
 {

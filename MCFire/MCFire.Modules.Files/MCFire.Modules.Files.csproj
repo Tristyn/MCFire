@@ -82,10 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Framework\FileRefreshedEventArgs.cs" />
-    <Compile Include="Framework\FolderRefreshedEventArgs.cs" />
     <Compile Include="Framework\FolderEventArgs.cs" />
-    <Compile Include="Framework\FolderItemRefreshedEventArgs.cs" />
     <Compile Include="Framework\IInjectedButton.cs" />
     <Compile Include="Framework\IViewBuilder.cs" />
     <Compile Include="Models\File.cs" />
@@ -101,11 +98,15 @@
     <Compile Include="Services\TextFormat.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\FolderItemViewModel.cs" />
+    <Compile Include="ViewModels\RefreshCommandViewModel.cs" />
     <Compile Include="Views\ExplorerView.xaml.cs">
       <DependentUpon>ExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FolderItemView.xaml.cs">
       <DependentUpon>FolderItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RefreshCommandView.xaml.cs">
+      <DependentUpon>RefreshCommandView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FolderItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RefreshCommandView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

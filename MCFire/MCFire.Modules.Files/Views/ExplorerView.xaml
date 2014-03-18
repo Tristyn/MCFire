@@ -8,10 +8,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
-        <!-- TODO: implement injected buttons, square like VS -->
-        <!--<StackPanel DockPanel.Dock="Top">
-            <Button x:Name="NewFolder" Visibility="Visible" IsEnabled="True">asd</Button>
-        </StackPanel>-->
+        
+        <ItemsControl ItemsSource="{Binding Commands}" DockPanel.Dock="Top" d:DataContext="{d:DesignInstance viewModels:ExplorerViewModel}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl cal:View.Model="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
         <TreeView x:Name="RootFolders" ClipToBounds="True">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
@@ -19,5 +24,6 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
+        
     </DockPanel>
 </UserControl>
