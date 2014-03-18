@@ -75,6 +75,7 @@ namespace MCFire.Modules.Files.Models
 
         public async Task Refresh()
         {
+            // TODO: create a view centric refresh, where only items visible in the treeview are refreshed.
             _info.Refresh();
 
             // get the FileInfos that have been created since the last refresh.

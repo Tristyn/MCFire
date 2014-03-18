@@ -12,9 +12,14 @@
         <ItemsControl ItemsSource="{Binding Commands}" DockPanel.Dock="Top" d:DataContext="{d:DesignInstance viewModels:ExplorerViewModel}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <ContentControl cal:View.Model="{Binding}"/>
+                    <ContentControl cal:View.Model="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" IsItemsHost="True" CanHorizontallyScroll="True"></StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
         </ItemsControl>
         
         <TreeView x:Name="RootFolders" ClipToBounds="True">

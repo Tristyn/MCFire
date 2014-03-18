@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Runtime.Serialization;
+﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using MCFire.Modules.Infrastructure;
 using MCFire.Modules.Infrastructure.ViewModels;

@@ -98,12 +98,16 @@
     <Compile Include="Services\TextFormat.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\FolderItemViewModel.cs" />
+    <Compile Include="ViewModels\NewFolderCommandViewModel.cs" />
     <Compile Include="ViewModels\RefreshCommandViewModel.cs" />
     <Compile Include="Views\ExplorerView.xaml.cs">
       <DependentUpon>ExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FolderItemView.xaml.cs">
       <DependentUpon>FolderItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewFolderCommandView.xaml.cs">
+      <DependentUpon>NewFolderCommandView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RefreshCommandView.xaml.cs">
       <DependentUpon>RefreshCommandView.xaml</DependentUpon>
@@ -119,6 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FolderItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewFolderCommandView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
