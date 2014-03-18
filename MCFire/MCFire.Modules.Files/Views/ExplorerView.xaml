@@ -5,23 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:viewModels="clr-namespace:MCFire.Modules.Files.ViewModels"
+             xmlns:inf="clr-namespace:MCFire.Modules.Infrastructure.Views;assembly=MCFire.Modules.Infrastructure"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData ExplorerViewModel}">
     <DockPanel>
-        
-        <ItemsControl ItemsSource="{Binding Commands}" DockPanel.Dock="Top" d:DataContext="{d:DesignInstance viewModels:ExplorerViewModel}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl cal:View.Model="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" IsItemsHost="True" CanHorizontallyScroll="True"></StackPanel>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-        
+
+        <inf:CommandsView 
+            DockPanel.Dock="Top" 
+            Commands="{Binding Commands}"/>
+
         <TreeView x:Name="RootFolders" ClipToBounds="True">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
@@ -29,6 +21,6 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        
+
     </DockPanel>
 </UserControl>

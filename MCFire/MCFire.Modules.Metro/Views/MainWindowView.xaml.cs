@@ -1,4 +1,6 @@
-﻿namespace MCFire.Modules.Metro.Views
+﻿using MCFire.Modules.Infrastructure;
+
+namespace MCFire.Modules.Metro.Views
 {
     /// <summary>
     /// Interaction logic for MainWindowView.xaml
