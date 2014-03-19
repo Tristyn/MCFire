@@ -6,24 +6,84 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ItemsControl 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Xceed.Wpf.AvalonDock.Themes.Metro;component/brushes.xaml" />
+
+                <ResourceDictionary>
+                    <Style TargetType="Button" x:Shared="True">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border BorderThickness="1" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            Background="{TemplateBinding Background}"
+                                            Margin="2,0"
+                                            Width="20"
+                                            Height="22">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          Margin="3"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                        <!--TODO: Disabled buttons should have their content tinted (to ThemeMetro_BaseColor6)-->
+                        <Style.Triggers>
+                            <!-- ReSharper disable Xaml.InvalidResourceType -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource AvalonDock_ThemeMetro_BaseColor3}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="BorderBrush" Value="{StaticResource AvalonDock_ThemeMetro_BaseColor7}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseCaptured" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AvalonDock_ThemeMetro_BaseColor3}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseCaptured" Value="False">
+                                <Setter Property="Background" Value="{StaticResource AvalonDock_ThemeMetro_BaseColor7}" />
+                            </Trigger>
+                            <!-- ReSharper restore Xaml.InvalidResourceType -->
+                        </Style.Triggers>
+                    </Style>
+                    
+                    <Style TargetType="Path">
+                        <!-- ReSharper disable once Xaml.InvalidResourceType -->
+                        <Setter Property="Fill" Value="{StaticResource AvalonDock_ThemeMetro_BaseColor5}"></Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <!--Required so that styles are applied to the ItemsControl properly WHY DO YOU DO THIS TO ME WPF-->
+        <Button Visibility="Collapsed"/>
+        <Path Visibility="Collapsed"/>
+        <!-- ReSharper disable once Xaml.InvalidResourceType -->
+        <ItemsControl
         ItemsSource="{Binding Commands, 
         RelativeSource={RelativeSource 
-        FindAncestor, 
-        AncestorType={x:Type UserControl}}}" 
+        FindAncestor, AncestorType={x:Type UserControl}}}" 
+        Background="{StaticResource AvalonDock_ThemeMetro_BaseColor7}"
         DockPanel.Dock="Top">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <ContentControl cal:View.Model="{Binding}" />
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel 
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl cal:View.Model="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel 
                     Orientation="Horizontal" 
                     IsItemsHost="True" 
-                    CanHorizontallyScroll="True" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-    </ItemsControl>
+                    CanHorizontallyScroll="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+        </ItemsControl>
+    </Grid>
 </UserControl>

@@ -2638,7 +2638,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>1503815120</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1851626190</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>1235367700</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>1235367700</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>1503821264</td></row>
@@ -3744,8 +3744,8 @@
 		<row><td>ID_STRING1</td><td>1033</td><td/><td>0</td><td/><td>1235369748</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td/><td>0</td><td/><td>1235388180</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td/><td>0</td><td/><td>1235355797</td></row>
-		<row><td>ID_STRING4</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>1503815120</td></row>
-		<row><td>ID_STRING5</td><td>1033</td><td>http://www.MCFire.com</td><td>0</td><td/><td>1503815120</td></row>
+		<row><td>ID_STRING4</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1851626190</td></row>
+		<row><td>ID_STRING5</td><td>1033</td><td>http://www.MCFire.com</td><td>0</td><td/><td>-1851626190</td></row>
 		<row><td>ID_STRING6</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>1235355989</td></row>
 		<row><td>ID_STRING7</td><td>1033</td><td/><td>0</td><td/><td>1503827184</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>1235367700</td></row>
@@ -3855,7 +3855,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;VSSolutionFolder&gt;\MCFire\Enchantment_Table.ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;VSSolutionFolder&gt;\MCFire\Resources\Enchantment_Table.ico</td><td>0</td></row>
 	</table>
 
 	<table name="IniFile">
@@ -3988,7 +3988,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{95B77F06-3593-4C2C-8425-25D6C62BD67F}</td></row>
 		<row><td>ISUSSignature</td><td>{16E5C4DA-2156-489A-B00E-A29725225FC4}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewProject,viewUpdateService,viewRealSetupDesign,viewISToday,viewObjects,viewFileExtensions,viewShortcuts,viewRelease</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewProject,viewUpdateService,viewRealSetupDesign,viewISToday,viewObjects,viewFileExtensions,viewShortcuts,viewRelease,viewSystemSearch</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>

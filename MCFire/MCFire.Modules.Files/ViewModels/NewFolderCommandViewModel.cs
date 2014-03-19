@@ -4,6 +4,7 @@ using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
 {
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(IFileExplorerCommand))]
     public class NewFolderCommandViewModel : IFileExplorerCommand
     {
@@ -11,6 +12,7 @@ namespace MCFire.Modules.Files.ViewModels
 
         public void AddFolder()
         {
+            
             FileExplorer.NewFolder();
         }
     }
