@@ -89,7 +89,6 @@ namespace MCFire.Modules.Files.Models
             // create new files
             if (newFiles.Any())
             {
-                Console.WriteLine(newFiles.Count + " new files in " + Name);
                 if (_files == null)
                     _files = new List<IFile>();
 
@@ -102,7 +101,6 @@ namespace MCFire.Modules.Files.Models
             // create new folders
             if (newFolders.Any())
             {
-                Console.WriteLine(newFolders.Count + " new FOLDERS in " + Name);
                 if (_folders == null)
                     _folders = new List<IFolder>();
 
@@ -151,17 +149,14 @@ namespace MCFire.Modules.Files.Models
 
         private async Task RefreshChildren()
         {
-            if (_files != null)
-                foreach (var file in _files)
-                {
-                    await file.Refresh();
-                }
+            var tasks = new List<Task>();
 
+            if (_files != null)
+                tasks.AddRange(_files.Select(file => file.Refresh()));
             if (_folders != null)
-                foreach (var folder in _folders)
-                {
-                    await folder.Refresh();
-                }
+                tasks.AddRange(_folders.Select(folder => folder.Refresh()));
+
+            await Task.WhenAll(tasks);
         }
 
         public Task<bool> CreateFile(string name)
