@@ -11,11 +11,11 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData ExplorerViewModel}">
     <DockPanel>
 
-        <inf:CommandsView 
-            DockPanel.Dock="Top" 
-            Commands="{Binding Commands}"/>
+        <inf:CommandsView DockPanel.Dock="Top" 
+                          Commands="{Binding Commands}"/>
 
-        <controls:ExtendedTreeView x:Name="RootFolders" ClipToBounds="True" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}">
+        <controls:ExtendedTreeView x:Name="RootFolders" ClipToBounds="True" 
+                                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}">
             <controls:ExtendedTreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
                     <ContentControl cal:View.Model="{Binding}"/>

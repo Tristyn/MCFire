@@ -7,10 +7,10 @@ namespace MCFire.Modules.Infrastructure.Controls
     {
         public ExtendedTreeView()
         {
-            SelectedItemChanged += ___ICH;
+            SelectedItemChanged += SelectedItemHandler;
         }
 
-        void ___ICH(object sender, RoutedPropertyChangedEventArgs<object> e)
+        void SelectedItemHandler(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (base.SelectedItem != null)
             {

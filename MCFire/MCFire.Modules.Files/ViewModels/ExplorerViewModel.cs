@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows.Forms;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -35,8 +36,9 @@ namespace MCFire.Modules.Files.ViewModels
 
             folderService.RootFolderAdded += AddFolderViewModelHandler;
 
-            Commands = commands;
-            foreach (var command in commands)
+            var commandsList = commands as IList<IFileExplorerCommand> ?? commands.ToList();
+            Commands = commandsList;
+            foreach (var command in commandsList)
             {
                 command.FileExplorer = this;
             }
@@ -82,7 +84,11 @@ namespace MCFire.Modules.Files.ViewModels
             get { return PaneLocation.Right; }
         }
 
-        public object SelectedItem { get; set; }
+        /// <summary>
+        /// The selected TreeViewItem item in the FileExplorerView. 
+        /// Setting this property doesn't affect the TreeView, as it is a one way bind to an auto-property.
+        /// </summary>
+        public IFolderItemViewModel SelectedItem { get; set; }
 
         #endregion
     }

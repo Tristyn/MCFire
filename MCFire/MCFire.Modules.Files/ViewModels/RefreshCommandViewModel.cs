@@ -11,18 +11,25 @@ namespace MCFire.Modules.Files.ViewModels
     {
         public IFileExplorerViewModel FileExplorer { set; private get; }
 
-        public void Refresh()
+        public async void Refresh()
         {
+            var selectedFolderitem = FileExplorer.SelectedItem;
+            if (selectedFolderitem != null)
+            {
+                await selectedFolderitem.Model.Refresh();
+                return;
+            }
+
+            // fall back to refreshing everything (OH GOD LOL)
             foreach (var folder in FileExplorer.RootFolders)
             {
-                // TODO: ASYNC??!??! OH GOD
-                folder.Model.Refresh();
+                await folder.Model.Refresh();
             }
         }
 
         public bool CanRefresh()
         {
-            return FileExplorer != null && FileExplorer.RootFolders.Any();
+            return FileExplorer.SelectedItem != null || (FileExplorer != null && FileExplorer.RootFolders.Any());
         }
     }
 }

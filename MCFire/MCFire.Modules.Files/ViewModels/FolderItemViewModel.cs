@@ -8,8 +8,14 @@ namespace MCFire.Modules.Files.ViewModels
     [Export]
     public class FolderItemViewModel : PropertyChangedBase, IFolderItemViewModel
     {
+        #region Fields
+
         IFolderItem _model;
         BindableCollection<IFolderItemViewModel> _children;
+
+        #endregion
+
+        #region Properties
 
         public IFolderItem Model
         {
@@ -53,5 +59,7 @@ namespace MCFire.Modules.Files.ViewModels
                 return _children;
             }
         }
+
+        #endregion
     }
 }

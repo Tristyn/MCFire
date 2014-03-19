@@ -78,35 +78,10 @@ namespace MCFire.Modules.Files.Models
             // TODO: create a view centric refresh, where only items visible in the treeview are refreshed.
             _info.Refresh();
 
-            // get the FileInfos that have been created since the last refresh.
-            List<FileInfo> currentFiles;
-            try
-            {
-                currentFiles = _info.Exists ? _info.EnumerateFiles().ToList() : new List<FileInfo>();
-            }
-            catch (DirectoryNotFoundException) { currentFiles = new List<FileInfo>(); }
-            catch (SecurityException) { currentFiles = new List<FileInfo>(); }
-            var oldFileNames = _files != null ? _files.Select(file => file.Name.ToLower()).ToList() : new List<string>();
-            var newFiles = currentFiles
-                .Where(file => currentFiles
-                .Select(currentFile => currentFile.Name.ToLower())
-                .Except(oldFileNames)
-                .Contains(file.Name.ToLower())).ToList();
+            // get the FileInfos and DirectoryInfos that have been created since the last refresh.
 
-            // get the DirectoryInfos that have been created since the last refresh.
-            List<DirectoryInfo> currentFolders;
-            try
-            {
-                currentFolders = _info.Exists ? _info.EnumerateDirectories().ToList() : new List<DirectoryInfo>();
-            }
-            catch (DirectoryNotFoundException) { currentFolders = new List<DirectoryInfo>(); }
-            catch (SecurityException) { currentFolders = new List<DirectoryInfo>(); }
-            var oldFolderNames = _files != null ? _files.Select(file => file.Name.ToLower()).ToList() : new List<string>();
-            var newFolders = currentFolders
-                .Where(folder => currentFolders
-                .Select(currentFolder => currentFolder.Name.ToLower())
-                .Except(oldFolderNames)
-                .Contains(folder.Name.ToLower())).ToList();
+            var newFiles = _files != null ? GetNewFiles() : new List<FileInfo>();
+            var newFolders = _folders != null ? GetNewDirectories() : new List<DirectoryInfo>();
 
             // refresh old children
             await RefreshChildren();
@@ -114,6 +89,7 @@ namespace MCFire.Modules.Files.Models
             // create new files
             if (newFiles.Any())
             {
+                Console.WriteLine(newFiles.Count + " new files in " + Name);
                 if (_files == null)
                     _files = new List<IFile>();
 
@@ -126,6 +102,7 @@ namespace MCFire.Modules.Files.Models
             // create new folders
             if (newFolders.Any())
             {
+                Console.WriteLine(newFolders.Count + " new FOLDERS in " + Name);
                 if (_folders == null)
                     _folders = new List<IFolder>();
 
@@ -136,6 +113,40 @@ namespace MCFire.Modules.Files.Models
             }
 
             OnRefreshed(new FolderItemRefreshedEventArgs(this));
+        }
+
+        private List<FileInfo> GetNewFiles()
+        {
+            List<FileInfo> currentFiles;
+            try
+            {
+                currentFiles = _info.Exists ? _info.EnumerateFiles().ToList() : new List<FileInfo>();
+            }
+            catch (DirectoryNotFoundException) { currentFiles = new List<FileInfo>(); }
+            catch (SecurityException) { currentFiles = new List<FileInfo>(); }
+            var oldFileNames = _files != null ? _files.Select(file => file.Name.ToLower()).ToList() : new List<string>();
+            return currentFiles
+                   .Where(file => currentFiles
+                   .Select(currentFile => currentFile.Name.ToLower())
+                   .Except(oldFileNames)
+                   .Contains(file.Name.ToLower())).ToList();
+        }
+
+        private List<DirectoryInfo> GetNewDirectories()
+        {
+            List<DirectoryInfo> currentFolders;
+            try
+            {
+                currentFolders = _info.Exists ? _info.EnumerateDirectories().ToList() : new List<DirectoryInfo>();
+            }
+            catch (DirectoryNotFoundException) { currentFolders = new List<DirectoryInfo>(); }
+            catch (SecurityException) { currentFolders = new List<DirectoryInfo>(); }
+            var oldFolderNames = _folders != null ? _folders.Select(folder => folder.Name.ToLower()).ToList() : new List<string>();
+            return currentFolders
+                   .Where(folder => currentFolders
+                   .Select(currentFolder => currentFolder.Name.ToLower())
+                   .Except(oldFolderNames)
+                   .Contains(folder.Name.ToLower())).ToList();
         }
 
         private async Task RefreshChildren()
