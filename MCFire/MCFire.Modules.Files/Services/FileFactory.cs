@@ -19,6 +19,7 @@ namespace MCFire.Modules.Files.Services
         readonly List<IFormat> _formats;
         [NotNull]
         readonly Dictionary<string, IFormat> _extensionDictionary = new Dictionary<string, IFormat>();
+        readonly object _lock = new object();
 
         #endregion
 
@@ -69,13 +70,13 @@ namespace MCFire.Modules.Files.Services
 
         #region Methods
 
-        public IFile GetFile(IFolder parent, FileInfo info)
+        public IFile CreateFile(IFolder parent, FileInfo info)
         {
-            var format = DetermineFormat(info.Extension);
-            if (format != null)
-                return format.CreateFile(parent, info);
-
-            return new UnknownFile(parent, info, FindReplacementFile);
+            lock (_lock)
+            {
+                var format = DetermineFormat(info.Extension);
+                return format != null ? format.CreateFile(parent, info) : new UnknownFile(parent, info, FindReplacementFile);
+            }
         }
 
         [CanBeNull]

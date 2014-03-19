@@ -130,7 +130,7 @@ namespace MCFire.Modules.Files.Models
 
                 foreach (var fileInfo in newFiles)
                 {
-                    _files.Add(_fileFactory.GetFile(this, fileInfo));
+                    _files.Add(_fileFactory.CreateFile(this, fileInfo));
                 }
             }
 
@@ -297,7 +297,7 @@ namespace MCFire.Modules.Files.Models
                 foreach (var fileInfo in _info.EnumerateFiles())
                 {
                     // add a originalFile to _files, using fileInfo and the shared originalFile factory
-                    _files.Add(_fileFactory.GetFile(this, fileInfo));
+                    _files.Add(_fileFactory.CreateFile(this, fileInfo));
                 }
                 return _files;
             }
