@@ -82,6 +82,8 @@ namespace MCFire.Modules.Files.ViewModels
             get { return PaneLocation.Right; }
         }
 
+        public object SelectedItem { get; set; }
+
         #endregion
     }
 }

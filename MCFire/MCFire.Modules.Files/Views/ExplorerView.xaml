@@ -6,6 +6,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:viewModels="clr-namespace:MCFire.Modules.Files.ViewModels"
              xmlns:inf="clr-namespace:MCFire.Modules.Infrastructure.Views;assembly=MCFire.Modules.Infrastructure"
+             xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.Controls;assembly=MCFire.Modules.Infrastructure"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData ExplorerViewModel}">
     <DockPanel>
@@ -14,13 +15,13 @@
             DockPanel.Dock="Top" 
             Commands="{Binding Commands}"/>
 
-        <TreeView x:Name="RootFolders" ClipToBounds="True">
-            <TreeView.ItemTemplate>
+        <controls:ExtendedTreeView x:Name="RootFolders" ClipToBounds="True" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}">
+            <controls:ExtendedTreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
                     <ContentControl cal:View.Model="{Binding}"/>
                 </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+            </controls:ExtendedTreeView.ItemTemplate>
+        </controls:ExtendedTreeView>
 
     </DockPanel>
 </UserControl>
