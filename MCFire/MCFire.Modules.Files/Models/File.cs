@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Framework;
@@ -16,6 +17,7 @@ namespace MCFire.Modules.Files.Models
         IFolder _parent;
         [NotNull]
         protected FileInfo Info;
+        readonly object _lock = new object();
 
         #endregion
 
@@ -27,8 +29,9 @@ namespace MCFire.Modules.Files.Models
             if (info == null) throw new ArgumentNullException("info");
 
             if (!String.Equals(parent.Path, info.DirectoryName, StringComparison.CurrentCultureIgnoreCase))
-                throw new ArgumentException("parent path != FileInfo path");
-
+                throw new ArgumentException("parent path must equal FileInfo path");
+            // ReSharper disable once UnusedVariable - Testing if the property was set properly
+            var directoryAssignedTest = info.DirectoryName;
             _parent = parent;
             Info = info;
         }
@@ -52,16 +55,55 @@ namespace MCFire.Modules.Files.Models
             return _parent.DeleteFile(this);
         }
 
-        public Task<bool> Rename(string name)
+        /// <summary>
+        /// Renames the file, leaving the extension unchanged.
+        /// </summary>
+        /// <param name="name">The new name, excluding extension.</param>
+        /// <returns></returns>
+        public async Task<bool> Rename(string name)
         {
-            throw new NotImplementedException();
+            if (name == null) throw new ArgumentNullException("name");
+
+            await Refresh();
+            lock (_lock)
+            {
+                if (!Info.Exists) return false;
+                try
+                {
+// ReSharper disable once AssignNullToNotNullAttribute - Directory wont be null because it is asserted during construction
+                    System.IO.File.Move(Info.FullName, System.IO.Path.Combine(Info.DirectoryName, name + Extension));
+                    return true;
+                }
+                catch (ArgumentException) { }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+                catch (NotSupportedException) { }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Renames the extension, and swaps out this file with a file that is assigned to that extension.
+        /// </summary>
+        /// <param name="name">The extension</param>
+        /// <returns></returns>
+        public Task<bool> RenameExtention(string name)
+        {
+            throw new NotImplementedException("Live change format not implemented yet.");
+            //await Refresh();
+            //if (!Info.Exists) return false;
+            //if (Info.DirectoryName == null) throw new InvalidOperationException();
+            //System.IO.File.Move(Info.FullName, System.IO.Path.Combine(Info.DirectoryName, name));
+
+            //return true;
         }
 
         public virtual Task Refresh()
         {
             return Task.Run(() =>
             {
-                Info.Refresh(); 
+                Info.Refresh();
                 OnRefreshed(new FolderItemRefreshedEventArgs(this));
             });
         }
