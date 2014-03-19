@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Infrastructure;
 using MCFire.Modules.Infrastructure.Events;
 
@@ -11,6 +9,7 @@ namespace MCFire.Modules.Files.Models
 {
     public class File : IFile
     {
+        //TODO: whenever a SecurityException is thrown, set a security bool to false
         #region Fields
 
         [NotNull]
@@ -40,19 +39,19 @@ namespace MCFire.Modules.Files.Models
 
         #region Methods
 
-        public Task<bool> Cut()
+        public virtual Task<bool> CutAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Copy()
+        public virtual Task<bool> CopyAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete()
+        public virtual Task<bool> DeleteAsync()
         {
-            return _parent.DeleteFile(this);
+            return _parent.DeleteFileAsync(this);
         }
 
         /// <summary>
@@ -60,17 +59,45 @@ namespace MCFire.Modules.Files.Models
         /// </summary>
         /// <param name="name">The new name, excluding extension.</param>
         /// <returns></returns>
-        public async Task<bool> Rename(string name)
+        public virtual bool Rename(string name)
         {
             if (name == null) throw new ArgumentNullException("name");
 
-            await Refresh();
+            Refresh();
             lock (_lock)
             {
                 if (!Info.Exists) return false;
                 try
                 {
-// ReSharper disable once AssignNullToNotNullAttribute - Directory wont be null because it is asserted during construction
+                    // ReSharper disable once AssignNullToNotNullAttribute - Directory wont be null because it is asserted during construction
+                    System.IO.File.Move(Info.FullName, System.IO.Path.Combine(Info.DirectoryName, name + Extension));
+                    return true;
+                }
+                catch (ArgumentException) { }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+                catch (NotSupportedException) { }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Renames the file, leaving the extension unchanged.
+        /// </summary>
+        /// <param name="name">The new name, excluding extension.</param>
+        /// <returns></returns>
+        public virtual async Task<bool> RenameAsync(string name)
+        {
+            if (name == null) throw new ArgumentNullException("name");
+
+            await RefreshAsync();
+            lock (_lock)
+            {
+                if (!Info.Exists) return false;
+                try
+                {
+                    // ReSharper disable once AssignNullToNotNullAttribute - Directory wont be null because it is asserted during construction
                     System.IO.File.Move(Info.FullName, System.IO.Path.Combine(Info.DirectoryName, name + Extension));
                     return true;
                 }
@@ -88,32 +115,28 @@ namespace MCFire.Modules.Files.Models
         /// </summary>
         /// <param name="name">The extension</param>
         /// <returns></returns>
-        public Task<bool> RenameExtention(string name)
+        public virtual Task<bool> RenameExtentionAsync(string name)
         {
             throw new NotImplementedException("Live change format not implemented yet.");
-            //await Refresh();
-            //if (!Info.Exists) return false;
-            //if (Info.DirectoryName == null) throw new InvalidOperationException();
-            //System.IO.File.Move(Info.FullName, System.IO.Path.Combine(Info.DirectoryName, name));
-
-            //return true;
         }
 
-        public virtual Task Refresh()
+        public virtual void Refresh()
         {
-            return Task.Run(() =>
-            {
-                Info.Refresh();
-                OnRefreshed(new FolderItemRefreshedEventArgs(this));
-            });
+            Info.Refresh();
+            OnRefreshed(new FolderItemRefreshedEventArgs(this));
         }
 
-        public virtual Task Open()
+        public virtual Task RefreshAsync()
         {
-            return _parent.OpenFile(this);
+            return Task.Run(() => Refresh());
         }
 
-        public Task ReplaceWith(IFormat format)
+        public virtual Task OpenAsync()
+        {
+            return _parent.OpenFileAsync(this);
+        }
+
+        public virtual Task ReplaceWithAsync(IFormat format)
         {
             throw new NotImplementedException();
         }
@@ -141,14 +164,14 @@ namespace MCFire.Modules.Files.Models
         public string Name
         {
             get { return Info.Name; }
-            set { throw new NotImplementedException(); }
+            set { Rename(value); }
         }
 
-        public string Path { get { return Info.FullName; } }
+        public virtual string Path { get { return Info.FullName; } }
 
-        public string Extension { get { return Info.Extension; } }
+        public virtual string Extension { get { return Info.Extension; } }
 
-        public IFolder Parent { get { return _parent; } }
+        public virtual IFolder Parent { get { return _parent; } }
 
         public event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
 

@@ -8,10 +8,17 @@ namespace MCFire.Modules.Infrastructure
         #region Methods
 
         [NotNull]
-        Task Open();
+        Task OpenAsync();
 
         [NotNull]
-        Task ReplaceWith([NotNull] IFormat format);
+        Task ReplaceWithAsync([NotNull] IFormat format);
+
+        /// <summary>
+        /// Renames the extension, and swaps out this file with a file that is assigned to that extension.
+        /// </summary>
+        /// <param name="name">The extension</param>
+        /// <returns></returns>
+        Task<bool> RenameExtentionAsync(string name);
 
         #endregion
 
@@ -21,12 +28,5 @@ namespace MCFire.Modules.Infrastructure
         IFolder Parent { get; }
 
         #endregion
-
-        /// <summary>
-        /// Renames the extension, and swaps out this file with a file that is assigned to that extension.
-        /// </summary>
-        /// <param name="name">The extension</param>
-        /// <returns></returns>
-        Task<bool> RenameExtention(string name);
     }
 }

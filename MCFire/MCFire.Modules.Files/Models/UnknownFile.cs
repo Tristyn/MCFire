@@ -18,13 +18,13 @@ namespace MCFire.Modules.Files.Models
             _getReplacementFileFunc = getReplacementFileFunc;
         }
 
-        public override async Task Open()
+        public override async Task OpenAsync()
         {
             var replacementFile = _getReplacementFileFunc(this, Info);
-            if (!await Parent.ReplaceFileWith(this, replacementFile))
+            if (!await Parent.ReplaceFileWithAsync(this, replacementFile))
                 return;
 
-            await replacementFile.Open();
+            await replacementFile.OpenAsync();
         }
     }
 }

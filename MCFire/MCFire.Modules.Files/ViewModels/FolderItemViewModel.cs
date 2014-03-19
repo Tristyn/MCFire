@@ -35,13 +35,12 @@ namespace MCFire.Modules.Files.ViewModels
         public string Name
         {
             get { return _model.Name; }
-            // TODO: setting _model.Name currently throws NotImplementedException 
-            //set
-            //{
-            //    if (Equals(value, _model.Name)) return;
-            //    _model.Name = value;
-            //    NotifyOfPropertyChange(() => Name);
-            //}
+            set
+            {
+                if (Equals(value, _model.Name)) return;
+                _model.Name = value;
+                NotifyOfPropertyChange(() => Name);
+            }
         }
 
         public BindableCollection<IFolderItemViewModel> Children

@@ -16,14 +16,14 @@ namespace MCFire.Modules.Files.ViewModels
             var selectedFolderitem = FileExplorer.SelectedItem;
             if (selectedFolderitem != null)
             {
-                await selectedFolderitem.Model.Refresh();
+                await selectedFolderitem.Model.RefreshAsync();
                 return;
             }
 
             // fall back to refreshing everything (OH GOD LOL)
             foreach (var folder in FileExplorer.RootFolders)
             {
-                await folder.Model.Refresh();
+                await folder.Model.RefreshAsync();
             }
         }
 

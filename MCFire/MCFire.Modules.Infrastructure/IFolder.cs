@@ -6,12 +6,19 @@ namespace MCFire.Modules.Infrastructure
 {
     public interface IFolder : IFolderItem
     {
-        Task<bool> CreateFile(string name);
-        Task<bool> DeleteFile(IFile file);
-        Task<bool> PasteFile(IFile file);
-        Task<bool> PasteFolder(IFolder folder);
-        Task OpenFile(IFile file);
-        Task<bool> ReplaceFileWith(IFile originalFile, IFile newFile);
+        #region methods
+
+        Task<bool> CreateFileAsync(string name);
+        Task<bool> DeleteFileAsync(IFile file);
+        Task<bool> PasteFileAsync(IFile file);
+        Task<bool> PasteFolderAsync(IFolder folder);
+        Task OpenFileAsync(IFile file);
+        Task<bool> ReplaceFileWithAsync(IFile originalFile, IFile newFile);
+
+        #endregion
+
+        #region Properties
+
         bool Empty { get; }
 
         [NotNull]
@@ -26,5 +33,7 @@ namespace MCFire.Modules.Infrastructure
 
         [NotNull]
         IEnumerable<IFolderItem> Children { get; }
+
+        #endregion
     }
 }

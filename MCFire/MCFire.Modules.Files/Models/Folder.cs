@@ -28,6 +28,7 @@ namespace MCFire.Modules.Files.Models
         DirectoryInfo _info;
         [NotNull]
         readonly FileFactory _fileFactory;
+        readonly object _lock = new object();
 
         #endregion
 
@@ -53,27 +54,62 @@ namespace MCFire.Modules.Files.Models
 
         #region Methods
 
-        public Task<bool> Cut()
+        public Task<bool> CutAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Copy()
+        public Task<bool> CopyAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete()
+        public Task<bool> DeleteAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Rename(string name)
+        public bool Rename(string name)
         {
-            throw new NotImplementedException();
+            if (name == null) throw new ArgumentNullException("name");
+
+            lock (_lock)
+            {
+                Refresh();
+                if (!_info.Exists) return false;
+                try
+                {
+                    var parentFolderPath = _info.FullName.FindReplaceLastOccurance(_info.Name, "");
+                    System.IO.File.Move(_info.FullName, System.IO.Path.Combine(parentFolderPath, name));
+                    return true;
+                }
+                catch (ArgumentException) { }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+                catch (NotSupportedException) { }
+
+                return false;
+            }
         }
 
-        public async Task Refresh()
+        public Task<bool> RenameAsync(string name)
+        {
+            return Task.Run(() => Rename(name));
+        }
+
+        /// <summary>
+        /// Refreshes this objects state, ignoring child FolderItems.
+        /// </summary>
+        public void Refresh()
+        {
+            _info.Refresh();
+            OnRefreshed(new FolderItemRefreshedEventArgs(this));
+        }
+
+        /// <summary>
+        /// Refreshes this objects state and the states of its children.
+        /// </summary>
+        public async Task RefreshAsync()
         {
             // TODO: create a view centric refresh, where only items visible in the treeview are refreshed.
             _info.Refresh();
@@ -152,41 +188,41 @@ namespace MCFire.Modules.Files.Models
             var tasks = new List<Task>();
 
             if (_files != null)
-                tasks.AddRange(_files.Select(file => file.Refresh()));
+                tasks.AddRange(_files.Select(file => file.RefreshAsync()));
             if (_folders != null)
-                tasks.AddRange(_folders.Select(folder => folder.Refresh()));
+                tasks.AddRange(_folders.Select(folder => folder.RefreshAsync()));
 
             await Task.WhenAll(tasks);
         }
 
-        public Task<bool> CreateFile(string name)
+        public Task<bool> CreateFileAsync(string name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteFile(IFile file)
+        public Task<bool> DeleteFileAsync(IFile file)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> PasteFile(IFile file)
+        public Task<bool> PasteFileAsync(IFile file)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> PasteFolder(IFolder folder)
+        public Task<bool> PasteFolderAsync(IFolder folder)
         {
             throw new NotImplementedException();
         }
 
-        public Task OpenFile(IFile file)
+        public Task OpenFileAsync(IFile file)
         {
             //if (!_files.Contains(originalFile));
             throw new NotImplementedException();
 
         }
 
-        public Task<bool> ReplaceFileWith(IFile originalFile, IFile newFile)
+        public Task<bool> ReplaceFileWithAsync(IFile originalFile, IFile newFile)
         {
             throw new NotImplementedException();
         }
