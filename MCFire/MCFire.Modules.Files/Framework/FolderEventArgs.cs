@@ -1,17 +1,17 @@
 ﻿using System;
 using JetBrains.Annotations;
-using MCFire.Modules.Files.Models;
+using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Framework
 {
     public class FolderEventArgs : EventArgs
     {
-        public FolderEventArgs([NotNull] Folder folder)
+        public FolderEventArgs([NotNull] IFolder folder)
         {
             if (folder == null) throw new ArgumentNullException("folder");
             Folder = folder;
         }
 
-        public Folder Folder { get; private set; }
+        public IFolder Folder { get; private set; }
     }
 }

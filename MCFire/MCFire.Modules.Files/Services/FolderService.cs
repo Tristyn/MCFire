@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using MCFire.Modules.Files.Framework;
 using MCFire.Modules.Files.Models;
+using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Services
 {
@@ -13,6 +14,8 @@ namespace MCFire.Modules.Files.Services
         #region Fields
 
         readonly FileFactory _fileFactory;
+        readonly List<IFolder> _rootFolders = new List<IFolder>();
+        readonly object _lock = new object();
 
         #endregion
 
@@ -22,22 +25,25 @@ namespace MCFire.Modules.Files.Services
         public FolderService(FileFactory fileFactory)
         {
             _fileFactory = fileFactory;
-            RootFolders = new List<Folder>();
         }
 
         #endregion
 
         #region Methods
 
-        public Folder GetOrCreateFolder(string path)
+        public IFolder GetOrCreateFolder(string path)
         {
-            // try to return existing folder
-            var first = RootFolders.FirstOrDefault(folder => folder.Path == path.ToLower());
-            if (first != null) return first;
+            IFolder newFolder;
+            lock (_lock)
+            {
+                // try to return existing folder
+                var first = _rootFolders.FirstOrDefault(folder => folder.Path == path.ToLower());
+                if (first != null) return first;
 
-            // create new folder
-            var newFolder = new Folder(null, path, _fileFactory);
-            RootFolders.Add(newFolder);
+                // create new folder
+                newFolder = new Folder(null, path, _fileFactory);
+                _rootFolders.Add(newFolder);
+            }
             OnRootFolderAdded(new FolderEventArgs(newFolder));
             return newFolder;
         }
@@ -52,7 +58,22 @@ namespace MCFire.Modules.Files.Services
 
         #region Properties
 
-        public List<Folder> RootFolders { get; private set; }
+        /// <summary>
+        /// Returns all root folders. 
+        /// The IEnumerable is thread safe to the consumer, 
+        /// and won't be updated when changes are made to this object.
+        /// </summary>
+        public IEnumerable<IFolder> RootFolders
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return new List<IFolder>(_rootFolders);
+                }
+            }
+        }
+
         public event EventHandler<FolderEventArgs> RootFolderAdded;
 
         #endregion
