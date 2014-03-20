@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
 using System.Security;
+using Caliburn.Micro;
 using Gemini;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ namespace MCFire
         {
             // get the application assembly, and the Metro assembly.
             var assemblies = new List<Assembly>();
-
             // get assemblies in mods folder
             try
             {

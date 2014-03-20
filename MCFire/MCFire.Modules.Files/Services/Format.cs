@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using MCFire.Modules.Infrastructure;
 using File = MCFire.Modules.Files.Models.File;
 
 namespace MCFire.Modules.Files.Services
 {
-    [Export]
+    [Export(typeof(IFormat))]
     public class Format : IFormat<File>
     {
         #region Fields
