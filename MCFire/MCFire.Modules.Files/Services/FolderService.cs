@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using MCFire.Modules.Files.Framework;
+using MCFire.Modules.Files.EventArgs;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure;
 

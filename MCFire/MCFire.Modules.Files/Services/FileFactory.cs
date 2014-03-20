@@ -52,24 +52,13 @@ namespace MCFire.Modules.Files.Services
                     // current format inherits set format, set extension to current format
                     _extensionDictionary[extension] = format;
                 }
-
-                // find base format or null
-                var baseType = format.GetType().BaseType;
-                var baseFormat = (from baseFormat2 in _formats
-                                  where baseFormat2.GetType() == baseType
-                                  select baseFormat2).FirstOrDefault();
-
-                //TODO: this is deprecated
-                // register base format
-                //if (baseFormat != null)
-                //baseFormat.RegisterChildFormat(format);
             }
         }
 
         #endregion
 
         #region Methods
-
+        // TODO: allow for files without parents, like disable folder specific methods for these orphan files
         public IFile CreateFile(IFolder parent, FileInfo info)
         {
             lock (_lock)

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Services;
-using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Models
 {

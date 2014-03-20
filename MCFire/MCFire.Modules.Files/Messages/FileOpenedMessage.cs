@@ -1,6 +1,6 @@
 ﻿using MCFire.Modules.Files.Models;
 
-namespace MCFire.Modules.Files.Events
+namespace MCFire.Modules.Files.Messages
 {
     public class FileOpenedEvent<TFile> where TFile : IFile
     {

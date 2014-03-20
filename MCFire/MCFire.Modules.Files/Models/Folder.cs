@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.EventArgs;
 using MCFire.Modules.Files.Services;
-using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Infrastructure.Extensions;
 
 namespace MCFire.Modules.Files.Models
 {

@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
-using MCFire.Modules.Files.Events;
+using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Models;
 using File = MCFire.Modules.Files.Models.File;
 
@@ -95,7 +95,7 @@ namespace MCFire.Modules.Files.Services
                 lock (_lock)
                 {
                     return new List<string>(_extensions);
-                }                
+                }
             }
         }
 

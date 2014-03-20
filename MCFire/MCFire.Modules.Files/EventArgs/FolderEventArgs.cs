@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Models;
 
-namespace MCFire.Modules.Files.Framework
+namespace MCFire.Modules.Files.EventArgs
 {
     public class FolderEventArgs : System.EventArgs
     {

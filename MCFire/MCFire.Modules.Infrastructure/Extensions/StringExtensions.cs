@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Infrastructure.Extensions
 {
     public static class StringExtensions
     {

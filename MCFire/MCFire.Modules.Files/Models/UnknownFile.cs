@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using MCFire.Modules.Infrastructure;
-using Xceed.Wpf.AvalonDock.Controls;
 
 namespace MCFire.Modules.Files.Models
 {

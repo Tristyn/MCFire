@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
 
-namespace MCFire.Modules.Files.Events
+namespace MCFire.Modules.Files.Messages
 {
     public class FormatExtensionsChangedEvent<TFile> where TFile : IFile
     {

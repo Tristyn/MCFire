@@ -1,7 +1,6 @@
 ﻿using MCFire.Modules.Files.Models;
-using MCFire.Modules.Infrastructure;
 
-namespace MCFire.Modules.Files.Events
+namespace MCFire.Modules.Files.Messages
 {
     public class FileCreatedEvent<TFile> where TFile : IFile
     {
