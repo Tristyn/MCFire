@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
 using System.Security;
-using Caliburn.Micro;
 using Gemini;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
-using MCFire.Modules.Infrastructure;
 using MCFire.Modules.Metro.Commands;
 
 namespace MCFire.Modules.Metro.ViewModels

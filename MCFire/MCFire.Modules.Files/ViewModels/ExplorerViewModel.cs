@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
@@ -12,7 +10,6 @@ using MCFire.Modules.Files.Commands;
 using MCFire.Modules.Files.EventArgs;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
-using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.ViewModels
 {
