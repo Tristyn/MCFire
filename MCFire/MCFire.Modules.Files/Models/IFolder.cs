@@ -12,7 +12,6 @@ namespace MCFire.Modules.Files.Models
         Task<bool> DeleteFileAsync(IFile file);
         Task<bool> PasteFileAsync(IFile file);
         Task<bool> PasteFolderAsync(IFolder folder);
-        Task OpenFileAsync(IFile file);
         Task<bool> ReplaceFileWithAsync(IFile originalFile, IFile newFile);
 
         #endregion

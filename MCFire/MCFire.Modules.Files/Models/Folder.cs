@@ -223,13 +223,6 @@ namespace MCFire.Modules.Files.Models
             throw new NotImplementedException();
         }
 
-        public Task OpenFileAsync(IFile file)
-        {
-            //if (!_files.Contains(originalFile));
-            throw new NotImplementedException();
-
-        }
-
         public Task<bool> ReplaceFileWithAsync(IFile originalFile, IFile newFile)
         {
             throw new NotImplementedException();

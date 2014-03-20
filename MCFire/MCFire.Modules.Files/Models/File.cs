@@ -1,22 +1,32 @@
 ﻿using System;
 using System.IO;
+using System.Security;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.EventArgs;
+using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Services;
 
 namespace MCFire.Modules.Files.Models
 {
     public class File : IFile
     {
-        //TODO: whenever a SecurityException is thrown, set a security bool to false
+        // TODO: whenever a SecurityException is thrown, set a security bool to false
+
+        // TODO: make FileContent implementation cleaner/less oportunity for inheritors to mess it 
+        // TODO: up by implementing a generic or overridable methods
         #region Fields
 
         [NotNull]
         IFolder _parent;
         [NotNull]
-        protected FileInfo Info;
-        readonly object _lock = new object();
+        protected FileInfo Info;    
+
+        private IFileContent _content;
+        private WeakReference<IFileContent> _weakContentReference;
+        protected readonly object Lock = new object();
 
         #endregion
 
@@ -64,7 +74,7 @@ namespace MCFire.Modules.Files.Models
             if (name == null) throw new ArgumentNullException("name");
 
             Refresh();
-            lock (_lock)
+            lock (Lock)
             {
                 if (!Info.Exists) return false;
                 try
@@ -92,7 +102,7 @@ namespace MCFire.Modules.Files.Models
             if (name == null) throw new ArgumentNullException("name");
 
             await RefreshAsync();
-            lock (_lock)
+            lock (Lock)
             {
                 if (!Info.Exists) return false;
                 try
@@ -129,7 +139,7 @@ namespace MCFire.Modules.Files.Models
 
             if (oldExists != Info.Exists)
                 OnExistsChanged(new FolderItemExistsChangedEventArgs(Info.Exists));
-            if (oldName != Info.Name) 
+            if (oldName != Info.Name)
                 OnNameChanged(new FolderItemNameChangedEventArgs(Info.Name));
 
             OnRefreshed(new FolderItemRefreshedEventArgs(this));
@@ -140,9 +150,52 @@ namespace MCFire.Modules.Files.Models
             return Task.Run(() => Refresh());
         }
 
+        /// <summary>
+        /// Notifies all ViewModels that are listening for this type of format that they should open its contents. 
+        /// This method is generally invoked by a user interface.
+        /// </summary>
+        /// <returns></returns>
         public virtual Task OpenAsync()
         {
-            return _parent.OpenFileAsync(this);
+            return Task.Run(() => IoC.Get<IEventAggregator>().Publish(new FileOpenedMessage<File>(this)));
+        }
+
+        /// <summary>
+        /// Gets the stream associated with this file.
+        /// </summary>
+        /// <param name="stream">The file stream. Can be null.</param>
+        /// <returns>If the stream was retrieved successfully.</returns>
+        public bool TryOpenRead(out Stream stream)
+        {
+            stream = null;
+            try
+            {
+                stream = Info.OpenRead();
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (IOException) { }
+            return stream != null;
+        }
+
+        /// <summary>
+        /// Returns the file stream for this file.
+        /// </summary>
+        /// <param name="mode">The file mode</param>
+        /// <param name="access">The access mode</param>
+        /// <param name="stream">The stream, can be null.</param>
+        /// <returns>If the stream was successfully retrieved</returns>
+        public bool TryOpen(FileMode mode, FileAccess access, out Stream stream)
+        {
+            stream = null;
+            try
+            {
+                stream = Info.Open(mode, access);
+            }
+            catch (SecurityException) { }
+            catch (IOException) { }
+            catch (ArgumentException) { }
+            catch (UnauthorizedAccessException) { }
+            return stream != null;
         }
 
         public virtual Task ReplaceWithAsync(IFormat format)
@@ -153,6 +206,32 @@ namespace MCFire.Modules.Files.Models
         public override string ToString()
         {
             return Name;
+        }
+
+        protected void OnContentDirtied(object sender, FileContentEventArgs e)
+        {
+            lock (Lock)
+            {
+                IFileContent content;
+                if (!_weakContentReference.TryGetTarget(out content)) return; // only way this can happen is if the finalizer calls Dirty=false
+                if (e.Content != content)
+                    throw new InvalidOperationException("FileContentEventArgs.Content != _weakContentReference.target");
+                _content = content;
+                content.Dirtied -= OnContentDirtied;
+                content.Saved += OnContentSaved;
+            }
+        }
+
+        private void OnContentSaved(object sender, FileContentEventArgs e)
+        {
+            lock (Lock)
+            {
+                if (e.Content != _content)
+                    throw new InvalidOperationException("FileContentEventArgs.Content != _content");
+                _content.Dirtied += OnContentDirtied;
+                _content.Saved -= OnContentSaved;
+                _content = null;
+            }
         }
 
         protected virtual void OnRefreshed(FolderItemRefreshedEventArgs e)

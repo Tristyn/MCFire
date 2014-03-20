@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using MCFire.Modules.Files.EventArgs;
 using MCFire.Modules.Files.Models;
-using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Services
 {

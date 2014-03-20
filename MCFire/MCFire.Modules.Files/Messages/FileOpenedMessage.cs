@@ -2,11 +2,11 @@
 
 namespace MCFire.Modules.Files.Messages
 {
-    public class FileOpenedEvent<TFile> where TFile : IFile
+    public class FileOpenedMessage<TFile> where TFile : IFile
     {
         public TFile File { get; set; }
 
-        public FileOpenedEvent(TFile file)
+        public FileOpenedMessage(TFile file)
         {
             File = file;
         }

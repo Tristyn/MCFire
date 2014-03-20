@@ -59,6 +59,7 @@ namespace MCFire.Modules.Files.Services
 
         #region Methods
         // TODO: allow for files without parents, like disable folder specific methods for these orphan files
+        [NotNull]
         public IFile CreateFile(IFolder parent, FileInfo info)
         {
             lock (_lock)

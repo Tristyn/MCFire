@@ -16,7 +16,7 @@ namespace MCFire.Modules.Files.Services
         #region Fields
 
         readonly List<string> _extensions = new List<string>();
-        readonly IEventAggregator _aggregator;
+        protected readonly IEventAggregator Aggregator;
         readonly object _lock = new object();
 
         #endregion
@@ -26,9 +26,10 @@ namespace MCFire.Modules.Files.Services
         [ImportingConstructor]
         public Format(IEventAggregator aggregator)
         {
-            _aggregator = aggregator;
+            Aggregator = aggregator;
             // ReSharper disable once DoNotCallOverridableMethodsInConstructor
             _extensions = DefaultExtensions.ToList();
+            // TODO: the extensions should be remembered and set from settings, if it doesn't exist, run that LOC
         }
 
         #endregion
@@ -43,19 +44,15 @@ namespace MCFire.Modules.Files.Services
             if (!String.Equals(parent.Path, info.DirectoryName, StringComparison.CurrentCultureIgnoreCase))
                 throw new ArgumentException("parent.Path must equal info.DirectoryInfo");
 
-            return ConstructFile(parent, info);
+            var file = new File(parent, info);
+            Aggregator.Publish(new FileCreatedMessage<File>(file));
+            return file;
         }
 
         File IFormat<File>.CreateFile(IFolder parent, FileInfo info)
         {
+            // ReSharper disable once AssignNullToNotNullAttribute
             return CreateFile(parent, info) as File;
-        }
-
-        protected virtual File ConstructFile(IFolder parent, FileInfo info)
-        {
-            var file = new File(parent, info);
-            _aggregator.Publish(new FileCreatedEvent<File>(file));
-            return file;
         }
 
         public virtual bool TryAddExtension(string extension)
@@ -68,7 +65,7 @@ namespace MCFire.Modules.Files.Services
                     return false;
                 _extensions.Add(extension);
             }
-            _aggregator.Publish(new FormatExtensionsChangedEvent<File>(this, extension, null));
+            Aggregator.Publish(new FormatExtensionsChangedMessage<File>(this, extension, null));
             return true;
         }
 
@@ -80,7 +77,7 @@ namespace MCFire.Modules.Files.Services
                 if (!_extensions.Remove(extension)) return false;
             }
 
-            _aggregator.Publish(new FormatExtensionsChangedEvent<File>(this, null, extension));
+            Aggregator.Publish(new FormatExtensionsChangedMessage<File>(this, null, extension));
             return true;
         }
 
@@ -99,7 +96,7 @@ namespace MCFire.Modules.Files.Services
             }
         }
 
-        public virtual IEnumerable<string> DefaultExtensions
+        public IEnumerable<string> DefaultExtensions
         {
             get { yield break; }
         }

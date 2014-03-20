@@ -86,8 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\IFileExplorerCommand.cs" />
+    <Compile Include="Content\FileContent.cs" />
+    <Compile Include="Content\IFileContent.cs" />
+    <Compile Include="Content\TextContent.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\NullableBoolToPathConverter.cs" />
+    <Compile Include="EventArgs\FileContentEventArgs.cs" />
     <Compile Include="EventArgs\FolderItemExistsChangedEventArgs.cs" />
     <Compile Include="EventArgs\FolderItemNameChangedEventArgs.cs" />
     <Compile Include="EventArgs\FolderItemRefreshedEventArgs.cs" />
@@ -108,6 +112,7 @@
     <Compile Include="Services\FolderService.cs" />
     <Compile Include="Services\Format.cs" />
     <Compile Include="Services\IFormat.cs" />
+    <Compile Include="Services\TextFormat.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\FolderItemViewModel.cs" />
     <Compile Include="ViewModels\IFileExplorerViewModel.cs" />

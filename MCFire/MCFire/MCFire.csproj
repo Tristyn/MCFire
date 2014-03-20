@@ -99,6 +99,11 @@
     <Compile Include="MCFireBootstrapper.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
+    <Compile Include="Modules\TextEditor\Module.cs" />
+    <Compile Include="Modules\TextEditor\ViewModels\TextEditorViewModel.cs" />
+    <Compile Include="Modules\TextEditor\Views\TextEditorView.xaml.cs">
+      <DependentUpon>TextEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,6 +150,13 @@
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\splash.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Modules\TextEditor\Views\TextEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

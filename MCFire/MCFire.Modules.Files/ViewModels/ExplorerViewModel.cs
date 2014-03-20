@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
@@ -57,6 +60,16 @@ namespace MCFire.Modules.Files.ViewModels
             };
             if (dialog.ShowDialog() == DialogResult.OK)
                 _folderService.GetOrCreateFolder(dialog.SelectedPath);
+        }
+
+        public async Task OnDoubleClick()
+        {
+            if (SelectedItem == null) return;
+            var file = SelectedItem.Model as IFile;
+            if (file != null)
+            {
+                await file.OpenAsync();
+            }
         }
 
         private void AddFolderViewModelHandler(object sender, FolderEventArgs e)

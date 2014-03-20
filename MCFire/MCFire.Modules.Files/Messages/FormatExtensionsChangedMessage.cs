@@ -5,7 +5,7 @@ using MCFire.Modules.Files.Services;
 
 namespace MCFire.Modules.Files.Messages
 {
-    public class FormatExtensionsChangedEvent<TFile> where TFile : IFile
+    public class FormatExtensionsChangedMessage<TFile> where TFile : IFile
     {
         public IFormat<TFile> Format { get; set; }
 
@@ -15,7 +15,7 @@ namespace MCFire.Modules.Files.Messages
         [CanBeNull]
         public string RemovedExtension { get; set; }
 
-        public FormatExtensionsChangedEvent(
+        public FormatExtensionsChangedMessage(
             [NotNull] IFormat<TFile> format, 
             [CanBeNull] string addedExtension,
             [CanBeNull] string removedExtension)

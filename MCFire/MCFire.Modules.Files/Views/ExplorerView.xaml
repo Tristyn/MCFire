@@ -20,7 +20,8 @@
                           Commands="{Binding Commands}"/>
 
         <controls:ExtendedTreeView x:Name="RootFolders" ClipToBounds="True" 
-                                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}">
+                                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                                   cal:Message.Attach="[Event MouseDoubleClick] = [Action OnDoubleClick]">
             <controls:ExtendedTreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
                     <ContentControl cal:View.Model="{Binding}"/>
