@@ -4,7 +4,8 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
-using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Files.Events;
+using MCFire.Modules.Files.Models;
 using File = MCFire.Modules.Files.Models.File;
 
 namespace MCFire.Modules.Files.Services
@@ -14,20 +15,18 @@ namespace MCFire.Modules.Files.Services
     {
         #region Fields
 
-        public event EventHandler FileCreated;
-        public event EventHandler FileOpened;
-        public event EventHandler FileClosing;
-        public event EventHandler FileClosed;
-        public event EventHandler ExtensionsChanged;
-
         readonly List<string> _extensions = new List<string>();
+        readonly IEventAggregator _aggregator;
+        readonly object _lock = new object();
 
         #endregion
 
         #region Constructor
 
-        public Format()
+        [ImportingConstructor]
+        public Format(IEventAggregator aggregator)
         {
+            _aggregator = aggregator;
             // ReSharper disable once DoNotCallOverridableMethodsInConstructor
             _extensions = DefaultExtensions.ToList();
         }
@@ -54,74 +53,36 @@ namespace MCFire.Modules.Files.Services
 
         protected virtual File ConstructFile(IFolder parent, FileInfo info)
         {
-            return new File(parent, info);
+            var file = new File(parent, info);
+            _aggregator.Publish(new FileCreatedEvent<File>(file));
+            return file;
         }
 
-        public bool TryAddExtension(string extension)
+        public virtual bool TryAddExtension(string extension)
         {
-            if (_extensions.Contains(extension))
-                return false;
+            if (extension == null) throw new ArgumentNullException("extension");
 
-            _extensions.Add(extension);
-            OnExtensionsChanged();
-            return true;
-        }
-
-        public bool TryRemoveExtension(string extension)
-        {
-            if (!_extensions.Remove(extension)) return false;
-
-            OnExtensionsChanged();
-            return true;
-        }
-
-        public virtual void RegisterChildFormat(IFormat format)
-        {
-            format.FileCreated += (s, e) => OnFileCreated();
-            format.FileOpened += (s, e) => OnFileOpened();
-            format.FileClosing += (s, e) => OnFileClosing();
-            format.FileClosed += (s, e) => OnFileClosed();
-
-            // remove any extensions that are also held by child format
-            foreach (var extension in _extensions.Where(extension => format.Extensions.Contains(extension)))
+            lock (_lock)
             {
-                TryRemoveExtension(extension);
+                if (_extensions.Contains(extension))
+                    return false;
+                _extensions.Add(extension);
             }
+            _aggregator.Publish(new FormatExtensionsChangedEvent<File>(this, extension, null));
+            return true;
         }
 
-        #region Event Invocators
-
-        protected virtual void OnFileCreated()
+        public virtual bool TryRemoveExtension(string extension)
         {
-            var handler = FileCreated;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
+            if (extension == null) throw new ArgumentNullException("extension");
+            lock (_lock)
+            {
+                if (!_extensions.Remove(extension)) return false;
+            }
 
-        protected virtual void OnFileOpened()
-        {
-            var handler = FileOpened;
-            if (handler != null) handler(this, EventArgs.Empty);
+            _aggregator.Publish(new FormatExtensionsChangedEvent<File>(this, null, extension));
+            return true;
         }
-
-        protected virtual void OnFileClosing()
-        {
-            var handler = FileClosing;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnFileClosed()
-        {
-            var handler = FileClosed;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnExtensionsChanged()
-        {
-            var handler = ExtensionsChanged;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        #endregion
 
         #endregion
 
@@ -129,7 +90,13 @@ namespace MCFire.Modules.Files.Services
 
         public IEnumerable<string> Extensions
         {
-            get { return _extensions; }
+            get
+            {
+                lock (_lock)
+                {
+                    return new List<string>(_extensions);
+                }                
+            }
         }
 
         public virtual IEnumerable<string> DefaultExtensions

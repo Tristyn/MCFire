@@ -5,10 +5,11 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
+using MCFire.Modules.Files.Commands;
 using MCFire.Modules.Files.Framework;
+using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure;
-using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
 {

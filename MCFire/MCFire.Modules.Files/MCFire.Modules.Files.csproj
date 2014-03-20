@@ -85,13 +85,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\IFileExplorerCommand.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\NullableBoolToPathConverter.cs" />
+    <Compile Include="EventArgs\FolderItemExistsChangedEventArgs.cs" />
+    <Compile Include="EventArgs\FolderItemNameChangedEventArgs.cs" />
+    <Compile Include="EventArgs\FolderItemRefreshedEventArgs.cs" />
+    <Compile Include="Events\FileCreatedEvent.cs" />
+    <Compile Include="Events\FileOpenedEvent.cs" />
+    <Compile Include="Events\FormatExtensionsChangedEvent.cs" />
     <Compile Include="Framework\FolderEventArgs.cs" />
     <Compile Include="Framework\IInjectedButton.cs" />
     <Compile Include="Framework\IViewBuilder.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\IFile.cs" />
+    <Compile Include="Models\IFolder.cs" />
+    <Compile Include="Models\IFolderItem.cs" />
     <Compile Include="Models\TextFile.cs" />
     <Compile Include="Models\UnknownFile.cs" />
     <Compile Include="Module.cs" />
@@ -100,8 +110,11 @@
     <Compile Include="Services\FileFactory.cs" />
     <Compile Include="Services\FolderService.cs" />
     <Compile Include="Services\Format.cs" />
+    <Compile Include="Services\IFormat.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\FolderItemViewModel.cs" />
+    <Compile Include="ViewModels\IFileExplorerViewModel.cs" />
+    <Compile Include="ViewModels\IFolderItemViewModel.cs" />
     <Compile Include="ViewModels\NewFolderCommandViewModel.cs" />
     <Compile Include="ViewModels\RefreshCommandViewModel.cs" />
     <Compile Include="Views\ExplorerView.xaml.cs">

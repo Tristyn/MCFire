@@ -1,6 +1,6 @@
-﻿using MCFire.Modules.Infrastructure.ViewModels;
+﻿using MCFire.Modules.Files.ViewModels;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Files.Commands
 {
     public interface IFileExplorerCommand
     {

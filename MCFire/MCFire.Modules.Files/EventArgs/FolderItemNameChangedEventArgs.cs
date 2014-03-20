@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace MCFire.Modules.Infrastructure.Events
+﻿namespace MCFire.Modules.Files.EventArgs
 {
-    public class FolderItemNameChangedEventArgs : EventArgs
+    public class FolderItemNameChangedEventArgs : System.EventArgs
     {
         public FolderItemNameChangedEventArgs(string newName)
         {

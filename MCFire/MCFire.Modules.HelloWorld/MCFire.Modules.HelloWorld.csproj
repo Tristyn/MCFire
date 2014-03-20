@@ -111,6 +111,10 @@
       <Project>{09f88847-c30f-4f1d-bc59-cfe55d4b8b75}</Project>
       <Name>MCFire.Modules.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MCFire.Modules.Metro\MCFire.Modules.Metro.csproj">
+      <Project>{07fa6a9d-de6d-4ecf-8ce5-9299ccdfb483}</Project>
+      <Name>MCFire.Modules.Metro</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

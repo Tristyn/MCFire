@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Composition;
+using MCFire.Modules.Files.Commands;
 using MCFire.Modules.Infrastructure;
-using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
 {

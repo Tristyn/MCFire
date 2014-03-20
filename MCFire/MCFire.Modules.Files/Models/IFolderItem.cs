@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using MCFire.Modules.Infrastructure.Events;
+using MCFire.Modules.Files.EventArgs;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Files.Models
 {
     public interface IFolderItem
     {

@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using MCFire.Modules.Infrastructure;
-using MCFire.Modules.Infrastructure.Events;
+using MCFire.Modules.Files.EventArgs;
+using MCFire.Modules.Files.Services;
 
 namespace MCFire.Modules.Files.Models
 {

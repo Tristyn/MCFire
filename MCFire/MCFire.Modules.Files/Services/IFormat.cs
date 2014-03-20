@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Models;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Files.Services
 {
     public interface IFormat
     {
@@ -12,12 +13,6 @@ namespace MCFire.Modules.Infrastructure
         IEnumerable<string> DefaultExtensions { get; }
         IEnumerable<string> Extensions { get; }
 
-        event EventHandler FileCreated;
-        event EventHandler FileOpened;
-        event EventHandler FileClosing;
-        event EventHandler FileClosed;
-        event EventHandler ExtensionsChanged;
-
         #endregion
 
         #region Methods
@@ -25,7 +20,6 @@ namespace MCFire.Modules.Infrastructure
         IFile CreateFile([NotNull] IFolder parent, [NotNull] FileInfo info);
         bool TryAddExtension([NotNull] string extension);
         bool TryRemoveExtension([NotNull] string extension);
-        void RegisterChildFormat([NotNull] IFormat format);
 
         #endregion
     }

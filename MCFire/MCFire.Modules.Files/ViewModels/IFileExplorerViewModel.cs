@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Caliburn.Micro;
+using MCFire.Modules.Files.Commands;
 
-namespace MCFire.Modules.Infrastructure.ViewModels
+namespace MCFire.Modules.Files.ViewModels
 {
     public interface IFileExplorerViewModel
     {

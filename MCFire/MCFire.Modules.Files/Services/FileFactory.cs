@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Models;
-using MCFire.Modules.Infrastructure;
 
 namespace MCFire.Modules.Files.Services
 {
@@ -60,9 +59,10 @@ namespace MCFire.Modules.Files.Services
                                   where baseFormat2.GetType() == baseType
                                   select baseFormat2).FirstOrDefault();
 
+                //TODO: this is deprecated
                 // register base format
-                if (baseFormat != null)
-                    baseFormat.RegisterChildFormat(format);
+                //if (baseFormat != null)
+                //baseFormat.RegisterChildFormat(format);
             }
         }
 
@@ -91,9 +91,12 @@ namespace MCFire.Modules.Files.Services
 
         IFile FindReplacementFile(IFile oldFile, FileInfo oldInfo)
         {
-            var format = DetermineFormat(oldFile.Extension);
-            if (format != null)
-                return format.CreateFile(oldFile.Parent, oldInfo);
+            lock (_lock)
+            {
+                var format = DetermineFormat(oldFile.Extension);
+                if (format != null)
+                    return format.CreateFile(oldFile.Parent, oldInfo);
+            }
 
             // TODO: display dialog here asking which format to use
             throw new NotImplementedException("Asking the user what format to use has not been implemented yet.");

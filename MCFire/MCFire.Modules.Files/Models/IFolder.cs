@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace MCFire.Modules.Infrastructure
+namespace MCFire.Modules.Files.Models
 {
     public interface IFolder : IFolderItem
     {

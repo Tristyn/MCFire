@@ -1,6 +1,7 @@
 using Caliburn.Micro;
+using MCFire.Modules.Files.Models;
 
-namespace MCFire.Modules.Infrastructure.ViewModels
+namespace MCFire.Modules.Files.ViewModels
 {
     public interface IFolderItemViewModel
     {

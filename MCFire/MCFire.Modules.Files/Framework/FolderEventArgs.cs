@@ -1,10 +1,10 @@
 ﻿using System;
 using JetBrains.Annotations;
-using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Files.Models;
 
 namespace MCFire.Modules.Files.Framework
 {
-    public class FolderEventArgs : EventArgs
+    public class FolderEventArgs : System.EventArgs
     {
         public FolderEventArgs([NotNull] IFolder folder)
         {

@@ -1,4 +1,4 @@
-﻿namespace MCFire.Modules.Infrastructure
+﻿namespace MCFire.Modules.Metro.Commands
 {
     /// <summary>
     /// Window Commands in MCFire are buttons that are found in the title bar of the main window.

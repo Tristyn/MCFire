@@ -1,4 +1,6 @@
-﻿namespace MCFire.Modules.Infrastructure.Events
+﻿using MCFire.Modules.Files.Models;
+
+namespace MCFire.Modules.Files.EventArgs
 {
     public class FolderItemRefreshedEventArgs : System.EventArgs
     {

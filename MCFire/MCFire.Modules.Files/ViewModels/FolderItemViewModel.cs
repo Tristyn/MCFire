@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
+using MCFire.Modules.Files.EventArgs;
+using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure;
-using MCFire.Modules.Infrastructure.Events;
-using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
 {

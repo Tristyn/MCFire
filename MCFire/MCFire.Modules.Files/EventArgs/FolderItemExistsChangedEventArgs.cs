@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace MCFire.Modules.Infrastructure.Events
+﻿namespace MCFire.Modules.Files.EventArgs
 {
-    public class FolderItemExistsChangedEventArgs:EventArgs
+    public class FolderItemExistsChangedEventArgs:System.EventArgs
     {
         public FolderItemExistsChangedEventArgs(bool newState)
         {
