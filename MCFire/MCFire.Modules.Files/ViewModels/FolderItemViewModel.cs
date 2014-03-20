@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using MCFire.Modules.Infrastructure;
+using MCFire.Modules.Infrastructure.Events;
 using MCFire.Modules.Infrastructure.ViewModels;
 
 namespace MCFire.Modules.Files.ViewModels
@@ -15,6 +16,20 @@ namespace MCFire.Modules.Files.ViewModels
 
         #endregion
 
+        #region Methods
+
+        void UpdateExists(object sender, FolderItemExistsChangedEventArgs e)
+        {
+            NotifyOfPropertyChange(() => DoesntExist);
+        }
+
+        void UpdateName(object sender, FolderItemNameChangedEventArgs e)
+        {
+            NotifyOfPropertyChange(() => Name);
+        }
+
+        #endregion
+
         #region Properties
 
         public IFolderItem Model
@@ -22,12 +37,23 @@ namespace MCFire.Modules.Files.ViewModels
             get { return _model; }
             set
             {
-                if (value == Model) return;
+                if (value == _model) return;
+                if (_model != null)
+                {
+                    _model.ExistsChanged -= UpdateExists;
+                    _model.NameChanged -= UpdateName;
+                }
+
                 _model = value;
+                _model.ExistsChanged += UpdateExists;
+                _model.NameChanged += UpdateName;
 
                 // reset children
                 _children = null;
                 NotifyOfPropertyChange(() => Model);
+                NotifyOfPropertyChange(() => Name);
+                NotifyOfPropertyChange(() => DoesntExist);
+                NotifyOfPropertyChange(() => IsFolder);
                 NotifyOfPropertyChange(() => Children);
             }
         }
@@ -43,6 +69,10 @@ namespace MCFire.Modules.Files.ViewModels
             }
         }
 
+        public bool DoesntExist { get { return !_model.Exists; } }
+
+        public bool IsFolder { get { return _model is IFolder; } }
+
         public BindableCollection<IFolderItemViewModel> Children
         {
             get
@@ -53,7 +83,7 @@ namespace MCFire.Modules.Files.ViewModels
                 if (folder == null) return _children;
                 foreach (var childFolder in folder.Children)
                 {
-                    _children.Add(new FolderItemViewModel { _model = childFolder });
+                    _children.Add(new FolderItemViewModel { Model = childFolder });
                 }
                 return _children;
             }

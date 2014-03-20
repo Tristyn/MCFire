@@ -122,7 +122,16 @@ namespace MCFire.Modules.Files.Models
 
         public virtual void Refresh()
         {
+            var oldExists = Info.Exists;
+            var oldName = Info.Name;
+
             Info.Refresh();
+
+            if (oldExists != Info.Exists)
+                OnExistsChanged(new FolderItemExistsChangedEventArgs(Info.Exists));
+            if (oldName != Info.Name) 
+                OnNameChanged(new FolderItemNameChangedEventArgs(Info.Name));
+
             OnRefreshed(new FolderItemRefreshedEventArgs(this));
         }
 
@@ -152,6 +161,18 @@ namespace MCFire.Modules.Files.Models
             if (handler != null) handler(this, e);
         }
 
+        protected virtual void OnExistsChanged(FolderItemExistsChangedEventArgs e)
+        {
+            EventHandler<FolderItemExistsChangedEventArgs> handler = ExistsChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        protected virtual void OnNameChanged(FolderItemNameChangedEventArgs e)
+        {
+            EventHandler<FolderItemNameChangedEventArgs> handler = NameChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         #region Properties
@@ -174,6 +195,8 @@ namespace MCFire.Modules.Files.Models
         public virtual IFolder Parent { get { return _parent; } }
 
         public event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
+        public event EventHandler<FolderItemExistsChangedEventArgs> ExistsChanged;
+        public event EventHandler<FolderItemNameChangedEventArgs> NameChanged;
 
         #endregion
     }

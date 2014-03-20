@@ -102,7 +102,15 @@ namespace MCFire.Modules.Files.Models
         /// </summary>
         public void Refresh()
         {
+            var oldExists = _info.Exists;
+            var oldName = _info.Name;
+
             _info.Refresh();
+
+            if(oldExists != _info.Exists)
+                OnExistsChanged(new FolderItemExistsChangedEventArgs(_info.Exists));
+            if(oldName!=_info.Name)
+                OnNameChanged(new FolderItemNameChangedEventArgs(_info.Name));
             OnRefreshed(new FolderItemRefreshedEventArgs(this));
         }
 
@@ -112,7 +120,7 @@ namespace MCFire.Modules.Files.Models
         public async Task RefreshAsync()
         {
             // TODO: create a view centric refresh, where only items visible in the treeview are refreshed.
-            _info.Refresh();
+            Refresh();
 
             // get the FileInfos and DirectoryInfos that have been created since the last refresh.
 
@@ -238,6 +246,18 @@ namespace MCFire.Modules.Files.Models
             if (handler != null) handler(this, e);
         }
 
+        private void OnExistsChanged(FolderItemExistsChangedEventArgs e)
+        {
+            EventHandler<FolderItemExistsChangedEventArgs> handler = ExistsChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        private void OnNameChanged(FolderItemNameChangedEventArgs e)
+        {
+            EventHandler<FolderItemNameChangedEventArgs> handler = NameChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         #region Properties
@@ -320,6 +340,8 @@ namespace MCFire.Modules.Files.Models
         }
 
         public event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
+        public event EventHandler<FolderItemExistsChangedEventArgs> ExistsChanged;
+        public event EventHandler<FolderItemNameChangedEventArgs> NameChanged;
 
         #endregion
     }

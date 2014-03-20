@@ -9,5 +9,7 @@ namespace MCFire.Modules.Infrastructure.ViewModels
         string Name { get; }
 
         BindableCollection<IFolderItemViewModel> Children { get; }
+        bool DoesntExist { get; }
+        bool IsFolder { get; }
     }
 }

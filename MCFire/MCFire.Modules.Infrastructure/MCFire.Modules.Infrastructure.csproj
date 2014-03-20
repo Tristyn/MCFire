@@ -36,13 +36,16 @@
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\packages\MahApps.Metro.0.12.1.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.0.12.1.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -69,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\ExtendedTreeView.cs" />
+    <Compile Include="Events\FolderItemExistsChangedEventArgs.cs" />
+    <Compile Include="Events\FolderItemNameChangedEventArgs.cs" />
     <Compile Include="Events\FolderItemRefreshedEventArgs.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="IFile.cs" />
@@ -89,6 +94,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\TreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CommandsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

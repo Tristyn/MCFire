@@ -34,6 +34,8 @@ namespace MCFire.Modules.Infrastructure
         [NotNull]
         string Path { get; }
         event EventHandler<FolderItemRefreshedEventArgs> Refreshed;
+        event EventHandler<FolderItemExistsChangedEventArgs> ExistsChanged;
+        event EventHandler<FolderItemNameChangedEventArgs> NameChanged;
 
         #endregion
     }

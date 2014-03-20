@@ -9,8 +9,13 @@
              xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.Controls;assembly=MCFire.Modules.Infrastructure"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData ExplorerViewModel}">
-    <DockPanel>
+    <UserControl.Resources>
+        <!--Tree View Button-->
+        <ResourceDictionary Source="pack://application:,,,/MCfire.Modules.Infrastructure;component/Resources/TreeView.xaml" />
+    </UserControl.Resources>
 
+    <DockPanel>
+        <Button Visibility="Collapsed" />
         <inf:CommandsView DockPanel.Dock="Top" 
                           Commands="{Binding Commands}"/>
 
