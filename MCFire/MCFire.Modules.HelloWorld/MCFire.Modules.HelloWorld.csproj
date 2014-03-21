@@ -107,13 +107,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MCFire.Modules.Infrastructure\MCFire.Modules.Infrastructure.csproj">
-      <Project>{09f88847-c30f-4f1d-bc59-cfe55d4b8b75}</Project>
-      <Name>MCFire.Modules.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MCFire.Modules.Metro\MCFire.Modules.Metro.csproj">
-      <Project>{07fa6a9d-de6d-4ecf-8ce5-9299ccdfb483}</Project>
-      <Name>MCFire.Modules.Metro</Name>
+    <ProjectReference Include="..\MCFire\MCFire.csproj">
+      <Project>{e973c683-9b54-4534-b22a-1abca6c1d254}</Project>
+      <Name>MCFire</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

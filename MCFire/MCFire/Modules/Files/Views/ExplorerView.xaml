@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="MCFire.Modules.Files.Views.ExplorerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:viewModels="clr-namespace:MCFire.Modules.Files.ViewModels"
+             xmlns:views="clr-namespace:MCFire.Modules.Infrastructure.Views"
+             xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData ExplorerViewModel}">
+    <UserControl.Resources>
+        <!--Tree View Button-->
+        <ResourceDictionary Source="/MCFire;component/Modules/Infrastructure/Resources/TreeView.xaml" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Button Visibility="Collapsed" />
+        <views:CommandsView DockPanel.Dock="Top" 
+                          Commands="{Binding Commands}"/>
+
+        <controls:ExtendedTreeView x:Name="RootFolders" ClipToBounds="True" 
+                                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                                   cal:Message.Attach="[Event MouseDoubleClick] = [Action OnDoubleClick]">
+            <controls:ExtendedTreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels:FolderItemViewModel">
+                    <ContentControl cal:View.Model="{Binding}"/>
+                </HierarchicalDataTemplate>
+            </controls:ExtendedTreeView.ItemTemplate>
+        </controls:ExtendedTreeView>
+
+    </DockPanel>
+</UserControl>

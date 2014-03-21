@@ -57,7 +57,6 @@ namespace MCFire
 
             // add priority MCFire assemblies.
             assemblies.AddRange(base.SelectAssemblies());
-            assemblies.Add(typeof(Modules.Metro.ViewModels.MainWindowViewModel).Assembly);
             return assemblies;
         }
 

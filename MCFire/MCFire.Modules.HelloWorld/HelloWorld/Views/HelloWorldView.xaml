@@ -7,6 +7,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Background="Aqua">
         <TextBlock Text="Hello World" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50"/>
-        <TextBlock Text="Load a text file to get started." HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="Open the File Explorer and load a text file to get started." HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>
