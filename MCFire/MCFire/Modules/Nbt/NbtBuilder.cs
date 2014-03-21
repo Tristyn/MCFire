@@ -7,7 +7,8 @@ using MCFire.Modules.Nbt.NbtTagAttribute;
 namespace MCFire.Modules.Nbt
 {
     /// <summary>
-    /// Provide
+    /// Provides a service to set a objects properties to reflect that of an NbtCompound.
+    /// Using this class is very similar to using Json.net, where fields and properties are decorated with [NbtAttribute].
     /// </summary>
     public static class NbtBuilder
     {

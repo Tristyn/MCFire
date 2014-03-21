@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace MCFire.Modules.Nbt.NbtTagAttribute
 {
@@ -7,11 +8,18 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
     {
         #region Constructors
 
+        /// <summary>
+        /// Instructs the NbtBuilder to use this member.
+        /// </summary>
         public NbtTagAttribute()
         {
 
         }
 
+        /// <summary>
+        /// Instructs the NbtBuilder to use this member.
+        /// </summary>
+        /// <param name="tagName">The Nbt tag to use.</param>
         public NbtTagAttribute(string tagName)
         {
             TagName = tagName;
@@ -21,7 +29,8 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
 
         #region Properties
 
-        public string TagName { get; set; }
+        [CanBeNull]
+        public string TagName { get; private set; }
 
         #endregion
     }
