@@ -179,6 +179,12 @@
     <Compile Include="Modules\Metro\Views\MainWindowView.xaml.cs">
       <DependentUpon>MainWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Nbt\fNbt\fNbt.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder.cs" />
+    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagAttribute.cs" />
+    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagExtensions.cs" />
+    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTaggedClass.cs" />
+    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagValueSetter.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Modules\TextEditor\Module.cs" />
     <Compile Include="Modules\TextEditor\ViewModels\TextEditorViewModel.cs" />
@@ -277,6 +283,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

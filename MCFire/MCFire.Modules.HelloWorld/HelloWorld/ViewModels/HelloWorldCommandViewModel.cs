@@ -8,7 +8,10 @@ namespace MCFire.Modules.HelloWorld.HelloWorld.ViewModels
     [Export(typeof(IWindowCommand))]
     public class HelloWorldCommandViewModel : IWindowCommand
     {
-        [Import] IShell _shell;
+#pragma warning disable 0649
+        [Import]
+        IShell _shell;
+#pragma warning restore 0649
 
         public void OpenView()
         {
