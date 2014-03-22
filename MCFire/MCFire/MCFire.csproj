@@ -128,7 +128,7 @@
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
     <Compile Include="Modules\Files\Content\IFileContent.cs" />
-    <Compile Include="Modules\Files\Content\TextContent.cs" />
+    <Compile Include="Modules\TextEditor\Content\TextContent.cs" />
     <Compile Include="Modules\Files\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Modules\Files\Converters\NullableBoolToPathConverter.cs" />
     <Compile Include="Modules\Files\Events\FileContentEventArgs.cs" />
@@ -145,14 +145,14 @@
     <Compile Include="Modules\Files\Models\IFile.cs" />
     <Compile Include="Modules\Files\Models\IFolder.cs" />
     <Compile Include="Modules\Files\Models\IFolderItem.cs" />
-    <Compile Include="Modules\Files\Models\TextFile.cs" />
+    <Compile Include="Modules\TextEditor\Models\TextFile.cs" />
     <Compile Include="Modules\Files\Models\UnknownFile.cs" />
     <Compile Include="Modules\Files\Module.cs" />
     <Compile Include="Modules\Files\Services\FileFactory.cs" />
     <Compile Include="Modules\Files\Services\FolderService.cs" />
     <Compile Include="Modules\Files\Services\Format.cs" />
     <Compile Include="Modules\Files\Services\IFormat.cs" />
-    <Compile Include="Modules\Files\Services\TextFormat.cs" />
+    <Compile Include="Modules\TextEditor\Services\TextFormat.cs" />
     <Compile Include="Modules\Files\ViewModels\ExplorerViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\FolderItemViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\IFileExplorerViewModel.cs" />
