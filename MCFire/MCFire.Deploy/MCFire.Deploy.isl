@@ -2604,7 +2604,6 @@
 		<col def="I2">Order</col>
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
-		<row><td>_04A42800_AAB7_4255_9B10_C6B70A67C6AC_</td><td>Microsoft .NET Framework 4.5 Full.prq</td><td/><td/><td/></row>
 	</table>
 
 	<table name="ISSetupType">
@@ -2638,7 +2637,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1851626190</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1448966025</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>1235367700</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>1235367700</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>1503821264</td></row>
@@ -3744,8 +3743,8 @@
 		<row><td>ID_STRING1</td><td>1033</td><td/><td>0</td><td/><td>1235369748</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td/><td>0</td><td/><td>1235388180</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td/><td>0</td><td/><td>1235355797</td></row>
-		<row><td>ID_STRING4</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1851626190</td></row>
-		<row><td>ID_STRING5</td><td>1033</td><td>http://www.MCFire.com</td><td>0</td><td/><td>-1851626190</td></row>
+		<row><td>ID_STRING4</td><td>1033</td><td>MC Fire</td><td>0</td><td/><td>-1448966025</td></row>
+		<row><td>ID_STRING5</td><td>1033</td><td>http://www.MCFire.com</td><td>0</td><td/><td>-1448966025</td></row>
 		<row><td>ID_STRING6</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>1235355989</td></row>
 		<row><td>ID_STRING7</td><td>1033</td><td/><td>0</td><td/><td>1503827184</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>1235367700</td></row>
