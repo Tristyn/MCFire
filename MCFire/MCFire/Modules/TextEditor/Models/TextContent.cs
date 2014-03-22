@@ -1,19 +1,29 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using MCFire.Modules.Files.Content;
 
-namespace MCFire.Modules.Files.Content
+namespace MCFire.Modules.TextEditor.Models
 {
     public class TextContent : FileContent
     {
-        private string _text;
+        string _text;
         readonly object _lock = new object();
         public TextContent(Stream stream)
         {
             using (stream)
             {
-                using (var reader = new StreamReader(stream))
+                try
                 {
-                    _text = reader.ReadToEnd();
+                    using (var reader = new StreamReader(stream))
+                    {
+                        _text = reader.ReadToEnd();
+                        return;
+                    }
                 }
+                catch (ArgumentException) { }
+                catch (IOException) { }
+                // ReSharper disable once DoNotCallOverridableMethodsInConstructor
+                IsInvalidData();
             }
         }
 

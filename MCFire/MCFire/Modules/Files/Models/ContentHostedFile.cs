@@ -6,6 +6,10 @@ using MCFire.Modules.Files.Events;
 
 namespace MCFire.Modules.Files.Models
 {
+    /// <summary>
+    /// Provides services for integrating IFileContent into File.
+    /// </summary>
+    /// <typeparam name="TContent"></typeparam>
     public abstract class ContentHostedFile<TContent> : File where TContent : class, IFileContent
     {
         #region Properties
@@ -33,7 +37,7 @@ namespace MCFire.Modules.Files.Models
         /// The file will take responsibility of saving the contents when saving is requested.
         /// </summary>
         /// <param name="content">The new content to set.</param>
-        void SetContent([NotNull] TContent content)
+        protected void SetContent([NotNull] TContent content)
         {
             if (content == null) throw new ArgumentNullException("content");
             lock (_refLock)
@@ -57,7 +61,7 @@ namespace MCFire.Modules.Files.Models
         }
 
         [CanBeNull]
-        TContent GetContent()
+        protected TContent GetContent()
         {
             TContent result;
             lock (_refLock)
@@ -71,7 +75,7 @@ namespace MCFire.Modules.Files.Models
         /// <summary>
         /// Gets a strong reference to the content, so it can be saved later.
         /// </summary>
-        private void OnContentDirtied(object sender, FileContentEventArgs e)
+        void OnContentDirtied(object sender, FileContentEventArgs e)
         {
             lock (_refLock)
             {
@@ -85,7 +89,7 @@ namespace MCFire.Modules.Files.Models
         /// <summary>
         /// Saves the content, then removes our strong reference to it.
         /// </summary>
-        private void OnContentSaved(object sender, FileContentEventArgs e)
+        void OnContentSaved(object sender, FileContentEventArgs e)
         {
             lock (_refLock)
             {
@@ -95,26 +99,6 @@ namespace MCFire.Modules.Files.Models
                 // save to file.
 
                 _content = null;
-            }
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or Sets the content for this file. 
-        /// The file will take responsibility of saving the Content when it becomes dirty.
-        /// Setting can't be null, getting can be null.
-        /// </summary>
-        [CanBeNull]
-        public virtual TContent Content
-        {
-            get { return GetContent(); }
-            set
-            {
-                // ReSharper disable once AssignNullToNotNullAttribute exception handled in SetContent
-                SetContent(value);
             }
         }
 

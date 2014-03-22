@@ -45,7 +45,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single byte. </summary>
     public sealed class NbtByte : NbtTag
     {
-        /// <summary> Type of this tag (Byte). </summary>
+        /// <summary> type of this tag (Byte). </summary>
         public override NbtTagType TagType
         {
             get
@@ -128,7 +128,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing an array of bytes. </summary>
     public sealed class NbtByteArray : NbtTag
     {
-        /// <summary> Type of this tag (ByteArray). </summary>
+        /// <summary> type of this tag (ByteArray). </summary>
         public override NbtTagType TagType
         {
             get
@@ -262,7 +262,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a set of other named tags. Order is not guaranteed. </summary>
     public sealed class NbtCompound : NbtTag, ICollection<NbtTag>, ICollection
     {
-        /// <summary> Type of this tag (Compound). </summary>
+        /// <summary> type of this tag (Compound). </summary>
         public override NbtTagType TagType
         {
             get
@@ -348,7 +348,7 @@ namespace MCFire.Modules.Nbt.fNbt
 
         /// <summary> Gets the tag with the specified name. May return <c>null</c>. </summary>
         /// <param name="tagName"> The name of the tag to get. </param>
-        /// <typeparam name="T"> Type to cast the result to. Must derive from NbtTag. </typeparam>
+        /// <typeparam name="T"> type to cast the result to. Must derive from NbtTag. </typeparam>
         /// <returns> The tag with the specified key. Null if tag with the given name was not found. </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="tagName"/> is <c>null</c>. </exception>
         /// <exception cref="InvalidCastException"> If tag could not be cast to the desired tag. </exception>
@@ -387,7 +387,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <param name="tagName"> The name of the tag to get. </param>
         /// <param name="result"> When this method returns, contains the tag associated with the specified name, if the tag is found;
         /// otherwise, null. This parameter is passed uninitialized. </param>
-        /// <typeparam name="T"> Type to cast the result to. Must derive from NbtTag. </typeparam>
+        /// <typeparam name="T"> type to cast the result to. Must derive from NbtTag. </typeparam>
         /// <returns> true if the NbtCompound contains a tag with the specified name; otherwise, false. </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="tagName"/> is <c>null</c>. </exception>
         /// <exception cref="InvalidCastException"> If tag could not be cast to the desired tag. </exception>
@@ -866,7 +866,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a double-precision floating point number. </summary>
     public sealed class NbtDouble : NbtTag
     {
-        /// <summary> Type of this tag (Double). </summary>
+        /// <summary> type of this tag (Double). </summary>
         public override NbtTagType TagType
         {
             get
@@ -949,7 +949,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single-precision floating point number. </summary>
     public sealed class NbtFloat : NbtTag
     {
-        /// <summary> Type of this tag (Float). </summary>
+        /// <summary> type of this tag (Float). </summary>
         public override NbtTagType TagType
         {
             get
@@ -1032,7 +1032,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single signed 32-bit integer. </summary>
     public sealed class NbtInt : NbtTag
     {
-        /// <summary> Type of this tag (Int). </summary>
+        /// <summary> type of this tag (Int). </summary>
         public override NbtTagType TagType
         {
             get
@@ -1115,7 +1115,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing an array of signed 32-bit integers. </summary>
     public sealed class NbtIntArray : NbtTag
     {
-        /// <summary> Type of this tag (ByteArray). </summary>
+        /// <summary> type of this tag (ByteArray). </summary>
         public override NbtTagType TagType
         {
             get
@@ -1257,7 +1257,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a list of unnamed tags, all of the same kind. </summary>
     public sealed class NbtList : NbtTag, IList<NbtTag>, IList
     {
-        /// <summary> Type of this tag (List). </summary>
+        /// <summary> type of this tag (List). </summary>
         public override NbtTagType TagType
         {
             get
@@ -1440,7 +1440,7 @@ namespace MCFire.Modules.Nbt.fNbt
 
         /// <summary> Gets or sets the tag with the specified name. </summary>
         /// <param name="tagIndex"> The zero-based index of the tag to get or set. </param>
-        /// <typeparam name="T"> Type to cast the result to. Must derive from NbtTag. </typeparam>
+        /// <typeparam name="T"> type to cast the result to. Must derive from NbtTag. </typeparam>
         /// <returns> The tag with the specified key. </returns>
         /// <exception cref="ArgumentOutOfRangeException"> <paramref name="tagIndex"/> is not a valid index in the NbtList. </exception>
         /// <exception cref="InvalidCastException"> If tag could not be cast to the desired tag. </exception>
@@ -1477,7 +1477,7 @@ namespace MCFire.Modules.Nbt.fNbt
         }
 
         /// <summary> Copies all tags in this NbtList to an array, and casts it to the desired type. </summary>
-        /// <typeparam name="T"> Type to cast every member of NbtList to. Must derive from NbtTag. </typeparam>
+        /// <typeparam name="T"> type to cast every member of NbtList to. Must derive from NbtTag. </typeparam>
         /// <returns> Array of NbtTags cast to the desired type. </returns>
         /// <exception cref="InvalidCastException"> If contents of this list cannot be cast to the given type. </exception>
         [NotNull]
@@ -1926,7 +1926,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single signed 64-bit integer. </summary>
     public sealed class NbtLong : NbtTag
     {
-        /// <summary> Type of this tag (Long). </summary>
+        /// <summary> type of this tag (Long). </summary>
         public override NbtTagType TagType
         {
             get
@@ -2013,7 +2013,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single signed 16-bit integer. </summary>
     public sealed class NbtShort : NbtTag
     {
-        /// <summary> Type of this tag (Short). </summary>
+        /// <summary> type of this tag (Short). </summary>
         public override NbtTagType TagType
         {
             get
@@ -2100,7 +2100,7 @@ namespace MCFire.Modules.Nbt.fNbt
     /// <summary> A tag containing a single string. String is stored in UTF-8 encoding. </summary>
     public sealed class NbtString : NbtTag
     {
-        /// <summary> Type of this tag (String). </summary>
+        /// <summary> type of this tag (String). </summary>
         public override NbtTagType TagType
         {
             get
@@ -2210,7 +2210,7 @@ namespace MCFire.Modules.Nbt.fNbt
         [CanBeNull]
         public NbtTag Parent { get; internal set; }
 
-        /// <summary> Type of this tag. </summary>
+        /// <summary> type of this tag. </summary>
         public abstract NbtTagType TagType { get; }
 
         /// <summary> Returns true if tags of this type have a value attached.
@@ -4786,7 +4786,7 @@ namespace MCFire.Modules.Nbt.fNbt
         }
 
         /// <summary> Begins an unnamed list tag. </summary>
-        /// <param name="elementType"> Type of elements of this list. </param>
+        /// <param name="elementType"> type of elements of this list. </param>
         /// <param name="size"> Number of elements in this list. Must not be negative. </param>
         /// <exception cref="NbtFormatException"> No more tags can be written -OR-
         /// a named list tag was expected -OR- a tag of a different type was expected -OR-
@@ -4814,7 +4814,7 @@ namespace MCFire.Modules.Nbt.fNbt
 
         /// <summary> Begins an unnamed list tag. </summary>
         /// <param name="tagName"> Name to give to this compound tag. May not be null. </param>
-        /// <param name="elementType"> Type of elements of this list. </param>
+        /// <param name="elementType"> type of elements of this list. </param>
         /// <param name="size"> Number of elements in this list. Must not be negative. </param>
         /// <exception cref="NbtFormatException"> No more tags can be written -OR-
         /// an unnamed list tag was expected -OR- a tag of a different type was expected. </exception>

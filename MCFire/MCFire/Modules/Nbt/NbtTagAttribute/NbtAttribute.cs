@@ -3,15 +3,15 @@ using JetBrains.Annotations;
 
 namespace MCFire.Modules.Nbt.NbtTagAttribute
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Enum, AllowMultiple = false)]
-    public sealed class NbtTagAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+    public sealed class NbtAttribute : Attribute
     {
         #region Constructors
 
         /// <summary>
         /// Instructs the NbtBuilder to use this member.
         /// </summary>
-        public NbtTagAttribute()
+        public NbtAttribute()
         {
 
         }
@@ -20,7 +20,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
         /// Instructs the NbtBuilder to use this member.
         /// </summary>
         /// <param name="tagName">The Nbt tag to use.</param>
-        public NbtTagAttribute(string tagName)
+        public NbtAttribute(string tagName)
         {
             TagName = tagName;
         }

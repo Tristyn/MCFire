@@ -6,17 +6,12 @@ namespace MCFire.Modules.Files.Content
 {
     public abstract class FileContent : IFileContent
     {
-        #region Properties
-
-        private bool _dirty;
-
-        #endregion
-
         #region Constructor
 
         protected FileContent()
         {
-            _dirty = false;
+            ValidData = true;
+            Dirty = false;
         }
 
         #endregion
@@ -30,11 +25,25 @@ namespace MCFire.Modules.Files.Content
 
         public abstract void Save(Stream stream);
 
+        /// <summary>
+        /// If the program has changed any of the data in this FileContent, and therefore needs to be saved.
+        /// </summary>
         protected void IsDirty()
         {
-            if(_dirty) return;
-            _dirty = true;
+            if(Dirty) return;
+            Dirty = true;
             OnDirtied(new FileContentEventArgs(this));
+        }
+
+        /// <summary>
+        /// Call this if the content has invalid data during loading from stream.
+        /// Sets ValidData to false and calls OnInvalidData
+        /// Setting this to false calls OnInvalidData
+        /// </summary>
+        protected void IsInvalidData()
+        {
+            ValidData = false;
+            OnInvalidData(new FileContentEventArgs(this));
         }
 
         protected virtual void OnDirtied(FileContentEventArgs e)
@@ -49,17 +58,26 @@ namespace MCFire.Modules.Files.Content
             if (handler != null) handler(this, e);
         }
 
+        protected virtual void OnInvalidData(FileContentEventArgs e)
+        {
+            var handler = InvalidData;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         #region Properties
 
-        public bool Dirty
-        {
-            get { return _dirty; }
-        }
-        // TODO: event handler with proper args
+        public bool Dirty { get; private set; }
+
+        /// <summary>
+        /// If the content has invalid data during loading.
+        /// </summary>
+        public bool ValidData { get; private set; }
+
         public event EventHandler<FileContentEventArgs> Dirtied;
         public event EventHandler<FileContentEventArgs> Saved;
+        public event EventHandler<FileContentEventArgs> InvalidData;
 
         #endregion
     }

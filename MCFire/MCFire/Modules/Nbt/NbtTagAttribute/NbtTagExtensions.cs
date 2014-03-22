@@ -16,7 +16,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
         /// This will fail if the tag is a nested NbtList of NbtLists, as nested lists of 
         /// different types are supported in the Nbt spec and not in C#.
         /// </summary>
-        public static object ObjectValue(this NbtTag thisTag)
+        public static object ObjectValue(this NbtTag thisTag, Type targetType)
         {
             switch (thisTag.TagType)
             {
@@ -25,7 +25,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
                 case NbtTagType.ByteArray:
                     return ((NbtByteArray)thisTag).Value;
                 case NbtTagType.Compound:
-                    return (thisTag);
+                    return (NbtBuilder.BuildNew(targetType, (NbtCompound)thisTag));
                 case NbtTagType.Double:
                     return ((NbtDouble)thisTag).Value;
                 case NbtTagType.Float:
@@ -36,7 +36,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
                     return ((NbtIntArray)thisTag).Value;
                 case NbtTagType.List:
                     // This is a bit tricky. We cant instantiate a list of an unknown type.
-                    // We create a List<> of unknown type via reflection, then cast it to IList
+                    // We create a List<> of targetType via reflection, then cast it to IList
                     var nbtList = (NbtList)thisTag;
                     var customListType = typeof(List<>).MakeGenericType(GetTranslatedType(nbtList.ListType));
                     var unknownTypeList = (IList)Activator.CreateInstance(customListType);
@@ -77,7 +77,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
                     return typeof(int[]);
                 case NbtTagType.List:
                     // object generic is a limitation of c#, practically there should never be nested lists
-                    return typeof (List<object>);
+                    return typeof(List<object>);
                 case NbtTagType.Long:
                     return typeof(long);
                 case NbtTagType.Short:
@@ -85,7 +85,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
                 case NbtTagType.String:
                     return typeof(string);
                 default:
-                    throw new InvalidCastException("Unknown nbt Type " + tagType.GetType());  
+                    throw new InvalidCastException("Unknown nbt type " + tagType.GetType());
             }
         }
     }

@@ -128,7 +128,12 @@
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
     <Compile Include="Modules\Files\Content\IFileContent.cs" />
-    <Compile Include="Modules\TextEditor\Content\TextContent.cs" />
+    <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
+    <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
+    <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
+    <Compile Include="Modules\Nbt\Models\NbtFile.cs" />
+    <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
+    <Compile Include="Modules\TextEditor\Models\TextContent.cs" />
     <Compile Include="Modules\Files\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Modules\Files\Converters\NullableBoolToPathConverter.cs" />
     <Compile Include="Modules\Files\Events\FileContentEventArgs.cs" />
@@ -184,7 +189,7 @@
     </Compile>
     <Compile Include="Modules\Nbt\fNbt\fNbt.cs" />
     <Compile Include="Modules\Nbt\NbtBuilder.cs" />
-    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagAttribute.cs" />
+    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtAttribute.cs" />
     <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagExtensions.cs" />
     <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTaggedClass.cs" />
     <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagValueSetter.cs" />

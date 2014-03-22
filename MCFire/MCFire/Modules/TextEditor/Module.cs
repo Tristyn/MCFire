@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Gemini.Framework;
 using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Models;
+using MCFire.Modules.TextEditor.Models;
 using MCFire.Modules.TextEditor.ViewModels;
 
 namespace MCFire.Modules.TextEditor

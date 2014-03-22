@@ -4,39 +4,22 @@ using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Models;
+using MCFire.Modules.Nbt.Content;
 
-namespace MCFire.Modules.TextEditor.Models
+namespace MCFire.Modules.Nbt.Models
 {
-    public class TextFile : ContentHostedFile<TextContent>
+    public class NbtFile : ContentHostedFile<NbtContent>
     {
-        #region Fields
-
         readonly object _lock = new object();
-
-        #endregion
-
-        #region Constructor
-
-        public TextFile([NotNull] IFolder parent, [NotNull] FileInfo info)
-            : base(parent, info)
-        {
-        }
-
-        #endregion
-
-        #region Methods
+        public NbtFile([NotNull] IFolder parent, [NotNull] FileInfo info) : base(parent, info) { }
 
         public override Task OpenAsync()
         {
-            return Task.Run(() => IoC.Get<IEventAggregator>().Publish(new FileOpenedMessage<TextFile>(this)));
+            return Task.Run(() => IoC.Get<IEventAggregator>().Publish(new FileOpenedMessage<NbtFile>(this)));
         }
 
-        #endregion
-
-        #region Properties
-
         [CanBeNull]
-        public TextContent TextContent
+        public NbtContent NbtContent
         {
             get
             {
@@ -45,16 +28,15 @@ namespace MCFire.Modules.TextEditor.Models
                     var content = GetContent();
                     if (content != null) return content;
 
-                    // create new TextContent
+                    // create new NbtContent
                     Stream stream;
                     if (!TryOpenRead(out stream)) return null;
-                    content = new TextContent(stream);
+                    // TODO: dependancy injected content types
+                    content = new LevelContent(stream);
                     SetContent(content);
                     return content;
                 }
             }
         }
-
-        #endregion
     }
 }

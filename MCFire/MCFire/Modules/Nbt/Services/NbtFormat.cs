@@ -6,35 +6,38 @@ using Caliburn.Micro;
 using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
-using MCFire.Modules.TextEditor.Models;
+using MCFire.Modules.Nbt.Models;
 
-namespace MCFire.Modules.TextEditor.Services
+namespace MCFire.Modules.Nbt.Services
 {
     [Export(typeof(IFormat))]
-    [Export(typeof(IFormat<TextFile>))]
-    class TextFormat : Format, IFormat<TextFile>
+    [Export(typeof(IFormat<NbtFile>))]
+    class NbtFormat : Format, IFormat<NbtFile>
     {
         [ImportingConstructor]
-        public TextFormat(IEventAggregator aggregator) : base(aggregator){}
+        public NbtFormat(IEventAggregator aggregator) : base(aggregator) { }
 
         IFile IFormat.CreateFile(IFolder parent, FileInfo info)
         {
             return CreateFile(parent, info);
         }
 
-        public new TextFile CreateFile(IFolder parent, FileInfo info)
+        public new NbtFile CreateFile(IFolder parent, FileInfo info)
         {
             if (parent == null) throw new ArgumentNullException("parent");
             if (info == null) throw new ArgumentNullException("info");
-
             if (!String.Equals(parent.Path, info.DirectoryName, StringComparison.CurrentCultureIgnoreCase))
                 throw new ArgumentException("parent.Path must equal info.DirectoryInfo");
 
-            var file = new TextFile(parent, info);
-            Aggregator.Publish(new FileCreatedMessage<TextFile>(file));
+            var file = new NbtFile(parent, info);
+            Aggregator.Publish(new FileCreatedMessage<NbtFile>(file));
+            var a = file.NbtContent;
             return file;
         }
 
-        IEnumerable<string> IFormat.DefaultExtensions { get { yield return ".txt"; } }
+        IEnumerable<string> IFormat.DefaultExtensions
+        {
+            get { yield return ".dat"; }
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using Gemini.Framework;
 using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.Models;
+using MCFire.Modules.TextEditor.Models;
 
 namespace MCFire.Modules.TextEditor.ViewModels
 {
