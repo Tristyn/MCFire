@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Services;
@@ -19,11 +20,11 @@ namespace MCFire.Modules.Files.Models
         [CanBeNull]
         IFolder _parent;
         [CanBeNull]
-        List<IFolder> _folders;
+        BindableCollection<IFolder> _folders;
         [CanBeNull]
-        List<IFile> _files;
+        BindableCollection<IFile> _files;
         [CanBeNull]
-        List<IFolderItem> _children;
+        BindableCollection<IFolderItem> _children;
         [NotNull]
         DirectoryInfo _info;
         [NotNull]
@@ -97,6 +98,8 @@ namespace MCFire.Modules.Files.Models
             return Task.Run(() => Rename(name));
         }
 
+        #region Refresh
+
         /// <summary>
         /// Refreshes this objects state, ignoring child FolderItems.
         /// </summary>
@@ -134,7 +137,7 @@ namespace MCFire.Modules.Files.Models
             if (newFiles.Any())
             {
                 if (_files == null)
-                    _files = new List<IFile>();
+                    _files = new BindableCollection<IFile>();
 
                 foreach (var fileInfo in newFiles)
                 {
@@ -146,7 +149,7 @@ namespace MCFire.Modules.Files.Models
             if (newFolders.Any())
             {
                 if (_folders == null)
-                    _folders = new List<IFolder>();
+                    _folders = new BindableCollection<IFolder>();
 
                 foreach (var folderInfo in newFolders)
                 {
@@ -202,6 +205,8 @@ namespace MCFire.Modules.Files.Models
 
             await Task.WhenAll(tasks);
         }
+
+        #endregion
 
         public Task<bool> CreateFileAsync(string name)
         {
@@ -263,7 +268,7 @@ namespace MCFire.Modules.Files.Models
         public string Name
         {
             get { return _info.Name; }
-            set { throw new NotImplementedException(); }
+            set { Rename(value); }
         }
 
         public string Path
@@ -276,13 +281,13 @@ namespace MCFire.Modules.Files.Models
             get { return Folders.Any() || Files.Any(); }
         }
 
-        public IEnumerable<IFolder> Folders
+        public BindableCollection<IFolder> Folders
         {
             get
             {
                 if (_folders != null) return _folders;
 
-                _folders = new List<IFolder>();
+                _folders = new BindableCollection<IFolder>();
                 foreach (var directoryInfo in _info.EnumerateDirectories())
                 {
                     _folders.Add(new Folder(this, directoryInfo, _fileFactory));
@@ -292,21 +297,13 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        public IEnumerable<IFolder> AllFolders
-        {
-            get
-            {
-                return Folders.Aggregate(Folders, (current, folder) => current.Concat(folder.AllFolders));
-            }
-        }
-
-        public IEnumerable<IFile> Files
+        public BindableCollection<IFile> Files
         {
             get
             {
                 if (_files != null) return _files;
 
-                _files = new List<IFile>();
+                _files = new BindableCollection<IFile>();
                 foreach (var fileInfo in _info.EnumerateFiles())
                 {
                     // add a originalFile to _files, using fileInfo and the shared originalFile factory
@@ -316,19 +313,11 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        public IEnumerable<IFile> AllFiles
+        public BindableCollection<IFolderItem> Children
         {
             get
             {
-                return Folders.Aggregate(Files, (current, folder) => current.Concat(folder.AllFiles));
-            }
-        }
-
-        public IEnumerable<IFolderItem> Children
-        {
-            get
-            {
-                return _children ?? (_children = new List<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
+                return _children ?? (_children = new BindableCollection<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
             }
         }
 

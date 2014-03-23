@@ -6,6 +6,7 @@ namespace MCFire.Modules.Files.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(IFileExplorerCommand))]
+    [Export]
     public class RefreshCommandViewModel : IFileExplorerCommand
     {
         public IFileExplorerViewModel FileExplorer { set; private get; }
@@ -30,5 +31,6 @@ namespace MCFire.Modules.Files.ViewModels
         {
             return FileExplorer.SelectedItem != null || (FileExplorer != null && FileExplorer.RootFolders.Any());
         }
+        public bool Visible { get; set; }
     }
 }

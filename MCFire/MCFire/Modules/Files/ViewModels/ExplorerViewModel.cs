@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +11,7 @@ using Gemini.Framework.Services;
 using MCFire.Modules.Files.Commands;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
-using FolderEventArgs = MCFire.Modules.Files.Events.FolderEventArgs;
+using MCFire.Modules.Infrastructure.Extensions;
 
 namespace MCFire.Modules.Files.ViewModels
 {
@@ -19,7 +21,8 @@ namespace MCFire.Modules.Files.ViewModels
         #region Fields
 
         readonly FolderService _folderService;
-        readonly BindableCollection<IFolderItemViewModel> _rootFolders = new BindableCollection<IFolderItemViewModel>();
+        readonly BindableCollection<FolderItemViewModel> _rootFolders = new BindableCollection<FolderItemViewModel>();
+        readonly object _lock = new object();
 
         #endregion
 
@@ -30,18 +33,25 @@ namespace MCFire.Modules.Files.ViewModels
         {
             DisplayName = "File Explorer";
             _folderService = folderService;
-            foreach (var folder in folderService.RootFolders)
-            {
-                AddFolderViewModel(folder);
-            }
-
-            folderService.RootFolderAdded += AddFolderViewModelHandler;
+            folderService.RootFolders.CollectionChanged += HandleRootFolders;
+            HandleRootFolders(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, _folderService.RootFolders, 0));
 
             var commandsList = commands as IList<IFileExplorerCommand> ?? commands.ToList();
             Commands = commandsList;
             foreach (var command in commandsList)
             {
                 command.FileExplorer = this;
+            }
+        }
+
+        private void HandleRootFolders(object s, NotifyCollectionChangedEventArgs e)
+        {
+            lock (_lock)
+            {
+                e.Handle<FolderItemViewModel, IFolderItem>(
+                    RootFolders,
+                    model => new FolderItemViewModel { Model = model },
+                    (model, viewModel) => viewModel.Model == model);
             }
         }
 
@@ -60,7 +70,7 @@ namespace MCFire.Modules.Files.ViewModels
         }
 
         public async Task OnDoubleClick()
-        {
+        {// expands the tree view automatically
             if (SelectedItem == null) return;
             var file = SelectedItem.Model as IFile;
             if (file != null)
@@ -69,21 +79,49 @@ namespace MCFire.Modules.Files.ViewModels
             }
         }
 
-        private void AddFolderViewModelHandler(object sender, FolderEventArgs e)
+        private void FoldersChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            RootFolders.Add(new FolderItemViewModel { Model = e.Folder });
-        }
-
-        private void AddFolderViewModel(IFolderItem folder)
-        {
-            RootFolders.Add(new FolderItemViewModel { Model = folder });
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    var index = e.NewStartingIndex;
+                    foreach (var viewModel in from IFolderItem newItem in e.NewItems select new FolderItemViewModel { Model = newItem })
+                    {
+                        RootFolders.Insert(index, viewModel);
+                        index++;
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    //for (var i = e.OldStartingIndex; i < e.OldStartingIndex + e.OldItems.Count; i++)
+                    //{
+                    //    RootFolders.RemoveAt(i);
+                    //}
+                    var viewModels = from IFolderItem oldItem in e.OldItems
+                                     select RootFolders.First(oldViewModel => oldViewModel.Model == oldItem);
+                    RootFolders.RemoveRange(viewModels);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    RootFolders[e.NewStartingIndex] =
+                        e.NewItems.Cast<IFolderItem>() // cast for linq functions
+                            .Select(folderItem => new FolderItemViewModel { Model = folderItem })
+                            .First();
+                    break;
+                case NotifyCollectionChangedAction.Move: // move 1
+                    RootFolders.Move(e.OldStartingIndex, e.NewStartingIndex);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    RootFolders.Clear();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         #endregion
 
         #region Properties
 
-        public BindableCollection<IFolderItemViewModel> RootFolders
+        public BindableCollection<FolderItemViewModel> RootFolders
         {
             get { return _rootFolders; }
         }
@@ -99,7 +137,7 @@ namespace MCFire.Modules.Files.ViewModels
         /// The selected TreeViewItem item in the FileExplorerView. 
         /// Setting this property doesn't affect the TreeView, as it is a one way bind to an auto-property.
         /// </summary>
-        public IFolderItemViewModel SelectedItem { get; set; }
+        public FolderItemViewModel SelectedItem { get; set; }
 
         #endregion
     }

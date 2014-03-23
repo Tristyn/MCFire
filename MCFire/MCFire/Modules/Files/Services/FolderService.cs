@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using Caliburn.Micro;
 using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Models;
 
@@ -13,7 +13,7 @@ namespace MCFire.Modules.Files.Services
         #region Fields
 
         readonly FileFactory _fileFactory;
-        readonly List<IFolder> _rootFolders = new List<IFolder>();
+        readonly BindableCollection<IFolder> _rootFolders = new BindableCollection<IFolder>();
         readonly object _lock = new object();
 
         #endregion
@@ -40,17 +40,10 @@ namespace MCFire.Modules.Files.Services
                 if (first != null) return first;
 
                 // create new folder
-                newFolder = new Folder(null, path, _fileFactory);
+                newFolder = new Folder(null, path.ToLower(), _fileFactory);
                 _rootFolders.Add(newFolder);
             }
-            OnRootFolderAdded(new FolderEventArgs(newFolder));
             return newFolder;
-        }
-
-        protected virtual void OnRootFolderAdded(FolderEventArgs e)
-        {
-            var handler = RootFolderAdded;
-            if (handler != null) handler(this, e);
         }
 
         #endregion
@@ -62,18 +55,16 @@ namespace MCFire.Modules.Files.Services
         /// The IEnumerable is thread safe to the consumer, 
         /// and won't be updated when changes are made to this object.
         /// </summary>
-        public IEnumerable<IFolder> RootFolders
+        public BindableCollection<IFolder> RootFolders
         {
             get
             {
                 lock (_lock)
                 {
-                    return new List<IFolder>(_rootFolders);
+                    return _rootFolders;
                 }
             }
         }
-
-        public event EventHandler<FolderEventArgs> RootFolderAdded;
 
         #endregion
     }

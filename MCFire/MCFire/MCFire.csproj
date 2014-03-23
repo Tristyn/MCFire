@@ -128,6 +128,8 @@
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
     <Compile Include="Modules\Files\Content\IFileContent.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Framework\ICommand.cs" />
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
     <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
@@ -161,7 +163,6 @@
     <Compile Include="Modules\Files\ViewModels\ExplorerViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\FolderItemViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\IFileExplorerViewModel.cs" />
-    <Compile Include="Modules\Files\ViewModels\IFolderItemViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\NewFolderCommandViewModel.cs" />
     <Compile Include="Modules\Files\ViewModels\RefreshCommandViewModel.cs" />
     <Compile Include="Modules\Files\Views\ExplorerView.xaml.cs">
@@ -198,6 +199,23 @@
     <Compile Include="Modules\TextEditor\ViewModels\TextEditorViewModel.cs" />
     <Compile Include="Modules\TextEditor\Views\TextEditorView.xaml.cs">
       <DependentUpon>TextEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\WorldExplorer\Commands\IWorldExplorerCommand.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\Dimension.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\Installation.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\WorldExplorerModel.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\WorldBrowserItem.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\WorldModel.cs" />
+    <Compile Include="Modules\WorldExplorer\Module.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\GameInstallation.cs" />
+    <Compile Include="Modules\WorldExplorer\ViewModels\WorldItemViewModel.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\ServerInstallation.cs" />
+    <Compile Include="Modules\WorldExplorer\ViewModels\WorldExplorerViewModel.cs" />
+    <Compile Include="Modules\WorldExplorer\Views\WorldItemView.xaml.cs">
+      <DependentUpon>WorldItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\WorldExplorer\Views\WorldExplorerView.xaml.cs">
+      <DependentUpon>WorldExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -287,6 +305,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Modules\TextEditor\Views\TextEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\WorldExplorer\Views\WorldItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\WorldExplorer\Views\WorldExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

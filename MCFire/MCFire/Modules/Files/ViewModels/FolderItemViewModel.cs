@@ -1,18 +1,19 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using Caliburn.Micro;
+using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Models;
-using FolderItemExistsChangedEventArgs = MCFire.Modules.Files.Events.FolderItemExistsChangedEventArgs;
-using FolderItemNameChangedEventArgs = MCFire.Modules.Files.Events.FolderItemNameChangedEventArgs;
+using MCFire.Modules.Infrastructure.Extensions;
 
 namespace MCFire.Modules.Files.ViewModels
 {
     [Export]
-    public class FolderItemViewModel : PropertyChangedBase, IFolderItemViewModel
+    public class FolderItemViewModel : PropertyChangedBase
     {
         #region Fields
 
         IFolderItem _model;
-        BindableCollection<IFolderItemViewModel> _children;
+        BindableCollection<FolderItemViewModel> _children;
 
         #endregion
 
@@ -37,11 +38,13 @@ namespace MCFire.Modules.Files.ViewModels
             get { return _model; }
             set
             {
-                if (value == _model) return;
+                if (value == _model || value == null) return;
                 if (_model != null)
                 {
                     _model.ExistsChanged -= UpdateExists;
                     _model.NameChanged -= UpdateName;
+                    var folder = _model as IFolder;
+                    if (folder != null) folder.Children.CollectionChanged -= HandleChildren;
                 }
 
                 _model = value;
@@ -73,20 +76,27 @@ namespace MCFire.Modules.Files.ViewModels
 
         public bool IsFolder { get { return _model is IFolder; } }
 
-        public BindableCollection<IFolderItemViewModel> Children
+        public BindableCollection<FolderItemViewModel> Children
         {
             get
             {
                 var folder = _model as IFolder;
                 if (_children == null)
-                    _children = new BindableCollection<IFolderItemViewModel>();
+                    _children = new BindableCollection<FolderItemViewModel>();
                 if (folder == null) return _children;
-                foreach (var childFolder in folder.Children)
-                {
-                    _children.Add(new FolderItemViewModel { Model = childFolder });
-                }
+                //folder.Children.CollectionChanged += FoldersChanged;
+                folder.Children.CollectionChanged += HandleChildren;
+                HandleChildren(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, folder.Children, 0));
                 return _children;
             }
+        }
+
+        private void HandleChildren(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            e.Handle<FolderItemViewModel, IFolderItem>(
+                _children,
+                model => new FolderItemViewModel { Model = model },
+                (model, viewModel) => viewModel.Model == model);
         }
 
         #endregion

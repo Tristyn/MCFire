@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -24,7 +25,7 @@ namespace MCFire.Modules.Files
             MainMenu.All.First(item => item.Name == "View")
                 .Add(new MenuItem("File Explorer", OpenFileExplorer));
 
-            _folderService.GetOrCreateFolder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+            _folderService.GetOrCreateFolder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),".minecraft"));
         }
 
         private static IEnumerable<IResult> OpenFileExplorer()
