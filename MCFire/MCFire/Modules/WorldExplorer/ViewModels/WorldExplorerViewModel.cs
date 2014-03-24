@@ -15,9 +15,13 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
     [Export]
     public class WorldExplorerViewModel : Tool
     {
-        [ImportMany]
-        public IEnumerable<IWindowCommand> Commands { get; private set; }
+        #region Fields
+
         readonly object _lock = new Object();
+
+        #endregion
+
+        #region Properties
 
         [ImportingConstructor]
         public WorldExplorerViewModel(FolderService folderService)
@@ -29,6 +33,10 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
             HandleWorldBrowserItems(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Model.Children, 0));
         }
 
+        #endregion
+
+        #region Methods
+
         private void HandleWorldBrowserItems(object sender, NotifyCollectionChangedEventArgs e)
         {
             e.Handle<WorldItemViewModel, WorldBrowserItem>(
@@ -37,14 +45,24 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
                 (model, viewModel) => viewModel.Model == model);
         }
 
+        #endregion
+
+        #region Properties
+
         public WorldExplorerModel Model { get; private set; }
+
         public BindableCollection<WorldItemViewModel> Children { get; private set; }
 
         public WorldItemViewModel SelectedItem { get; set; }
+
+        [ImportMany]
+        public IEnumerable<IWindowCommand> Commands { get; private set; }
 
         public override PaneLocation PreferredLocation
         {
             get { return PaneLocation.Right; }
         }
+
+        #endregion
     }
 }

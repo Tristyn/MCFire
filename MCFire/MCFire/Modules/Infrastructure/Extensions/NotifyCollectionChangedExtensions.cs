@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -35,9 +36,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
                     Move(sourceArgs, targetCollection);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    Remove(sourceArgs, targetCollection, comparer);
-                    Add(sourceArgs, targetCollection, targetFactory);
-                    break;
+                    throw new NotImplementedException("Resetting collections not implemented.");
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -46,7 +45,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         static void Add<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
         {
             var index = e.NewStartingIndex;
-            if(index==-1)
+            if (index == -1)
                 targetCollection.Insert(-1, e.NewItems.Cast<TSource>().Select(targetFactory).First());
             foreach (var targetItem in e.NewItems.Cast<TSource>().Select(targetFactory))
             {
@@ -57,8 +56,8 @@ namespace MCFire.Modules.Infrastructure.Extensions
 
         static void Remove<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget, bool> comparer)
         {
-            targetCollection.RemoveRange(from sourceItem in e.OldItems.Cast<TSource>()
-                                         select targetCollection.First(targetItem => comparer(sourceItem, targetItem)));
+            targetCollection.RemoveForeach(from sourceItem in e.OldItems.Cast<TSource>()
+                                           select targetCollection.First(targetItem => comparer(sourceItem, targetItem)));
         }
 
         static void Replace<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
@@ -69,6 +68,35 @@ namespace MCFire.Modules.Infrastructure.Extensions
         static void Move<TTarget>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection)
         {
             targetCollection.Move(e.OldStartingIndex, e.NewStartingIndex);
+        }
+    }
+
+    public static class BindableCollectionExtensions
+    {
+
+
+        /// <summary>
+        /// Iterates through range and calls Add() foreach item.
+        /// This solves the issue of AddRange() saying that bindings should be reset.
+        /// </summary>
+        public static void AddForeach<T>(this BindableCollection<T> collection, IEnumerable<T> range)
+        {
+            foreach (var item in range)
+            {
+                collection.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Iterates through range and calls Remove() foreach item.
+        /// This solves the issue of RemoveRange() saying that bindings should be reset.
+        /// </summary>
+        public static void RemoveForeach<T>(this BindableCollection<T> collection, IEnumerable<T> range)
+        {
+            foreach (var item in range)
+            {
+                collection.Remove(item);
+            }
         }
     }
 
@@ -187,7 +215,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         public readonly BindableCollection<SubViewModel> SubViewModels = new BindableCollection<SubViewModel>();
         public ViewModelUsingExtensions(Model model)
         {
-            
+
             model.SubModels.CollectionChanged += (s, e) => e.Handle<SubViewModel, SubModel>
                  (SubViewModels,
                  subModel => new SubViewModel { Model = subModel },

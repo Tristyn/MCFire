@@ -12,18 +12,18 @@ namespace MCFire.Modules.WorldExplorer.Models
     {
         protected Installation(IFolder folder) : base(folder)
         {
-            Worlds = new BindableCollection<WorldModel>();
+            Worlds = new BindableCollection<World>();
             Worlds.CollectionChanged += HandleWorlds;
         }
 
-        private void HandleWorlds(object sender, NotifyCollectionChangedEventArgs e)
+        void HandleWorlds(object sender, NotifyCollectionChangedEventArgs e)
         {
-            e.Handle<WorldBrowserItem, WorldModel>(Children, item => item, (world, worldItem) => world == worldItem);
+            e.Handle<WorldBrowserItem, World>(Children, item => item, (world, worldItem) => world == worldItem);
         }
 
         public abstract InstallationType Type { get; }
 
-        public BindableCollection<WorldModel> Worlds { get; private set; }
+        public BindableCollection<World> Worlds { get; private set; }
 
         [CanBeNull]
         public static Installation ConstructInstallation([NotNull] IFolder folder)

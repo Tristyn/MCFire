@@ -3,9 +3,9 @@ using MCFire.Modules.Files.Models;
 
 namespace MCFire.Modules.WorldExplorer.Models
 {
-    public class WorldModel : WorldBrowserItem
+    public class World : WorldBrowserItem
     {
-        public WorldModel([NotNull] IFolder folder) : base(folder)
+        public World([NotNull] IFolder folder) : base(folder)
         {
         }
     }

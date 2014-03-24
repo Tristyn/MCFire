@@ -205,7 +205,7 @@
     <Compile Include="Modules\WorldExplorer\Models\Installation.cs" />
     <Compile Include="Modules\WorldExplorer\Models\WorldExplorerModel.cs" />
     <Compile Include="Modules\WorldExplorer\Models\WorldBrowserItem.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\WorldModel.cs" />
+    <Compile Include="Modules\WorldExplorer\Models\World.cs" />
     <Compile Include="Modules\WorldExplorer\Module.cs" />
     <Compile Include="Modules\WorldExplorer\Models\GameInstallation.cs" />
     <Compile Include="Modules\WorldExplorer\ViewModels\WorldItemViewModel.cs" />

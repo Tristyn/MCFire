@@ -15,7 +15,7 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
 
         private void HandleWorldBrowserItem(object s, NotifyCollectionChangedEventArgs e)
         {
-            e.Handle<WorldItemViewModel, WorldBrowserItem>(_children, model => new WorldItemViewModel { Model = model }, (model, viewModel) => viewModel.Model == model);
+            e.Handle<WorldItemViewModel, WorldBrowserItem>(Children, model => new WorldItemViewModel { Model = model }, (model, viewModel) => viewModel.Model == model);
         }
 
         public string Title
@@ -42,7 +42,7 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
                     return _children;
                 _children = new BindableCollection<WorldItemViewModel>();
                 Model.Children.CollectionChanged += HandleWorldBrowserItem;
-                HandleWorldBrowserItem(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Model.Children, 0));
+                //HandleWorldBrowserItem(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Model.Children, 0));
                 return _children;
             }
         }
