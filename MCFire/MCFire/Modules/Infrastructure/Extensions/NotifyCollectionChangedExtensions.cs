@@ -23,12 +23,35 @@ namespace MCFire.Modules.Infrastructure.Extensions
         public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection,
             ObservableCollection<TSource> sourceCollection)
             where TSource : TTarget
-            where TTarget : class 
+            where TTarget : class
         {
             sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
             Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
         }
 
+        /// <summary>
+        /// Links the two collections such that when 
+        /// the items of sourceColletion are changed, 
+        /// the changes are mirrored in the targetCollection.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of target collection</typeparam>
+        /// <typeparam name="TSource">The type that the collection is binding to.</typeparam>
+        /// <param name="targetCollection">The target collection.</param>
+        /// <param name="sourceCollection">The collection to observe changes to.</param>
+        /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
+        /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
+        public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection, ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        {
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection, targetFactory, comparer);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection, targetFactory, comparer);
+        }
+
+        /// <summary>
+        /// Extends ObservableCollection and makes 'Linked' ObservableCollections very simple to set up.
+        /// </summary>
+        /// <typeparam name="TTarget">The target type, usually a view model</typeparam>
+        /// <param name="e">The NotifyCollectionChangedEventArgs</param>
+        /// <param name="targetCollection">The target collection</param>
         static void Handle<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection) where TTarget : class
         {
             switch (e.Action)
@@ -57,25 +80,25 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// </summary>
         /// <typeparam name="TTarget">The target type, usually a view model</typeparam>
         /// <typeparam name="TSource">The source type, usually a model</typeparam>
-        /// <param name="sourceArgs">The NotifyCollectionChangedEventArgs</param>
-        /// <param name="targetCollection"></param>
-        /// <param name="targetFactory"></param>
-        /// <param name="comparer"></param>
-        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs sourceArgs, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        /// <param name="e">The NotifyCollectionChangedEventArgs</param>
+        /// <param name="targetCollection">The target collection</param>
+        /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
+        /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
+        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
         {
-            switch (sourceArgs.Action)
+            switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    Add(sourceArgs, targetCollection, targetFactory);
+                    Add(e, targetCollection, targetFactory);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    Remove(sourceArgs, targetCollection, comparer);
+                    Remove(e, targetCollection, comparer);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    Replace(sourceArgs, targetCollection, targetFactory);
+                    Replace(e, targetCollection, targetFactory);
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    Move(sourceArgs, targetCollection);
+                    Move(e, targetCollection);
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     throw new NotImplementedException("Resetting collections not implemented.");
@@ -87,9 +110,6 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Adds the items found in e.NewItems to the targetCollection with no transformation.
         /// </summary>
-        /// <typeparam name="TTarget"></typeparam>
-        /// <param name="e"></param>
-        /// <param name="targetCollection"></param>
         static void Add<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
         {
             var index = e.NewStartingIndex;

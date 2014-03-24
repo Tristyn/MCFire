@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Caliburn.Micro;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure.Extensions;
 
@@ -12,7 +11,9 @@ namespace MCFire.Modules.WorldExplorer.Models
         {
             Installations = new ObservableCollection<Installation>();
             Children = new ObservableCollection<WorldBrowserItem>();
-            Installations.CollectionChanged += HandleWorldBrowserItems;
+            Children.Link(Installations);
+
+            // TODO: Link with transformations
             rootFolders.CollectionChanged += HandleRootFolders;
             HandleRootFolders(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, rootFolders, 0));
         }
