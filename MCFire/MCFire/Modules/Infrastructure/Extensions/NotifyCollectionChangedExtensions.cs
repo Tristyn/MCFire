@@ -16,14 +16,14 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// the items of sourceColletion are changed, 
         /// the changes are mirrored in the targetCollection.
         /// </summary>
-        /// <typeparam name="TTarget"></typeparam>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="targetCollection"></param>
-        /// <param name="sourceCollection"></param>
+        /// <typeparam name="TTarget">The type of target collection</typeparam>
+        /// <typeparam name="TSource">The type that the collection is binding to.</typeparam>
+        /// <param name="targetCollection">The target collection.</param>
+        /// <param name="sourceCollection">The collection to observe changes to.</param>
         public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection,
             ObservableCollection<TSource> sourceCollection)
             where TSource : TTarget
-            where TTarget : class
+            where TTarget : class 
         {
             sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
             Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
