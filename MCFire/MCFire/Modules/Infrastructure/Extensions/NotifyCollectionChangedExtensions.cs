@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,47 @@ namespace MCFire.Modules.Infrastructure.Extensions
 {
     public static class NotifyCollectionChangedExtensions
     {
+        /// <summary>
+        /// Links the two collections such that when 
+        /// the items of sourceColletion are changed, 
+        /// the changes are mirrored in the targetCollection.
+        /// </summary>
+        /// <typeparam name="TTarget"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="targetCollection"></param>
+        /// <param name="sourceCollection"></param>
+        public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection,
+            ObservableCollection<TSource> sourceCollection)
+            where TSource : TTarget
+            where TTarget : class
+        {
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
+        }
+
+        static void Handle<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection) where TTarget : class
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    Add(e, targetCollection);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    Remove(e, targetCollection);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    Replace(e, targetCollection);
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    Move(e, targetCollection);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    throw new NotImplementedException("Resetting collections not implemented.");
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         /// <summary>
         /// Extends BindableCollection and makes 'Linked' ObservableCollections very simple to set up.
         /// </summary>
@@ -42,7 +84,28 @@ namespace MCFire.Modules.Infrastructure.Extensions
             }
         }
 
-        static void Add<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
+        /// <summary>
+        /// Adds the items found in e.NewItems to the targetCollection with no transformation.
+        /// </summary>
+        /// <typeparam name="TTarget"></typeparam>
+        /// <param name="e"></param>
+        /// <param name="targetCollection"></param>
+        static void Add<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
+        {
+            var index = e.NewStartingIndex;
+            if (index == -1)
+                targetCollection.Insert(0, e.NewItems.Cast<TTarget>().First());
+            foreach (var targetItem in e.NewItems.Cast<TTarget>())
+            {
+                targetCollection.Insert(index, targetItem);
+                index++;
+            }
+        }
+
+        /// <summary>
+        /// Adds the items found in e.NewItems to the targetCollection, specifying a transformation from TSource to TTarget.
+        /// </summary>
+        static void Add<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
         {
             var index = e.NewStartingIndex;
             if (index == -1)
@@ -54,24 +117,51 @@ namespace MCFire.Modules.Infrastructure.Extensions
             }
         }
 
-        static void Remove<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget, bool> comparer)
+        /// <summary>
+        /// Removes the items found in e.OldItems from the targetCollection, using the default equality comparer ==
+        /// </summary>
+        static void Remove<T>(NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection) where T : class
+        {
+            targetCollection.RemoveForeach(from sourceItem in e.OldItems.Cast<T>()
+                                           select targetCollection.First(targetItem => sourceItem == targetItem));
+        }
+
+        /// <summary>
+        /// Removes the items found in e.OldItems from the targetCollection, specifying a custom equality comparer.
+        /// </summary>
+        static void Remove<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget, bool> comparer)
         {
             targetCollection.RemoveForeach(from sourceItem in e.OldItems.Cast<TSource>()
                                            select targetCollection.First(targetItem => comparer(sourceItem, targetItem)));
         }
 
-        static void Replace<TTarget, TSource>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
+        /// <summary>
+        /// Replaces the item in targetCollection at the same point where the change occured in the source collection with no transformation.
+        /// </summary>
+        static void Replace<T>(NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection)
+        {
+            targetCollection[e.NewStartingIndex] = e.NewItems.Cast<T>().First();
+        }
+
+        /// <summary>
+        /// Replaces the item in targetCollection at the same point where the change occured in the source collection, 
+        /// specifying a transformation from TSource to TTarget. 
+        /// </summary>
+        static void Replace<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
         {
             targetCollection[e.NewStartingIndex] = targetFactory(e.NewItems.Cast<TSource>().First());
         }
 
-        static void Move<TTarget>(NotifyCollectionChangedEventArgs e, BindableCollection<TTarget> targetCollection)
+        /// <summary>
+        /// Moves the item in targetCollection using the indexes that occured in the source collection.
+        /// </summary>
+        static void Move<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
         {
             targetCollection.Move(e.OldStartingIndex, e.NewStartingIndex);
         }
     }
 
-    public static class BindableCollectionExtensions
+    public static class ObservableCollectionExtensions
     {
 
 
@@ -79,7 +169,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// Iterates through range and calls Add() foreach item.
         /// This solves the issue of AddRange() saying that bindings should be reset.
         /// </summary>
-        public static void AddForeach<T>(this BindableCollection<T> collection, IEnumerable<T> range)
+        public static void AddForeach<T>(this ObservableCollection<T> collection, IEnumerable<T> range)
         {
             foreach (var item in range)
             {
@@ -91,7 +181,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// Iterates through range and calls Remove() foreach item.
         /// This solves the issue of RemoveRange() saying that bindings should be reset.
         /// </summary>
-        public static void RemoveForeach<T>(this BindableCollection<T> collection, IEnumerable<T> range)
+        public static void RemoveForeach<T>(this ObservableCollection<T> collection, IEnumerable<T> range)
         {
             foreach (var item in range)
             {
