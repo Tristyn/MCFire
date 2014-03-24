@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure.Extensions;
 
@@ -9,23 +8,13 @@ namespace MCFire.Modules.WorldExplorer.Models
     {
         public WorldExplorerModel(ObservableCollection<IFolder> rootFolders)
         {
-            Installations = new ObservableCollection<Installation>();
             Children = new ObservableCollection<WorldBrowserItem>();
+            Installations = new ObservableCollection<Installation>();
             Children.Link(Installations);
-
-            // TODO: Link with transformations
-            rootFolders.CollectionChanged += HandleRootFolders;
-            HandleRootFolders(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, rootFolders, 0));
-        }
-
-        private void HandleRootFolders(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            e.Handle<Installation, IFolder>(Installations, Installation.ConstructInstallation, (folder, install) => install.Folder == folder);
-        }
-
-        private void HandleWorldBrowserItems(object s, NotifyCollectionChangedEventArgs e)
-        {
-            e.Handle<WorldBrowserItem, Installation>(Children, install => install, (install, item) => install == item);
+            Installations.Link(
+                rootFolders,
+                Installation.ConstructInstallation,
+                (folder, install) => install.Folder == folder);
         }
 
         public ObservableCollection<Installation> Installations { get; private set; }
