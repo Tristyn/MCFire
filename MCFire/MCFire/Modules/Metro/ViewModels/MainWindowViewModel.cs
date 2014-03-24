@@ -18,7 +18,11 @@ namespace MCFire.Modules.Metro.ViewModels
         // ReSharper disable once UnusedMember.Local
         private IEnumerable<IWindowCommand> CommandImports
         {
-            set { Commands = new BindableCollection<IWindowCommand>(value); }
+            set
+            {
+                Commands = new BindableCollection<IWindowCommand>(value);
+                NotifyOfPropertyChange(() => Commands);
+            }
         }
 
         public BindableCollection<IWindowCommand> Commands

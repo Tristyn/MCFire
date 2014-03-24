@@ -1,5 +1,5 @@
 ﻿using System;
-using Caliburn.Micro;
+using System.Collections.ObjectModel;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Models;
 
@@ -11,10 +11,10 @@ namespace MCFire.Modules.WorldExplorer.Models
         {
             if (folder == null) throw new ArgumentNullException("folder");
             Folder = folder;
-            Children=new BindableCollection<WorldBrowserItem>();
+            Children = new ObservableCollection<WorldBrowserItem>();
         }
 
-        public BindableCollection<WorldBrowserItem> Children { get; private set; }
+        public ObservableCollection<WorldBrowserItem> Children { get; private set; }
 
         public IFolder Folder { get; private set; }
 

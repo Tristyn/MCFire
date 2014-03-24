@@ -53,7 +53,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Extends BindableCollection and makes 'Linked' ObservableCollections very simple to set up.
+        /// Extends ObservableCollection and makes 'Linked' ObservableCollections very simple to set up.
         /// </summary>
         /// <typeparam name="TTarget">The target type, usually a view model</typeparam>
         /// <typeparam name="TSource">The source type, usually a model</typeparam>
@@ -61,7 +61,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <param name="targetCollection"></param>
         /// <param name="targetFactory"></param>
         /// <param name="comparer"></param>
-        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs sourceArgs, BindableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs sourceArgs, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
         {
             switch (sourceArgs.Action)
             {

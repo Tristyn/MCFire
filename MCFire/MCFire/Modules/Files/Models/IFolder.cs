@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Caliburn.Micro;
 using JetBrains.Annotations;
 
 namespace MCFire.Modules.Files.Models
@@ -22,13 +21,13 @@ namespace MCFire.Modules.Files.Models
         bool Empty { get; }
 
         [NotNull]
-        BindableCollection<IFolder> Folders { get; }
+        ObservableCollection<IFolder> Folders { get; }
 
         [NotNull]
-        BindableCollection<IFile> Files { get; }
+        ObservableCollection<IFile> Files { get; }
 
         [NotNull]
-        BindableCollection<IFolderItem> Children { get; }
+        ObservableCollection<IFolderItem> Children { get; }
 
         #endregion
     }

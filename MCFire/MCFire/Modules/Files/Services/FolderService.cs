@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
-using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Models;
 
 namespace MCFire.Modules.Files.Services
@@ -13,7 +12,7 @@ namespace MCFire.Modules.Files.Services
         #region Fields
 
         readonly FileFactory _fileFactory;
-        readonly BindableCollection<IFolder> _rootFolders = new BindableCollection<IFolder>();
+        readonly ObservableCollection<IFolder> _rootFolders = new ObservableCollection<IFolder>();
         readonly object _lock = new object();
 
         #endregion
@@ -55,7 +54,7 @@ namespace MCFire.Modules.Files.Services
         /// The IEnumerable is thread safe to the consumer, 
         /// and won't be updated when changes are made to this object.
         /// </summary>
-        public BindableCollection<IFolder> RootFolders
+        public ObservableCollection<IFolder> RootFolders
         {
             get
             {

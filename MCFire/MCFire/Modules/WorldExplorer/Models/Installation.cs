@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Caliburn.Micro;
@@ -12,7 +13,7 @@ namespace MCFire.Modules.WorldExplorer.Models
     {
         protected Installation(IFolder folder) : base(folder)
         {
-            Worlds = new BindableCollection<World>();
+            Worlds = new ObservableCollection<World>();
             Worlds.CollectionChanged += HandleWorlds;
         }
 
@@ -23,7 +24,7 @@ namespace MCFire.Modules.WorldExplorer.Models
 
         public abstract InstallationType Type { get; }
 
-        public BindableCollection<World> Worlds { get; private set; }
+        public ObservableCollection<World> Worlds { get; private set; }
 
         [CanBeNull]
         public static Installation ConstructInstallation([NotNull] IFolder folder)

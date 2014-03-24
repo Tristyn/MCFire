@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -20,11 +21,11 @@ namespace MCFire.Modules.Files.Models
         [CanBeNull]
         IFolder _parent;
         [CanBeNull]
-        BindableCollection<IFolder> _folders;
+        ObservableCollection<IFolder> _folders;
         [CanBeNull]
-        BindableCollection<IFile> _files;
+        ObservableCollection<IFile> _files;
         [CanBeNull]
-        BindableCollection<IFolderItem> _children;
+        ObservableCollection<IFolderItem> _children;
         [NotNull]
         DirectoryInfo _info;
         [NotNull]
@@ -137,7 +138,7 @@ namespace MCFire.Modules.Files.Models
             if (newFiles.Any())
             {
                 if (_files == null)
-                    _files = new BindableCollection<IFile>();
+                    _files = new ObservableCollection<IFile>();
 
                 foreach (var fileInfo in newFiles)
                 {
@@ -149,7 +150,7 @@ namespace MCFire.Modules.Files.Models
             if (newFolders.Any())
             {
                 if (_folders == null)
-                    _folders = new BindableCollection<IFolder>();
+                    _folders = new ObservableCollection<IFolder>();
 
                 foreach (var folderInfo in newFolders)
                 {
@@ -281,13 +282,13 @@ namespace MCFire.Modules.Files.Models
             get { return Folders.Any() || Files.Any(); }
         }
 
-        public BindableCollection<IFolder> Folders
+        public ObservableCollection<IFolder> Folders
         {
             get
             {
                 if (_folders != null) return _folders;
 
-                _folders = new BindableCollection<IFolder>();
+                _folders = new ObservableCollection<IFolder>();
                 foreach (var directoryInfo in _info.EnumerateDirectories())
                 {
                     _folders.Add(new Folder(this, directoryInfo, _fileFactory));
@@ -297,13 +298,13 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        public BindableCollection<IFile> Files
+        public ObservableCollection<IFile> Files
         {
             get
             {
                 if (_files != null) return _files;
 
-                _files = new BindableCollection<IFile>();
+                _files = new ObservableCollection<IFile>();
                 foreach (var fileInfo in _info.EnumerateFiles())
                 {
                     // add a originalFile to _files, using fileInfo and the shared originalFile factory
@@ -313,11 +314,11 @@ namespace MCFire.Modules.Files.Models
             }
         }
 
-        public BindableCollection<IFolderItem> Children
+        public ObservableCollection<IFolderItem> Children
         {
             get
             {
-                return _children ?? (_children = new BindableCollection<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
+                return _children ?? (_children = new ObservableCollection<IFolderItem>(Files.Concat<IFolderItem>(Folders)));
             }
         }
 
