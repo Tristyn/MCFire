@@ -10,79 +10,13 @@ namespace MCFire.Modules.Infrastructure.Extensions
 {
     public static class NotifyCollectionChangedExtensions
     {
-        #region Link New
-
-        /// <summary>
-        /// Links the two collections such that when 
-        /// the items of sourceColletion are changed, 
-        /// the changes are mirrored in the targetCollection.
-        /// </summary>
-        /// <typeparam name="TTarget">The type of target collection</typeparam>
-        /// <typeparam name="TSource">The type that the collection is binding to.</typeparam>
-        /// <param name="sourceCollection">The collection to observe changes to.</param>
-        /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
-        /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
-        public static ObservableCollection<TTarget> Link<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
-        {
-            var targetCollection = new ObservableCollection<TTarget>();
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection, targetFactory, comparer);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection, targetFactory, comparer);
-            return targetCollection;
-        }
-
-        public static ObservableCollection<TTarget> Link<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection)
-            where TSource : TTarget
-            where TTarget : class
-        {
-            var targetCollection = new ObservableCollection<TTarget>();
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
-            return targetCollection;
-        }
-
-        public static TTargetCollection Link<TTarget, TSource, TTargetCollection>(this ObservableCollection<TSource> sourceCollection)
-            where TTargetCollection : ObservableCollection<TTarget>
-            where TSource : TTarget
-            where TTarget : class
-        {
-            var targetCollection = Activator.CreateInstance<TTargetCollection>();
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
-            return targetCollection;
-        }
-
-        public static TTargetCollection Link<TTarget, TSource, TTargetCollection>(this ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
-            where TTargetCollection : ObservableCollection<TTarget>
-        {
-            var targetCollection = Activator.CreateInstance<TTargetCollection>();
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection, targetFactory, comparer);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection, targetFactory, comparer);
-            return targetCollection;
-        }
-
-        #endregion
-
-        #region Link Existing
-
-
-        public static void LinkExisting<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection, ObservableCollection<TTarget> targetCollection)
-            where TSource : TTarget
-            where TTarget : class
-        {
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
-        }
-
-        #endregion
-
-
         /// <summary>
         /// Extends ObservableCollection and makes 'Linked' ObservableCollections very simple to set up.
         /// </summary>
         /// <typeparam name="TTarget">The target type, usually a view model</typeparam>
         /// <param name="e">The NotifyCollectionChangedEventArgs</param>
         /// <param name="targetCollection">The target collection</param>
-        static void Handle<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection) where TTarget : class
+        public static void Handle<TTarget>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection) where TTarget : class
         {
             switch (e.Action)
             {
@@ -114,7 +48,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <param name="targetCollection">The target collection</param>
         /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
         /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
-        static void Handle<TTarget, TSource>([NotNull] NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
         {
             switch (e.Action)
             {
@@ -140,7 +74,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Adds the items found in e.NewItems to the targetCollection with no transformation.
         /// </summary>
-        static void Add<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
+        public static void Add<TTarget>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
         {
             var index = e.NewStartingIndex;
             if (index == -1)
@@ -155,7 +89,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Adds the items found in e.NewItems to the targetCollection, specifying a transformation from TSource to TTarget.
         /// </summary>
-        static void Add<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
+        public static void Add<TTarget, TSource>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
         {
             var index = e.NewStartingIndex;
             if (index == -1)
@@ -170,7 +104,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Removes the items found in e.OldItems from the targetCollection, using the default equality comparer ==
         /// </summary>
-        static void Remove<T>(NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection) where T : class
+        public static void Remove<T>(this NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection) where T : class
         {
             targetCollection.RemoveForeach(from sourceItem in e.OldItems.Cast<T>()
                                            select targetCollection.First(targetItem => sourceItem == targetItem));
@@ -179,7 +113,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Removes the items found in e.OldItems from the targetCollection, specifying a custom equality comparer.
         /// </summary>
-        static void Remove<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget, bool> comparer)
+        public static void Remove<TTarget, TSource>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget, bool> comparer)
         {
             targetCollection.RemoveForeach(from sourceItem in e.OldItems.Cast<TSource>()
                                            select targetCollection.First(targetItem => comparer(sourceItem, targetItem)));
@@ -188,7 +122,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Replaces the item in targetCollection at the same point where the change occured in the source collection with no transformation.
         /// </summary>
-        static void Replace<T>(NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection)
+        public static void Replace<T>(this NotifyCollectionChangedEventArgs e, ObservableCollection<T> targetCollection)
         {
             targetCollection[e.NewStartingIndex] = e.NewItems.Cast<T>().First();
         }
@@ -197,7 +131,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// Replaces the item in targetCollection at the same point where the change occured in the source collection, 
         /// specifying a transformation from TSource to TTarget. 
         /// </summary>
-        static void Replace<TTarget, TSource>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
+        public static void Replace<TTarget, TSource>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory)
         {
             targetCollection[e.NewStartingIndex] = targetFactory(e.NewItems.Cast<TSource>().First());
         }
@@ -205,7 +139,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <summary>
         /// Moves the item in targetCollection using the indexes that occured in the source collection.
         /// </summary>
-        static void Move<TTarget>(NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
+        public static void Move<TTarget>(this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection)
         {
             targetCollection.Move(e.OldStartingIndex, e.NewStartingIndex);
         }
