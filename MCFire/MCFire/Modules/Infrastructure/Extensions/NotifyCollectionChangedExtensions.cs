@@ -11,23 +11,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
 {
     public static class NotifyCollectionChangedExtensions
     {
-        /// <summary>
-        /// Links the two collections such that when 
-        /// the items of sourceColletion are changed, 
-        /// the changes are mirrored in the targetCollection.
-        /// </summary>
-        /// <typeparam name="TTarget">The type of target collection</typeparam>
-        /// <typeparam name="TSource">The type that the collection is binding to.</typeparam>
-        /// <param name="targetCollection">The target collection.</param>
-        /// <param name="sourceCollection">The collection to observe changes to.</param>
-        public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection,
-            ObservableCollection<TSource> sourceCollection)
-            where TSource : TTarget
-            where TTarget : class
-        {
-            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
-            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
-        }
+        #region Link New
 
         /// <summary>
         /// Links the two collections such that when 
@@ -36,15 +20,62 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// </summary>
         /// <typeparam name="TTarget">The type of target collection</typeparam>
         /// <typeparam name="TSource">The type that the collection is binding to.</typeparam>
-        /// <param name="targetCollection">The target collection.</param>
         /// <param name="sourceCollection">The collection to observe changes to.</param>
         /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
         /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
-        public static void Link<TTarget, TSource>(this ObservableCollection<TTarget> targetCollection, ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        public static ObservableCollection<TTarget> Link<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
         {
+            var targetCollection = new ObservableCollection<TTarget>();
             sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection, targetFactory, comparer);
             Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection, targetFactory, comparer);
+            return targetCollection;
         }
+
+        public static ObservableCollection<TTarget> Link<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection)
+            where TSource : TTarget
+            where TTarget : class
+        {
+            var targetCollection = new ObservableCollection<TTarget>();
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
+            return targetCollection;
+        }
+
+        public static TTargetCollection Link<TTarget, TSource, TTargetCollection>(this ObservableCollection<TSource> sourceCollection)
+            where TTargetCollection : ObservableCollection<TTarget>
+            where TSource : TTarget
+            where TTarget : class
+        {
+            var targetCollection = Activator.CreateInstance<TTargetCollection>();
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
+            return targetCollection;
+        }
+
+        public static TTargetCollection Link<TTarget, TSource, TTargetCollection>(this ObservableCollection<TSource> sourceCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+            where TTargetCollection : ObservableCollection<TTarget>
+        {
+            var targetCollection = Activator.CreateInstance<TTargetCollection>();
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection, targetFactory, comparer);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection, targetFactory, comparer);
+            return targetCollection;
+        }
+
+        #endregion
+
+        #region Link Existing
+
+
+        public static void LinkExisting<TTarget, TSource>(this ObservableCollection<TSource> sourceCollection, ObservableCollection<TTarget> targetCollection)
+            where TSource : TTarget
+            where TTarget : class
+        {
+            sourceCollection.CollectionChanged += (s, e) => Handle(e, targetCollection);
+            Handle(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, sourceCollection, 0), targetCollection);
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Extends ObservableCollection and makes 'Linked' ObservableCollections very simple to set up.
@@ -84,7 +115,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
         /// <param name="targetCollection">The target collection</param>
         /// <param name="targetFactory">The function to create a new TTarget using a TSource</param>
         /// <param name="comparer">The function to determine if the TTarget was created using the instance of TSource</param>
-        public static void Handle<TTarget, TSource>([NotNull] this NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
+        static void Handle<TTarget, TSource>([NotNull] NotifyCollectionChangedEventArgs e, ObservableCollection<TTarget> targetCollection, Func<TSource, TTarget> targetFactory, Func<TSource, TTarget, bool> comparer)
         {
             switch (e.Action)
             {
@@ -227,110 +258,109 @@ namespace MCFire.Modules.Infrastructure.Extensions
     // By changing the type of SubModels to an ObservableCollection, we can leverage CollectionChanged events too, but it requires excessive amounts of boilerplate code per implementation that cant be hidden well via inheritance.
     // The following code is required to link one ObservableCollection<SubModel> to an ObservableCollection<SubViewModel>
 
-    class Model
-    {
-        public readonly BindableCollection<SubModel> SubModels = new BindableCollection<SubModel>();
-    }
+    //class Model
+    //{
+    //    public readonly BindableCollection<SubModel> SubModels = new BindableCollection<SubModel>();
+    //}
 
-    class ViewModel
-    {
-        public readonly BindableCollection<SubViewModel> SubViewModels = new BindableCollection<SubViewModel>();
+    //class ViewModel
+    //{
+    //    public readonly BindableCollection<SubViewModel> SubViewModels = new BindableCollection<SubViewModel>();
 
-        public ViewModel(Model model)
-        {
-            model.SubModels.CollectionChanged += SubModelsChanged;
-            // SubViewModels will get created automatically when a SubModel is added!
-            // But the code is ugly, and types need to be changed for every implementation.
-        }
+    //    public ViewModel(Model model)
+    //    {
+    //        model.SubModels.CollectionChanged += SubModelsChanged;
+    //        // SubViewModels will get created automatically when a SubModel is added!
+    //        // But the code is ugly, and types need to be changed for every implementation.
+    //    }
 
-        private void SubModelsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    var index = e.NewStartingIndex;
-                    foreach (var viewModel in from SubModel newItem in e.NewItems select new SubViewModel { Model = newItem })
-                    {
-                        SubViewModels.Insert(index, viewModel);
-                        index++;
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    for (var i = 0; i < e.OldItems.Count; i++)
-                    {
-                        SubViewModels.RemoveAt(e.OldStartingIndex);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    SubViewModels[e.NewStartingIndex] =
-                        (from SubModel item in e.NewItems
-                         select new SubViewModel { Model = item }
-                         ).First();
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    SubViewModels.Move(e.OldStartingIndex, e.NewStartingIndex);
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    SubViewModels.Clear();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
+    //    private void SubModelsChanged(object sender, NotifyCollectionChangedEventArgs e)
+    //    {
+    //        switch (e.Action)
+    //        {
+    //            case NotifyCollectionChangedAction.Add:
+    //                var index = e.NewStartingIndex;
+    //                foreach (var viewModel in from SubModel newItem in e.NewItems select new SubViewModel { Model = newItem })
+    //                {
+    //                    SubViewModels.Insert(index, viewModel);
+    //                    index++;
+    //                }
+    //                break;
+    //            case NotifyCollectionChangedAction.Remove:
+    //                for (var i = 0; i < e.OldItems.Count; i++)
+    //                {
+    //                    SubViewModels.RemoveAt(e.OldStartingIndex);
+    //                }
+    //                break;
+    //            case NotifyCollectionChangedAction.Replace:
+    //                SubViewModels[e.NewStartingIndex] =
+    //                    (from SubModel item in e.NewItems
+    //                     select new SubViewModel { Model = item }
+    //                     ).First();
+    //                break;
+    //            case NotifyCollectionChangedAction.Move:
+    //                SubViewModels.Move(e.OldStartingIndex, e.NewStartingIndex);
+    //                break;
+    //            case NotifyCollectionChangedAction.Reset:
+    //                SubViewModels.Clear();
+    //                break;
+    //            default:
+    //                throw new ArgumentOutOfRangeException();
+    //        }
+    //    }
+    //}
 
-    class SubModel
-    { // Simple data object
-        public int Id { get; set; }
-        public string Data { get; set; }
-    }
+    //class SubModel
+    //{ // Simple data object
+    //    public int Id { get; set; }
+    //    public string Data { get; set; }
+    //}
 
-    class SubViewModel : INotifyPropertyChanged
-    { // sub view model
-        public SubModel Model { get; set; }
-        public int Id
-        {
-            get { return Model.Id; }
-            set
-            {
-                Model.Id = value;
-                OnPropertyChanged("Id");
-            }
-        }
+    //class SubViewModel : INotifyPropertyChanged
+    //{ // sub view model
+    //    public SubModel Model { get; set; }
+    //    public int Id
+    //    {
+    //        get { return Model.Id; }
+    //        set
+    //        {
+    //            Model.Id = value;
+    //            OnPropertyChanged("Id");
+    //        }
+    //    }
 
-        public string Data
-        {
-            get { return Model.Data; }
-            set
-            {
-                Model.Data = value;
-                OnPropertyChanged("Data");
-            }
-        }
+    //    public string Data
+    //    {
+    //        get { return Model.Data; }
+    //        set
+    //        {
+    //            Model.Data = value;
+    //            OnPropertyChanged("Data");
+    //        }
+    //    }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    //    public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    //    [NotifyPropertyChangedInvocator]
+    //    protected virtual void OnPropertyChanged(string propertyName)
+    //    {
+    //        var handler = PropertyChanged;
+    //        if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+    //    }
+    //}
 
-    // using extensions
+    //// using extensions
 
-    class ViewModelUsingExtensions
-    {
-        public readonly BindableCollection<SubViewModel> SubViewModels = new BindableCollection<SubViewModel>();
-        public ViewModelUsingExtensions(Model model)
-        {
+    //class ViewModelUsingExtensions
+    //{
+    //    public readonly BindableCollection<SubViewModel> SubViewModels = new BindableCollection<SubViewModel>();
+    //    public ViewModelUsingExtensions(Model model)
+    //    {
 
-            model.SubModels.CollectionChanged += (s, e) => e.Handle<SubViewModel, SubModel>
-                 (SubViewModels,
-                 subModel => new SubViewModel { Model = subModel },
-                 (subModel, viewModel) => viewModel.Model == subModel);
-        }
-
-    }
+    //        model.SubModels.CollectionChanged += (s, e) => e.Handle<SubViewModel, SubModel>
+    //             (SubViewModels,
+    //             subModel => new SubViewModel { Model = subModel },
+    //             (subModel, viewModel) => viewModel.Model == subModel);
+    //    }
+    //}
 }

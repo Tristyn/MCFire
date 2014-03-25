@@ -8,13 +8,10 @@ namespace MCFire.Modules.WorldExplorer.Models
     {
         public WorldExplorerModel(ObservableCollection<IFolder> rootFolders)
         {
-            Children = new ObservableCollection<WorldBrowserItem>();
-            Installations = new ObservableCollection<Installation>();
-            Children.Link(Installations);
-            Installations.Link(
-                rootFolders,
+            Installations = rootFolders.Link<Installation, IFolder>(
                 Installation.ConstructInstallation,
                 (folder, install) => install.Folder == folder);
+            Children = Installations.Link<WorldBrowserItem, Installation, ObservableCollection<WorldBrowserItem>>();
         }
 
         public ObservableCollection<Installation> Installations { get; private set; }

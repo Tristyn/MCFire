@@ -11,10 +11,9 @@ namespace MCFire.Modules.WorldExplorer.Models
         {
             if (folder == null) throw new ArgumentNullException("folder");
             Folder = folder;
-            Children = new ObservableCollection<WorldBrowserItem>();
         }
 
-        public ObservableCollection<WorldBrowserItem> Children { get; private set; }
+        public abstract ObservableCollection<WorldBrowserItem> Children { get; protected set; }
 
         public IFolder Folder { get; private set; }
 

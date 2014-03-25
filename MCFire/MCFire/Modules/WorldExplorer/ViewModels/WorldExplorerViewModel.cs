@@ -27,20 +27,8 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
         public WorldExplorerViewModel(FolderService folderService)
         {
             DisplayName = "World Explorer";
-            Children = new BindableCollection<WorldItemViewModel>();
             Model = new WorldExplorerModel(folderService.RootFolders);
-            Model.Children.CollectionChanged += HandleWorldBrowserItems;
-            HandleWorldBrowserItems(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Model.Children, 0));
-        }
-
-        #endregion
-
-        #region Methods
-
-        private void HandleWorldBrowserItems(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            e.Handle<WorldItemViewModel, WorldBrowserItem>(
-                Children,
+            Children = Model.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
                 model => new WorldItemViewModel { Model = model },
                 (model, viewModel) => viewModel.Model == model);
         }

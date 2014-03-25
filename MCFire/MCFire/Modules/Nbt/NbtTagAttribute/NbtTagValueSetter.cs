@@ -70,9 +70,6 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
             // Not able to assign any value to the field or property.
             // The default behaviour is to leave it null and print a message.
             // You could potentially throw an exception here.
-            string assignableTypes;
-            if (objectValue is IEnumerable<NbtCompound>)
-                assignableTypes = "Assignable types are ";
 
             Console.WriteLine("Unable to set property {0} on instance of type {1} using {2} due to incompatible types. Assignable types are {3} and {4}.",
                 _info.Name, target.GetType(), value.TagType, value.GetType().Name, objectValue.GetType().Name);

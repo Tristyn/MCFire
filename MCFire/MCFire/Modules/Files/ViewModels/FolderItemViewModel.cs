@@ -43,8 +43,6 @@ namespace MCFire.Modules.Files.ViewModels
                 {
                     _model.ExistsChanged -= UpdateExists;
                     _model.NameChanged -= UpdateName;
-                    var folder = _model as IFolder;
-                    if (folder != null) folder.Children.CollectionChanged -= HandleChildren;
                 }
 
                 _model = value;
@@ -81,22 +79,24 @@ namespace MCFire.Modules.Files.ViewModels
             get
             {
                 var folder = _model as IFolder;
+                //if (_children == null)
+                //    _children = new BindableCollection<FolderItemViewModel>();
+                //if (folder == null) return _children;
+                if (folder == null)
+                {
+                    // return empty collection, initialize if necessary
+                    return _children ?? (_children = new BindableCollection<FolderItemViewModel>());
+                }
+
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (_children == null)
-                    _children = new BindableCollection<FolderItemViewModel>();
-                if (folder == null) return _children;
-                //folder.Children.CollectionChanged += FoldersChanged;
-                folder.Children.CollectionChanged += HandleChildren;
-                HandleChildren(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, folder.Children, 0));
+                    _children =
+                        folder.Children.Link<FolderItemViewModel, IFolderItem, BindableCollection<FolderItemViewModel>>(
+                            model => new FolderItemViewModel { Model = model },
+                            (model, viewModel) => viewModel.Model == model);
+
                 return _children;
             }
-        }
-
-        private void HandleChildren(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            e.Handle<FolderItemViewModel, IFolderItem>(
-                _children,
-                model => new FolderItemViewModel { Model = model },
-                (model, viewModel) => viewModel.Model == model);
         }
 
         #endregion
