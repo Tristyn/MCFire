@@ -27,7 +27,7 @@ namespace MCFire.Modules.WorldExplorer.Models
             folder.Folders.CollectionChanged += CheckInstallationforSavesFolder;
         }
 
-        private void CheckInstallationforSavesFolder(object s, NotifyCollectionChangedEventArgs e)
+        void CheckInstallationforSavesFolder(object s, NotifyCollectionChangedEventArgs e)
         {
             var folders = e.NewItems.Cast<IFolder>();
             var savesFolder = folders.FirstOrDefault(item => item.Name.ToLower() == "saves");
