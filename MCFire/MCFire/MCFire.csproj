@@ -131,6 +131,7 @@
     <Compile Include="Modules\Files\Content\FileContent.cs" />
     <Compile Include="Modules\Files\Content\IFileContent.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Framework\ICommand.cs" />
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
