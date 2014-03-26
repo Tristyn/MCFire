@@ -31,7 +31,7 @@ namespace MCFire.Modules.Nbt.Services
 
             var file = new NbtFile(parent, info);
             Aggregator.Publish(new FileCreatedMessage<NbtFile>(file));
-            var a = file.NbtContent;
+
             return file;
         }
 
