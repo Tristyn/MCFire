@@ -4,6 +4,7 @@ using System.Security;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Services;
@@ -19,7 +20,10 @@ namespace MCFire.Modules.Files.Models
         IFolder _parent;
         [NotNull]
         protected FileInfo Info;
-
+        [CanBeNull]
+        WeakReference<FileContent> _weakContentReference;
+        [CanBeNull]
+        FileContent _strongContentReference;
         readonly object _lock = new object();
 
         #endregion
@@ -151,16 +155,6 @@ namespace MCFire.Modules.Files.Models
         }
 
         /// <summary>
-        /// Notifies all ViewModels that are listening for this type of format that they should open its contents. 
-        /// This method is generally invoked by a user interface.
-        /// </summary>
-        /// <returns></returns>
-        public virtual Task OpenAsync()
-        {
-            return Task.Run(() => IoC.Get<IEventAggregator>().Publish(new FileOpenedMessage<File>(this)));
-        }
-
-        /// <summary>
         /// Returns the file stream for this file, catching any exception.
         /// </summary>
         /// <param name="mode">The file mode</param>
@@ -172,6 +166,7 @@ namespace MCFire.Modules.Files.Models
             stream = null;
             try
             {
+                Info.Create();
                 stream = Info.Open(mode, access);
             }
             catch (SecurityException) { }
@@ -207,6 +202,7 @@ namespace MCFire.Modules.Files.Models
         {
             try
             {
+                Info.Create();
                 stream = Info.Open(FileMode.Truncate, FileAccess.Write);
                 return true;
             }
@@ -217,6 +213,131 @@ namespace MCFire.Modules.Files.Models
             stream = null;
             return false;
             
+        }
+
+        /// <summary>
+        /// Sets this file to read its content as the specified type.
+        /// The file will manage the saving of content, though you can still call Save().
+        /// If the content has already been set, it will return that instance if the type is assignable.
+        /// Use ForceContent if you want to force a file to change content types.
+        /// </summary>
+        /// <typeparam name="TContent">The type of content to create.</typeparam>
+        /// <param name="content">The instance of content to return, can be null.</param>
+        /// <returns>
+        /// False if set type and requested type is incompatible, 
+        /// or an exception was raised while loading content from disk.
+        /// </returns>
+        public bool TryOpenContent<TContent>(out TContent content)
+            where TContent : FileContent, new()
+        {
+            lock (_lock)
+            {
+                // if content already set
+                FileContent existingContent;
+                if (_weakContentReference != null && _weakContentReference.TryGetTarget(out existingContent))
+                {
+                    // check if set type is instance or derived.
+                    if (existingContent is TContent)
+                    {
+                        content = existingContent as TContent;
+                        return true;
+                    }
+                    content = null;
+                    return false;
+                }
+
+                // create new content, return it
+                content = new TContent();
+                Stream stream;
+                if (TryOpenRead(out stream) && content.Load(stream))
+                {
+                    // reading successful, set and return new instance
+                    if (_weakContentReference == null)
+                        _weakContentReference = new WeakReference<FileContent>(content);
+                    else
+                        _weakContentReference.SetTarget(content);
+                    content.Dirtied += OnContentDirtied;
+                    content.Saved += OnContentSaved;
+                    return true;
+                }
+
+                // content loading failed, return false
+                content = null;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets this file to read its content as the specified type.
+        /// The file will manage the saving of content, though you can still call Save().
+        /// If the content has already been set, it will return that instance if the type is assignable.
+        /// Use ForceContent if you want to force a file to change content types.
+        /// </summary>
+        /// <typeparam name="TContent">The type of content to create.</typeparam>
+        /// <param name="content">The instance of content to return, can be null.</param>
+        /// <returns>
+        /// False if set type and requested type is incompatible, 
+        /// or an exception was raised while loading content from disk.
+        /// </returns>
+        public bool TryForceContent<TContent>(out TContent content)
+            where TContent : FileContent, new()
+        {
+            lock (_lock)
+            {
+                // get content incase TryOpenContent fails and GC collects inbetween
+                FileContent oldContent = null;
+                if (_weakContentReference != null)
+                    _weakContentReference.TryGetTarget(out oldContent);
+
+                // try this, override content if it fails
+                if (TryOpenContent(out content))
+                    return true;
+
+                // save and dispose content
+                Stream stream;
+                if (oldContent != null && TryOpenWrite(out stream))
+                {
+                    oldContent.Save(stream);
+                    oldContent.Dispose();
+                }
+
+                // create new content, note: if TryOpenWrite fails, changes will be lost
+                _weakContentReference = null;
+                _strongContentReference = null;
+                return TryOpenContent(out content);
+            }
+        }
+
+        /// <summary>
+        /// Gets a strong reference to the content, so it can be saved later.
+        /// </summary>
+        protected virtual void OnContentDirtied(object sender, FileContentEventArgs e)
+        {
+            lock (_lock)
+            {
+                FileContent content = null;
+                if (_weakContentReference != null && !_weakContentReference.TryGetTarget(out content)) return;
+                if (e.Content != content) return; // This is a ghost event from previously set content. ignore it
+                _strongContentReference = content;
+            }
+        }
+
+        /// <summary>
+        /// Saves the content, then removes our strong reference to it.
+        /// </summary>
+        protected virtual void OnContentSaved(object sender, FileContentEventArgs e)
+        {
+            lock (_lock)
+            {
+                if (_strongContentReference != null && _strongContentReference != e.Content)
+                    return;
+
+                Stream stream;
+                if (TryOpenWrite(out stream))
+                    e.Content.Save(stream);
+
+                _strongContentReference = null;
+            }
         }
 
         public override string ToString()

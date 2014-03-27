@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,7 +65,8 @@ namespace MCFire.Modules.Files.ViewModels
             var file = SelectedItem.Model as IFile;
             if (file != null)
             {
-                await file.OpenAsync();
+                throw new NotImplementedException("changes to files and content have made this not work anymore, and the file explorer uses this method to open files.");
+                //await file.OpenAsync();
             }
         }
 

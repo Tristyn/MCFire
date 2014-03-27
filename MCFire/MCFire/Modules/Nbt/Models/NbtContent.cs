@@ -3,11 +3,11 @@ using System.IO;
 using MCFire.Modules.Files.Content;
 using MCFire.Modules.Nbt.fNbt;
 
-namespace MCFire.Modules.Nbt.Content
+namespace MCFire.Modules.Nbt.Models
 {
     public abstract class NbtContent : FileContent
     {
-        protected NbtContent(Stream stream)
+        public override bool Load(Stream stream)
         {
             using (stream)
             {
@@ -17,7 +17,7 @@ namespace MCFire.Modules.Nbt.Content
                     nbtFile.LoadFromStream(stream, NbtCompression.AutoDetect);
                     // Inherited properties will get assigned here.
                     NbtBuilder.BuildExisting(this, nbtFile.RootTag);
-                    return;
+                    return true;
                 }
                 catch (ArgumentOutOfRangeException) { }
                 catch (NotSupportedException) { }
@@ -26,9 +26,10 @@ namespace MCFire.Modules.Nbt.Content
                 catch (NbtFormatException) { }
 
                 IsInvalidData();
+                return false;
             }
         }
-
+        // TODO: have list of nbtTag that gets included when saving. any fields that arent assigned during loaded are put there, then included when saving.
         public override void Save(Stream stream)
         {
             throw new NotImplementedException();

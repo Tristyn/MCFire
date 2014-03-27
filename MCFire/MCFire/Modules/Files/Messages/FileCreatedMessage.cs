@@ -2,11 +2,11 @@
 
 namespace MCFire.Modules.Files.Messages
 {
-    public class FileCreatedMessage<TFile> where TFile : IFile
+    public class FileCreatedMessage
     {
-        public TFile File { get; set; }
+        public IFile File { get; set; }
 
-        public FileCreatedMessage(TFile file)
+        public FileCreatedMessage(IFile file)
         {
             File = file;
         }

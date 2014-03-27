@@ -2,14 +2,13 @@
 using Caliburn.Micro;
 using Gemini.Framework;
 using MCFire.Modules.Files.Messages;
-using MCFire.Modules.Files.Models;
 using MCFire.Modules.TextEditor.Models;
 using MCFire.Modules.TextEditor.ViewModels;
 
 namespace MCFire.Modules.TextEditor
 {
     [Export(typeof(IModule))]
-    public class Module : ModuleBase, IHandle<FileOpenedMessage<TextFile>>
+    public class Module : ModuleBase, IHandle<FileOpenedMessage<TextContent>>
     {
 
         [ImportingConstructor]
@@ -17,10 +16,9 @@ namespace MCFire.Modules.TextEditor
         {
             aggregator.Subscribe(this);
         }
-
-        public void Handle(FileOpenedMessage<TextFile> message)
+        public void Handle(FileOpenedMessage<TextContent> message)
         {
-            Shell.OpenDocument(new TextEditorViewModel(message.File));
+            Shell.OpenDocument(new TextEditorViewModel(message.File,message.Content));
         }
     }
 }

@@ -65,9 +65,18 @@ namespace MCFire.Modules.WorldExplorer.Models
         public override sealed ObservableCollection<WorldBrowserItem> Children { get; protected set; }
         public override sealed ObservableCollection<World> Worlds { get; protected set; }
 
-        public TextFile Options
+        public TextContent Options
         {
-            get { return Folder.Files.FirstOrDefault(file => file.Name.ToLower() == "options.txt") as TextFile; }
+            get
+            {
+                IFile optionsFile = Folder.Files.FirstOrDefault(file => file.Name.ToLower() == "options.txt");
+                if (optionsFile == null) return null;
+
+                TextContent content;
+                if (optionsFile.TryOpenContent(out content))
+                    return content;
+                return null;
+            }
         }
     }
 }

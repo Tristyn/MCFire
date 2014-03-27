@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using Gemini.Framework;
-using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.TextEditor.Models;
 
@@ -12,10 +11,10 @@ namespace MCFire.Modules.TextEditor.ViewModels
     {
         private readonly TextContent _textContent;
 
-        public TextEditorViewModel(TextFile file)
+        public TextEditorViewModel(IFile file, TextContent content)
         {
             DisplayName = file.Name;
-            _textContent = file.TextContent;
+            _textContent = content;
         }
 
         public override void CanClose(Action<bool> callback)

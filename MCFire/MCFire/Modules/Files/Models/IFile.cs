@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.Services;
 
 namespace MCFire.Modules.Files.Models
@@ -9,8 +10,9 @@ namespace MCFire.Modules.Files.Models
     {
         #region Methods
 
-        [NotNull]
-        Task OpenAsync();
+        // TODO: changes to files and content have made this not work anymore, and the file explorer uses this method to open files.
+        //[NotNull]
+        //Task OpenAsync();
 
         [NotNull]
         Task ReplaceWithAsync([NotNull] IFormat format);
@@ -53,5 +55,35 @@ namespace MCFire.Modules.Files.Models
         IFolder Parent { get; }
 
         #endregion
+
+        /// <summary>
+        /// Sets this file to read its content as the specified type.
+        /// The file will manage the saving of content, though you can still call Save().
+        /// If the content has already been set, it will return that instance if the type is assignable.
+        /// Use ForceContent if you want to force a file to change content types.
+        /// </summary>
+        /// <typeparam name="TContent">The type of content to create.</typeparam>
+        /// <param name="content">The instance of content to return, can be null.</param>
+        /// <returns>
+        /// False if set type and requested type is incompatible, 
+        /// or an exception was raised while loading content from disk.
+        /// </returns>
+        bool TryOpenContent<TContent>(out TContent content)
+            where TContent : FileContent, new();
+
+        /// <summary>
+        /// Sets this file to read its content as the specified type.
+        /// The file will manage the saving of content, though you can still call Save().
+        /// If the content has already been set, it will return that instance if the type is assignable.
+        /// Use ForceContent if you want to force a file to change content types.
+        /// </summary>
+        /// <typeparam name="TContent">The type of content to create.</typeparam>
+        /// <param name="content">The instance of content to return, can be null.</param>
+        /// <returns>
+        /// False if set type and requested type is incompatible, 
+        /// or an exception was raised while loading content from disk.
+        /// </returns>
+        bool TryForceContent<TContent>(out TContent content)
+            where TContent : FileContent, new();
     }
 }

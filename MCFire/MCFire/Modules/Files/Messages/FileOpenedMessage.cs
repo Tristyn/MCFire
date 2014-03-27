@@ -1,14 +1,17 @@
-﻿using MCFire.Modules.Files.Models;
+﻿using MCFire.Modules.Files.Content;
+using MCFire.Modules.Files.Models;
 
 namespace MCFire.Modules.Files.Messages
 {
-    public class FileOpenedMessage<TFile> where TFile : IFile
+    public class FileOpenedMessage<TContent> where TContent : FileContent
     {
-        public TFile File { get; set; }
+        public IFile File { get; set; }
+        public TContent Content { get; set; }
 
-        public FileOpenedMessage(TFile file)
+        public FileOpenedMessage(IFile file, TContent content)
         {
             File = file;
+            Content = content;
         }
     }
 }

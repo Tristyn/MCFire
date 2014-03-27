@@ -154,7 +154,6 @@
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
-    <Compile Include="Modules\Files\Content\IFileContent.cs" />
     <Compile Include="Modules\Infrastructure\D3D\Controls\D3D11ImageSource.cs" />
     <Compile Include="Modules\Infrastructure\D3D\Services\DeviceService.cs" />
     <Compile Include="Modules\Infrastructure\D3D\Controls\DrawEventArgs.cs" />
@@ -168,7 +167,6 @@
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
     <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
-    <Compile Include="Modules\Nbt\Models\NbtFile.cs" />
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
     <Compile Include="Modules\Test3D\ViewModels\3DViewModel.cs" />
@@ -186,13 +184,11 @@
     <Compile Include="Modules\Files\Messages\FileCreatedMessage.cs" />
     <Compile Include="Modules\Files\Messages\FileOpenedMessage.cs" />
     <Compile Include="Modules\Files\Messages\FormatExtensionsChangedMessage.cs" />
-    <Compile Include="Modules\Files\Models\ContentHostedFile.cs" />
     <Compile Include="Modules\Files\Models\File.cs" />
     <Compile Include="Modules\Files\Models\Folder.cs" />
     <Compile Include="Modules\Files\Models\IFile.cs" />
     <Compile Include="Modules\Files\Models\IFolder.cs" />
     <Compile Include="Modules\Files\Models\IFolderItem.cs" />
-    <Compile Include="Modules\TextEditor\Models\TextFile.cs" />
     <Compile Include="Modules\Files\Models\UnknownFile.cs" />
     <Compile Include="Modules\Files\Module.cs" />
     <Compile Include="Modules\Files\Services\FileFactory.cs" />

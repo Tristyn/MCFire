@@ -8,7 +8,8 @@ namespace MCFire.Modules.TextEditor.Models
     {
         string _text;
         readonly object _lock = new object();
-        public TextContent(Stream stream)
+
+        public override bool Load(Stream stream)
         {
             using (stream)
             {
@@ -17,13 +18,14 @@ namespace MCFire.Modules.TextEditor.Models
                     using (var reader = new StreamReader(stream))
                     {
                         _text = reader.ReadToEnd();
-                        return;
+                        return true;
                     }
                 }
                 catch (ArgumentException) { }
                 catch (IOException) { }
                 // ReSharper disable once DoNotCallOverridableMethodsInConstructor
                 IsInvalidData();
+                return false;
             }
         }
 

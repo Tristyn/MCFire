@@ -4,8 +4,16 @@ using MCFire.Modules.Files.Events;
 
 namespace MCFire.Modules.Files.Content
 {
-    public abstract class FileContent : IFileContent
+    public abstract class FileContent : IDisposable
     {
+        #region Properties
+        // TODO: derived objects override dispose
+        protected bool Disposed;
+        private bool _dirty;
+        private bool _validData;
+
+        #endregion
+
         #region Constructor
 
         protected FileContent()
@@ -14,14 +22,24 @@ namespace MCFire.Modules.Files.Content
             Dirty = false;
         }
 
+        ~FileContent()
+        {
+            Dispose(false);
+        }
+
         #endregion
 
         #region Methods
 
         public void Save()
         {
+            if (Disposed)
+                throw new ObjectDisposedException("FileContent");
+
             OnSaved(new FileContentEventArgs(this));
         }
+
+        public abstract bool Load(Stream stream);
 
         public abstract void Save(Stream stream);
 
@@ -30,7 +48,7 @@ namespace MCFire.Modules.Files.Content
         /// </summary>
         protected void IsDirty()
         {
-            if(Dirty) return;
+            if (Dirty) return;
             Dirty = true;
             OnDirtied(new FileContentEventArgs(this));
         }
@@ -64,16 +82,57 @@ namespace MCFire.Modules.Files.Content
             if (handler != null) handler(this, e);
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Disposed)
+                return;
+
+            if (disposing)
+            {
+                Dirtied = null;
+                Saved = null;
+                InvalidData = null;
+            }
+
+            Disposed = true;
+        }
+
         #endregion
 
         #region Properties
 
-        public bool Dirty { get; private set; }
+        public bool Dirty
+        {
+            get
+            {
+                if (Disposed)
+                    throw new ObjectDisposedException("FileContent");
+
+                return _dirty;
+            }
+            private set { _dirty = value; }
+        }
 
         /// <summary>
         /// If the content has invalid data during loading.
         /// </summary>
-        public bool ValidData { get; private set; }
+        public bool ValidData
+        {
+            get
+            {
+                if (Disposed)
+                    throw new ObjectDisposedException("FileContent");
+
+                return _validData;
+            }
+            private set { _validData = value; }
+        }
 
         public event EventHandler<FileContentEventArgs> Dirtied;
         public event EventHandler<FileContentEventArgs> Saved;

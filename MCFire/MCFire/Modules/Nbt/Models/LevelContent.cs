@@ -1,18 +1,14 @@
 ﻿using System;
 using System.IO;
-using MCFire.Modules.Nbt.fNbt;
-using MCFire.Modules.Nbt.Models;
 using MCFire.Modules.Nbt.NbtTagAttribute;
 
-namespace MCFire.Modules.Nbt.Content
+namespace MCFire.Modules.Nbt.Models
 {
     /// <summary>
     /// Content for level.dat
     /// </summary>
     class LevelContent : NbtContent
     {
-        public LevelContent(Stream stream) : base(stream) { }
-
         [Nbt("version")]
         public int Version { get; set; }
 

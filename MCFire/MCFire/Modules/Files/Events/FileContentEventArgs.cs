@@ -4,9 +4,9 @@ namespace MCFire.Modules.Files.Events
 {
     public class FileContentEventArgs : System.EventArgs
     {
-        public IFileContent Content { get; private set; }
+        public FileContent Content { get; private set; }
 
-        public FileContentEventArgs(IFileContent content)
+        public FileContentEventArgs(FileContent content)
         {
             Content = content;
         }
