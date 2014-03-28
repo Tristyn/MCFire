@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MCFire.Modules.Nbt.fNbt;
-using MCFire.Modules.Nbt.NbtTagAttribute;
 
-namespace MCFire.Modules.Nbt
+namespace MCFire.Modules.Nbt.NbtBuilder
 {
     /// <summary>
     /// Provides a service to set a objects properties to reflect that of an NbtCompound.

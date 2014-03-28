@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace MCFire.Modules.Nbt.NbtTagAttribute
+namespace MCFire.Modules.Nbt.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public sealed class NbtAttribute : Attribute

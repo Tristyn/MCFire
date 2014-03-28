@@ -1,4 +1,4 @@
-﻿using MCFire.Modules.Nbt.NbtTagAttribute;
+﻿using MCFire.Modules.Nbt.Attributes;
 
 namespace MCFire.Modules.Nbt.Models
 {

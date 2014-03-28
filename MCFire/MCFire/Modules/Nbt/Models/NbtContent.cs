@@ -16,7 +16,7 @@ namespace MCFire.Modules.Nbt.Models
                 {
                     nbtFile.LoadFromStream(stream, NbtCompression.AutoDetect);
                     // Inherited properties will get assigned here.
-                    NbtBuilder.BuildExisting(this, nbtFile.RootTag);
+                    NbtBuilder.NbtBuilder.BuildExisting(this, nbtFile.RootTag);
                     return true;
                 }
                 catch (ArgumentOutOfRangeException) { }

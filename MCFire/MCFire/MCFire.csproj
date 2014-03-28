@@ -164,9 +164,12 @@
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Framework\ICommand.cs" />
+    <Compile Include="Modules\Nbt\Attributes\AuxiliaryTagsAttribute.cs" />
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
     <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\AuxiliaryTagsValueSetter.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\ValueSetterBase.cs" />
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
     <Compile Include="Modules\Test3D\ViewModels\3DViewModel.cs" />
@@ -225,11 +228,11 @@
       <DependentUpon>MainWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Nbt\fNbt\fNbt.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder.cs" />
-    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtAttribute.cs" />
-    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagExtensions.cs" />
-    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTaggedClass.cs" />
-    <Compile Include="Modules\Nbt\NbtTagAttribute\NbtTagValueSetter.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\NbtBuilder.cs" />
+    <Compile Include="Modules\Nbt\Attributes\NbtAttribute.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\NbtTagExtensions.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\NbtTaggedClass.cs" />
+    <Compile Include="Modules\Nbt\NbtBuilder\NbtTagValueSetter.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Modules\TextEditor\Module.cs" />
     <Compile Include="Modules\TextEditor\ViewModels\TextEditorViewModel.cs" />

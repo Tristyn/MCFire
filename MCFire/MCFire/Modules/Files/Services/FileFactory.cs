@@ -72,7 +72,7 @@ namespace MCFire.Modules.Files.Services
         //    extension = extension.ToLower();
         //    // recheck extension dictionary for format incase it changed, if it hasn't, use a UI to determine it
         //    IFormat format;
-        //    return _extensionDictionary.TryGetValue(extension.ToLower(), out format) ? format : null;
+        //    return _extensionDictionary.GetValue(extension.ToLower(), out format) ? format : null;
         //}
 
         //IFile FindReplacementFile(IFile oldFile, FileInfo oldInfo)

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MCFire.Modules.Nbt.fNbt;
 
-namespace MCFire.Modules.Nbt.NbtTagAttribute
+namespace MCFire.Modules.Nbt.NbtBuilder
 {
     internal static class NbtTagExtensions
     {
@@ -25,7 +25,7 @@ namespace MCFire.Modules.Nbt.NbtTagAttribute
                 case NbtTagType.ByteArray:
                     return ((NbtByteArray)thisTag).Value;
                 case NbtTagType.Compound:
-                    return (NbtBuilder.BuildNew(targetType, (NbtCompound)thisTag));
+                    return (Nbt.NbtBuilder.NbtBuilder.BuildNew(targetType, (NbtCompound)thisTag));
                 case NbtTagType.Double:
                     return ((NbtDouble)thisTag).Value;
                 case NbtTagType.Float:

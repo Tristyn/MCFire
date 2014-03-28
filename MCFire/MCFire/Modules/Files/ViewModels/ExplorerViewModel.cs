@@ -65,7 +65,7 @@ namespace MCFire.Modules.Files.ViewModels
             var file = SelectedItem.Model as IFile;
             if (file != null)
             {
-                throw new NotImplementedException("changes to files and content have made this not work anymore, and the file explorer uses this method to open files.");
+                throw new NotImplementedException("changes to files and content have made opening files via double click not work anymore.");
                 //await file.OpenAsync();
             }
         }
