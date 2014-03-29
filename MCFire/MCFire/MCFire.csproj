@@ -40,6 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -91,6 +92,9 @@
     </Reference>
     <Reference Include="SharpDX.Toolkit">
       <HintPath>..\packages\SharpDX.Toolkit.2.5.0\lib\net40\SharpDX.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Toolkit.Game">
+      <HintPath>..\packages\SharpDX.Toolkit.Game.2.5.0\lib\net40\SharpDX.Toolkit.Game.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Toolkit.Graphics">
       <HintPath>..\packages\SharpDX.Toolkit.Graphics.2.5.0\lib\net40\SharpDX.Toolkit.Graphics.dll</HintPath>
@@ -154,13 +158,6 @@
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Controls\D3D11ImageSource.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Services\DeviceService.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Controls\DrawEventArgs.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Controls\DrawingSurface.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Controls\GraphicsDeviceEventArgs.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Util\Disposer.cs" />
-    <Compile Include="Modules\Infrastructure\D3D\Util\Texture2DExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Framework\ICommand.cs" />
@@ -171,8 +168,9 @@
     <Compile Include="Modules\Nbt\NbtBuilder\AuxiliaryTagsValueSetter.cs" />
     <Compile Include="Modules\Nbt\NbtBuilder\ValueSetterBase.cs" />
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
+    <Compile Include="Modules\Test3D\Models\D3DTestGame.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
-    <Compile Include="Modules\Test3D\ViewModels\3DViewModel.cs" />
+    <Compile Include="Modules\Test3D\ViewModels\D3DViewModel.cs" />
     <Compile Include="Modules\Test3D\Views\D3DView.xaml.cs">
       <DependentUpon>D3DView.xaml</DependentUpon>
     </Compile>

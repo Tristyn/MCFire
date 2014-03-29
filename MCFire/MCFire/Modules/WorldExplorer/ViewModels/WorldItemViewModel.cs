@@ -1,7 +1,5 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
-using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.WorldExplorer.Models;
 

@@ -3,12 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:toolkit="clr-namespace:SharpDX.Toolkit;assembly=SharpDX.Toolkit.Game"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.D3D.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <controls:DrawingSurface
-             cal:Message.Attach="[Event LoadContent] = [Action OnLoadContent]"/>
-    </Grid>
+             d:DesignHeight="300" d:DesignWidth="300" >
+    <toolkit:SharpDXElement MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50" cal:Message.Attach="[Event Loaded] = [Action Loaded($source)]"/>
 </UserControl>
