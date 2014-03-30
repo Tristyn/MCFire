@@ -1,11 +1,11 @@
-﻿
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Gemini.Framework;
 using JetBrains.Annotations;
 using MCFire.Modules.Test3D.Models;
+using MCFire.Modules.Test3D.Views;
 using SharpDX.Toolkit;
 
 namespace MCFire.Modules.Test3D.ViewModels
@@ -15,46 +15,45 @@ namespace MCFire.Modules.Test3D.ViewModels
     public class D3DViewModel : Document
     {
         D3DTestGame _game;
-        bool _loadedFirstTime;
-        SharpDXElement sharpDxElement;
+        SharpDXElement _sharpDxElement;
 
         public D3DViewModel()
         {
             Deactivated += D3DViewModel_Deactivated;
         }
 
-        void D3DViewModel_Deactivated(object sender, Caliburn.Micro.DeactivationEventArgs e)
+        protected override void OnViewLoaded(object view)
         {
-            if(!e.WasClosed)
-                return;
-            _game.Exit();
-            _game.Dispose();
-            _game = null;
-        }
+            base.OnViewLoaded(view);
 
-        public void Loaded(object sharpDx)
-        {
-            // controls can be loaded multiple times because of avalondock docking.
-            // run this code only once
-            if (_loadedFirstTime)
+            var d3DView = view as D3DView;
+            if (d3DView == null)
                 return;
 
-            sharpDxElement = (sharpDx as SharpDXElement);
+            _sharpDxElement = d3DView.SharpDx;
             _game = new D3DTestGame();
-            _game.Run(sharpDxElement);
+            _game.Run(_sharpDxElement);
 
             // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
             // but that can be triggered by avalondock, while the control should still be kept alive.
             // We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
             // The only option then is to remove the event handler via reflection.
             // We select the method with the matching name and remove it.
-            if(sharpDxElement==null)
+            if (_sharpDxElement == null)
                 return;
-            var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
+            var handlers = GetRoutedEventHandlers(_sharpDxElement, FrameworkElement.UnloadedEvent);
             var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
-            sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent,sharpDxElementDisposer.Handler);
+            _sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
+        }
 
-            _loadedFirstTime = true;
+        void D3DViewModel_Deactivated(object sender, Caliburn.Micro.DeactivationEventArgs e)
+        {
+            if (!e.WasClosed)
+                return;
+
+            _game.Exit();
+            _game.Dispose();
+            _game = null;
         }
 
         /// <summary>
