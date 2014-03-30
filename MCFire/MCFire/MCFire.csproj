@@ -161,6 +161,7 @@
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Framework\ICommand.cs" />
+    <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Nbt\Attributes\AuxiliaryTagsAttribute.cs" />
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
