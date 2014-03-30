@@ -18,7 +18,6 @@ namespace MCFire.Modules.Test3D.Models
         private BasicEffect _basicEffect;
         private Buffer<VertexPositionColor> _vertices;
         private VertexInputLayout _inputLayout;
-        private readonly Random _randomSpeed = new Random();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -104,7 +103,7 @@ namespace MCFire.Modules.Test3D.Models
         protected override void Update(GameTime gameTime)
         {
             // Rotate the cube.
-            var time = (float)gameTime.TotalGameTime.TotalSeconds * _randomSpeed.NextFloat(1, 1.001f);
+            var time = (float)gameTime.TotalGameTime.TotalSeconds;
             _basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
             _basicEffect.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f);
 

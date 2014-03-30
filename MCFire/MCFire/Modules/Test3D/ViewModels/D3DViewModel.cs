@@ -16,6 +16,7 @@ namespace MCFire.Modules.Test3D.ViewModels
     {
         D3DTestGame _game;
         bool _loadedFirstTime;
+        SharpDXElement sharpDxElement;
 
         public D3DViewModel()
         {
@@ -24,8 +25,11 @@ namespace MCFire.Modules.Test3D.ViewModels
 
         void D3DViewModel_Deactivated(object sender, Caliburn.Micro.DeactivationEventArgs e)
         {
+            if(!e.WasClosed)
+                return;
             _game.Exit();
             _game.Dispose();
+            _game = null;
         }
 
         public void Loaded(object sharpDx)
@@ -35,15 +39,15 @@ namespace MCFire.Modules.Test3D.ViewModels
             if (_loadedFirstTime)
                 return;
 
+            sharpDxElement = (sharpDx as SharpDXElement);
             _game = new D3DTestGame();
-            _game.Run(sharpDx as SharpDXElement);
+            _game.Run(sharpDxElement);
 
             // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
             // but that can be triggered by avalondock, while the control should still be kept alive.
             // We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
             // The only option then is to remove the event handler via reflection.
             // We select the method with the matching name and remove it.
-            var sharpDxElement = (sharpDx as SharpDXElement);
             if(sharpDxElement==null)
                 return;
             var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
