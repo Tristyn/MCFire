@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:toolkit="clr-namespace:SharpDX.Toolkit;assembly=SharpDX.Toolkit.Game"
-             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" >
-    <toolkit:SharpDXElement MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50"/>
+    <toolkit:SharpDXElement MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50" SendResizeToGame="True"/>
 </UserControl>

@@ -62,7 +62,7 @@ namespace MCFire.Modules.Test3D.ViewModels
         /// </summary>
         /// <param name="element">The UI element on which the routed event is defined.</param>
         /// <param name="routedEvent">The routed event for which to retrieve the event handlers.</param>
-        public static RoutedEventHandlerInfo[] GetRoutedEventHandlers([NotNull] UIElement element,
+        static RoutedEventHandlerInfo[] GetRoutedEventHandlers([NotNull] UIElement element,
             [NotNull] RoutedEvent routedEvent)
         {
             // Get the EventHandlersStore instance which holds event handlers for the specified element.
