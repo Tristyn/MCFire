@@ -3,6 +3,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
 using System.Security;
+using System.Windows;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
@@ -113,10 +114,18 @@ namespace MCFire
             var rootDir = new DirectoryInfo(@"./");
             foreach (var fileInfo in rootDir.GetFiles("*.dll").Where(info => !ignoredAssembies.Contains(info.Name)))
             {
-                var assemblyCatalog = new AssemblyCatalog(Assembly.LoadFrom(fileInfo.Name));
-                var parts = assemblyCatalog.Parts
-                    .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly).Where(assembly=> !AssemblySource.Instance.Contains(assembly));
-                AssemblySource.Instance.AddRange(parts);
+                try
+                {
+                    var assemblyCatalog=new AssemblyCatalog(Assembly.LoadFrom(fileInfo.Name));
+                    var parts = assemblyCatalog.Parts
+                        .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly).Where(assembly => !AssemblySource.Instance.Contains(assembly));
+                    AssemblySource.Instance.AddRange(parts);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to load {0}: {1}", fileInfo.Name, ex);
+                    MessageBox.Show(ex.ToString());
+                }
             }
 
             //var directoryCatalog = new DirectoryCatalog(@"./",);
