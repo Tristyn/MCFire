@@ -1,14 +1,18 @@
 ﻿using System.Collections.ObjectModel;
-using MCFire.Modules.Files.Models;
+using System.ComponentModel.Composition;
+using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure.Extensions;
+using MCFire.Modules.WorldExplorer.Models;
 
-namespace MCFire.Modules.WorldExplorer.Models
+namespace MCFire.Modules.WorldExplorer.Services
 {
-    public class WorldExplorerModel
+    [Export]
+    public class WorldExplorerService
     {
-        public WorldExplorerModel(ObservableCollection<IFolder> rootFolders)
+        [ImportingConstructor]
+        public WorldExplorerService(FolderService folderService)
         {
-            Installations = rootFolders.Link<Installation, IFolder>(
+            Installations = folderService.RootFolders.Link(
                 Installation.ConstructInstallation,
                 (folder, install) => install.Folder == folder);
             Children = Installations.Link<WorldBrowserItem, Installation, ObservableCollection<WorldBrowserItem>>();

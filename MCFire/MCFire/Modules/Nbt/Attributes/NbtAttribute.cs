@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace MCFire.Modules.Nbt.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false), MeansImplicitUse]
     public sealed class NbtAttribute : Attribute
     {
         #region Constructors

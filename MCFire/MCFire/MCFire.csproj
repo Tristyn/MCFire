@@ -174,6 +174,7 @@
     <Compile Include="Modules\Nbt\Attributes\AuxiliaryTagsAttribute.cs" />
     <Compile Include="Modules\Nbt\Attributes\NbtAttribute.cs" />
     <Compile Include="Modules\Nbt\fNbt\fNbt.cs" />
+    <Compile Include="Modules\Nbt\Models\EntityContent.cs" />
     <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
     <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
     <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
@@ -207,8 +208,8 @@
     <Compile Include="Modules\WorldExplorer\Models\ServerInstallation.cs" />
     <Compile Include="Modules\WorldExplorer\Models\World.cs" />
     <Compile Include="Modules\WorldExplorer\Models\WorldBrowserItem.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\WorldExplorerModel.cs" />
     <Compile Include="Modules\WorldExplorer\Module.cs" />
+    <Compile Include="Modules\WorldExplorer\Services\WorldExplorerService.cs" />
     <Compile Include="Modules\WorldExplorer\ViewModels\WorldExplorerViewModel.cs" />
     <Compile Include="Modules\WorldExplorer\ViewModels\WorldItemViewModel.cs" />
     <Compile Include="Modules\WorldExplorer\Views\WorldExplorerView.xaml.cs">

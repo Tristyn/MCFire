@@ -2,7 +2,7 @@
 
 namespace MCFire.Modules.Nbt.Models
 {
-    public class GameRulesContent
+    public class GameRulesContent : NbtContent
     {
         [Nbt("commandBlockOutput")]
         public string CommandBlockOutput { get; set; }

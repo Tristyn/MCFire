@@ -69,13 +69,11 @@ namespace MCFire.Modules.WorldExplorer.Models
         {
             get
             {
-                IFile optionsFile = Folder.Files.FirstOrDefault(file => file.Name.ToLower() == "options.txt");
+                var optionsFile = Folder.Files.FirstOrDefault(file => file.Name.ToLower() == "options.txt");
                 if (optionsFile == null) return null;
 
                 TextContent content;
-                if (optionsFile.TryOpenContent(out content))
-                    return content;
-                return null;
+                return optionsFile.TryOpenContent(out content) ? content : null;
             }
         }
     }

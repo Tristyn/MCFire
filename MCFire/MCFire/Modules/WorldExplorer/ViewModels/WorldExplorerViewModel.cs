@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -8,26 +7,21 @@ using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Metro.Commands;
 using MCFire.Modules.WorldExplorer.Models;
+using MCFire.Modules.WorldExplorer.Services;
 
 namespace MCFire.Modules.WorldExplorer.ViewModels
 {
     [Export]
     public class WorldExplorerViewModel : Tool
     {
-        #region Fields
-
-        readonly object _lock = new Object();
-
-        #endregion
-
         #region Properties
 
         [ImportingConstructor]
-        public WorldExplorerViewModel(FolderService folderService)
+        public WorldExplorerViewModel(WorldExplorerService service)
         {
             DisplayName = "World Explorer";
-            Model = new WorldExplorerModel(folderService.RootFolders);
-            Children = Model.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
+
+            Children = service.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
                 model => new WorldItemViewModel { Model = model },
                 (model, viewModel) => viewModel.Model == model);
         }
@@ -35,8 +29,6 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
         #endregion
 
         #region Properties
-
-        public WorldExplorerModel Model { get; private set; }
 
         public BindableCollection<WorldItemViewModel> Children { get; private set; }
 

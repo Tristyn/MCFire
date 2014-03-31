@@ -9,8 +9,8 @@ namespace MCFire.Modules.Files.Content
         #region Properties
         // TODO: derived objects override dispose
         protected bool Disposed;
-        private bool _dirty;
-        private bool _validData;
+        bool _dirty;
+        bool _validData;
 
         #endregion
 
@@ -46,7 +46,7 @@ namespace MCFire.Modules.Files.Content
         /// <summary>
         /// If the program has changed any of the data in this FileContent, and therefore needs to be saved.
         /// </summary>
-        protected void IsDirty()
+        protected virtual void IsDirty()
         {
             if (Dirty) return;
             Dirty = true;
