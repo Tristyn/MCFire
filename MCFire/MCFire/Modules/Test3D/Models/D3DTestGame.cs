@@ -29,7 +29,7 @@ namespace MCFire.Modules.Test3D.Models
 
             // Setup the relative directory to the executable directory
             // for loading contents with the ContentManager
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = @"Modules/Test3D/Content";
         }
 
         protected override void LoadContent()
