@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using Caliburn.Micro;
-using MCFire.Modules.Files.Messages;
-using MCFire.Modules.Files.Models;
-using MCFire.Modules.Files.Services;
-using MCFire.Modules.Nbt.Models;
-
-namespace MCFire.Modules.Nbt.Services
+﻿namespace MCFire.Modules.Nbt.Services
 {
     //[Export(typeof(IFormat))]
     //[Export(typeof(IFormat<NbtFile>))]

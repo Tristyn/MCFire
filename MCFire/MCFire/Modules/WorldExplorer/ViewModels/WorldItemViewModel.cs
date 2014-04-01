@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
-using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.WorldExplorer.Models;
 
 namespace MCFire.Modules.WorldExplorer.ViewModels
@@ -22,10 +21,10 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
             set
             {
                 _model = value;
-                Children =
-                    Model.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
-                    model => new WorldItemViewModel { Model = model }, 
-                    (model, viewModel) => viewModel.Model == model);
+                //Children =
+                //    Model.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
+                //    model => new WorldItemViewModel { Model = model }, 
+                //    (model, viewModel) => viewModel.Model == model);
             }
         }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-
-namespace MCFire.Modules.Files.Models
+﻿namespace MCFire.Modules.Files.Models
 {
     //class UnknownFile : File
     //{

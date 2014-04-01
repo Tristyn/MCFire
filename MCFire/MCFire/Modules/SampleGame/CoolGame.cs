@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using SharpDX;
+﻿using SharpDX;
 
 
 namespace MCFire
@@ -8,7 +6,6 @@ namespace MCFire
     // Use these namespaces here to override SharpDX.Direct3D11
     using SharpDX.Toolkit;
     using SharpDX.Toolkit.Graphics;
-    using SharpDX.Toolkit.Input;
 
     /// <summary>
     /// Simple MCFire game using SharpDX.Toolkit.

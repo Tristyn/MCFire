@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
-using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Services;

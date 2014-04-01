@@ -2,11 +2,9 @@
 using System.IO;
 using System.Security;
 using System.Threading.Tasks;
-using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Files.Content;
 using MCFire.Modules.Files.Events;
-using MCFire.Modules.Files.Messages;
 using MCFire.Modules.Files.Services;
 
 namespace MCFire.Modules.Files.Models

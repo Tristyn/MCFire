@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
 using MCFire.Modules.Nbt.Attributes;
 
 namespace MCFire.Modules.Nbt.Models

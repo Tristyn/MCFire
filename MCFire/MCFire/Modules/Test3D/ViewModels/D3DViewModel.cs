@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using MCFire.Modules.Infrastructure.ViewModels;
 using MCFire.Modules.SampleGame;
-using MCFire.Modules.Test3D.Models;
 using MCFire.Modules.Test3D.Views;
 
 namespace MCFire.Modules.Test3D.ViewModels

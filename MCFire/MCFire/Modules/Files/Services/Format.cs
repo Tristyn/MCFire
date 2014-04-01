@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
-using Caliburn.Micro;
-using MCFire.Modules.Files.Messages;
-using MCFire.Modules.Files.Models;
-using File = MCFire.Modules.Files.Models.File;
-
-namespace MCFire.Modules.Files.Services
+﻿namespace MCFire.Modules.Files.Services
 {
     //[Export(typeof(IFormat))]
     //public class Format : IFormat<File>

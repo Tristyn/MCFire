@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
-using MCFire.Modules.Files.Services;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Metro.Commands;
 using MCFire.Modules.WorldExplorer.Models;
@@ -21,7 +20,7 @@ namespace MCFire.Modules.WorldExplorer.ViewModels
         {
             DisplayName = "World Explorer";
 
-            Children = service.Children.Link<WorldItemViewModel, WorldBrowserItem, BindableCollection<WorldItemViewModel>>(
+            Children = service.Installations.Link<WorldItemViewModel, Installation, BindableCollection<WorldItemViewModel>>(
                 model => new WorldItemViewModel { Model = model },
                 (model, viewModel) => viewModel.Model == model);
         }
