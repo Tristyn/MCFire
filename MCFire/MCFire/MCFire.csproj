@@ -202,11 +202,9 @@
       <DependentUpon>TextEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\WorldExplorer\Commands\IWorldExplorerCommand.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\Dimension.cs" />
     <Compile Include="Modules\WorldExplorer\Models\GameInstallation.cs" />
     <Compile Include="Modules\WorldExplorer\Models\Installation.cs" />
     <Compile Include="Modules\WorldExplorer\Models\ServerInstallation.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\World.cs" />
     <Compile Include="Modules\WorldExplorer\Models\WorldBrowserItem.cs" />
     <Compile Include="Modules\WorldExplorer\Module.cs" />
     <Compile Include="Modules\WorldExplorer\Services\WorldExplorerService.cs" />
@@ -327,6 +325,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Substrate\SubstrateCS\Substrate %28NET4%29.csproj">
+      <Project>{7264a1c4-ab4a-4437-b252-7379b98b5509}</Project>
+      <Name>Substrate %28NET4%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SharpDXSdkDir)\SharpDX.targets" />

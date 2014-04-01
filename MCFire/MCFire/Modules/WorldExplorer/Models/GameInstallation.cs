@@ -1,60 +1,17 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using MCFire.Modules.Files.Models;
 using MCFire.Modules.Infrastructure.Extensions;
-using MCFire.Modules.TextEditor.Models;
+using Substrate;
 
 namespace MCFire.Modules.WorldExplorer.Models
 {
     public class GameInstallation : Installation
     {
-        public GameInstallation(IFolder folder)
-            : base(folder)
-        {
-            var savesFolder = folder.Folders.FirstOrDefault(f => f.Name.ToLower() == "saves");
-            if (savesFolder == null)
-            {
-                // when saves does pop up, call LinkWorlds via this
-                ListenForSaves(folder);
-                Children = new ObservableCollection<WorldBrowserItem>();
-            }
-            else LinkWorlds(savesFolder);
-        }
+        private ObservableCollection<NbtWorld> _worlds;
 
-        void ListenForSaves(IFolder folder)
+        public GameInstallation(string path)
+            : base(path)
         {
-            folder.Folders.CollectionChanged += CheckInstallationforSavesFolder;
-        }
-
-        void CheckInstallationforSavesFolder(object s, NotifyCollectionChangedEventArgs e)
-        {
-            var folders = e.NewItems.Cast<IFolder>();
-            var savesFolder = folders.FirstOrDefault(item => item.Name.ToLower() == "saves");
-            if (savesFolder == null) return;
-
-            Folder.Folders.CollectionChanged -= CheckInstallationforSavesFolder;
-            LinkWorlds(savesFolder);
-        }
-
-        /// <summary>
-        /// Sets Worlds to react to the content of savesFolder
-        /// </summary>
-        /// <param name="savesFolder"></param>
-        void LinkWorlds(IFolder savesFolder)
-        {
-            Worlds = savesFolder.Folders.Link
-                        (fold => new World(fold),
-                        (fold, world) => world.Folder == fold);
-            if (Children == null)
-                Children = Worlds.Link<WorldBrowserItem, World>();
-            else
-                Worlds.LinkExisting(Children);
-        }
-
-        public override string Title
-        {
-            get { return Folder.Name.ToLower() == ".minecraft" ? "Mine Craft" : Folder.Name; }
         }
 
         public override InstallationType Type
@@ -62,19 +19,24 @@ namespace MCFire.Modules.WorldExplorer.Models
             get { return InstallationType.Game; }
         }
 
-        public override sealed ObservableCollection<WorldBrowserItem> Children { get; protected set; }
-        public override sealed ObservableCollection<World> Worlds { get; protected set; }
-
-        public TextContent Options
+        public override ObservableCollection<NbtWorld> Worlds
         {
             get
             {
-                var optionsFile = Folder.Files.FirstOrDefault(file => file.Name.ToLower() == "options.txt");
-                if (optionsFile == null) return null;
+                if (_worlds != null) return _worlds;
 
-                TextContent content;
-                return optionsFile.TryOpenContent(out content) ? content : null;
+                _worlds = new ObservableCollection<NbtWorld>();
+                var savesFolder = Directory.EnumerateDirectories().FirstOrDefault(folder => folder.Name.ToLower() == "saves");
+                if (savesFolder == null)
+                    return _worlds;
+                _worlds.AddForeach(
+                    savesFolder.EnumerateDirectories()
+                    .Select(folder => NbtWorld.Open(folder.FullName))
+                    .Where(world => world != null));
+
+                return _worlds;
             }
+            protected set { _worlds = value; }
         }
     }
 }

@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using MCFire.Modules.Files.Models;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using JetBrains.Annotations;
+using MCFire.Modules.Infrastructure.Extensions;
+using Substrate;
 
 namespace MCFire.Modules.WorldExplorer.Models
 {
     class ServerInstallation : Installation
     {
-        public ServerInstallation(IFolder folder) : base(folder)
+        private ObservableCollection<NbtWorld> _worlds;
+
+        public ServerInstallation([NotNull] string folder) : base(folder)
         {
-            throw new NotImplementedException("servers not implemented");
         }
 
         public override InstallationType Type
@@ -16,7 +19,21 @@ namespace MCFire.Modules.WorldExplorer.Models
             get { return InstallationType.Server; }
         }
 
-        public override sealed ObservableCollection<World> Worlds { get; protected set; }
-        public override sealed ObservableCollection<WorldBrowserItem> Children { get; protected set; }
+        public override ObservableCollection<NbtWorld> Worlds
+        {
+            get
+            {
+                if (_worlds != null) return _worlds;
+
+                _worlds = new ObservableCollection<NbtWorld>();
+                _worlds.AddForeach(
+                    Directory.EnumerateDirectories()
+                    .Select(folder => NbtWorld.Open(folder.FullName))
+                    .Where(world => world != null));
+
+                return _worlds;
+            }
+            protected set { _worlds = value; }
+        }
     }
 }

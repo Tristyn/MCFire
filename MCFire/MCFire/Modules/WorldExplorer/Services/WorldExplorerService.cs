@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using MCFire.Modules.Files.Services;
-using MCFire.Modules.Infrastructure.Extensions;
+using MCFire.Modules.Files.Models;
 using MCFire.Modules.WorldExplorer.Models;
 
 namespace MCFire.Modules.WorldExplorer.Services
@@ -9,13 +9,11 @@ namespace MCFire.Modules.WorldExplorer.Services
     [Export]
     public class WorldExplorerService
     {
-        [ImportingConstructor]
-        public WorldExplorerService(FolderService folderService)
+        List<Installation> _installations = new List<Installation>();
+        
+        public WorldExplorerService()
         {
-            Installations = folderService.RootFolders.Link(
-                Installation.ConstructInstallation,
-                (folder, install) => install.Folder == folder);
-            Children = Installations.Link<WorldBrowserItem, Installation, ObservableCollection<WorldBrowserItem>>();
+            _installations.Add(Installation.New(@"C:\Users\Tristyn\AppData\Roaming\.minecraft"));
         }
 
         public ObservableCollection<Installation> Installations { get; private set; }
