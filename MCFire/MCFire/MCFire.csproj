@@ -185,9 +185,9 @@
     <Compile Include="Modules\Nbt\NbtBuilder\NbtTagValueSetter.cs" />
     <Compile Include="Modules\Nbt\NbtBuilder\ValueSetterBase.cs" />
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
-    <Compile Include="Modules\SampleGame\CoolGame.cs" />
-    <Compile Include="Modules\SampleGame\CustomEffectGame.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
+    <Compile Include="Modules\Test3D\Models\CoolGame.cs" />
+    <Compile Include="Modules\Test3D\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Test3D\Models\D3DTestGame.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
     <Compile Include="Modules\Test3D\ViewModels\D3DViewModel.cs" />
@@ -231,8 +231,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <ToolkitModel Include="Modules\SampleGame\Content\Ship.fbx" />
-    <ToolkitTexture Include="Modules\SampleGame\Content\ShipDiffuse.dds" />
+    <ToolkitModel Include="Modules\Test3D\Content\Ship.fbx" />
+    <ToolkitTexture Include="Modules\Test3D\Content\ShipDiffuse.dds" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -299,10 +299,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFxc Include="Modules\SampleGame\Content\Bloom.fx" />
+    <ToolkitFxc Include="Modules\Test3D\Content\Bloom.fx" />
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFxc Include="Modules\SampleGame\Content\metatunnel.fx" />
+    <ToolkitFxc Include="Modules\Test3D\Content\metatunnel.fx" />
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\splash.png">

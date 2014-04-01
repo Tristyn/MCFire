@@ -21,7 +21,7 @@
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Modules.SampleGame
+namespace MCFire.Modules.Test3D.Models
 {
     // Use this namespace here in case we need to use Direct3D11 namespace as well, as this
     // namespace will override the Direct3D11.
@@ -52,7 +52,7 @@ namespace MCFire.Modules.SampleGame
 
             // Setup the relative directory to the executable directory
             // for loading contents with the ContentManager
-            Content.RootDirectory = @"Modules/SampleGame/Content";
+            Content.RootDirectory = @"Modules/Test3D/Content";
         }
 
         protected override void Initialize()

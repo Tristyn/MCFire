@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using MCFire.Modules.Infrastructure.ViewModels;
-using MCFire.Modules.SampleGame;
+using MCFire.Modules.Test3D.Models;
 using MCFire.Modules.Test3D.Views;
 
 namespace MCFire.Modules.Test3D.ViewModels
@@ -16,7 +16,7 @@ namespace MCFire.Modules.Test3D.ViewModels
             var d3DView = view as D3DView;
             if (d3DView == null)
                 return;
-            RunGame(new CustomEffectGame(), d3DView.SharpDx);
+            RunGame(new D3DTestGame(), d3DView.SharpDx);
         }
     }
 }
