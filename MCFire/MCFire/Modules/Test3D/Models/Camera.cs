@@ -1,12 +1,16 @@
-﻿using SharpDX;
+﻿using System;
+using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 
 namespace MCFire.Modules.Test3D.Models
 {
-    public class Camera
+    public class Camera : IDisposable
     {
-        readonly GraphicsDevice _graphicsDevice;
+        GraphicsDevice _graphicsDevice;
+        Vector3 _position;
+        Vector3 _direction;
+        float _fov;
 
         public Camera(GraphicsDevice graphicsDevice)
         {
@@ -64,11 +68,43 @@ namespace MCFire.Modules.Test3D.Models
             Direction = Vector3.Normalize(target - Position);
         }
 
-        public Vector3 Position { get; set; }
+        /// <summary>
+        /// Rotates the camera from its current direction.
+        /// </summary>
+        /// <param name="magnitude">The angle, in radians, to pan the camera. +X is right, +Y is down.</param>
+        public void Pan(Vector2 magnitude)
+        {
+            // TODO: clamp Y, because when you look to far down or up, X gets flipped.
+            var rotation = Matrix.RotationYawPitchRoll(magnitude.X, magnitude.Y, 0);
+            Direction = Vector3.TransformCoordinate(Direction, rotation);
+        }
 
-        public Vector3 Direction { get; set; }
+        public void Dispose()
+        {
+            _graphicsDevice = null;
+        }
 
-        public float Fov { get; set; }
+        public Vector3 Position
+        {
+            get { return _position; }
+            set { _position = value; }
+        }
+
+        public Vector3 Direction
+        {
+            get { return _direction; }
+            set
+            {
+                value.Normalize();
+                _direction = value;
+            }
+        }
+
+        public float Fov
+        {
+            get { return _fov; }
+            set { _fov = MathUtil.Clamp(value, 1, 179); }
+        }
 
         public Matrix ViewMatrix
         {

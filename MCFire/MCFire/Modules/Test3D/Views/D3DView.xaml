@@ -7,5 +7,5 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" >
     <toolkit:SharpDXElement MouseDown="SetSharpDxFocus" MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50"
-                            SendResizeToGame="True" Focusable="True" />
+                            SendResizeToGame="True" Focusable="True"/>
 </UserControl>

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Windows.Input;
+using MCFire.Modules.Test3D.Extensions;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
@@ -20,6 +21,7 @@ namespace MCFire.Modules.Test3D.Models
         GraphicsDeviceManager _graphicsDeviceManager;
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
+        SharpDXElement _sharpDx;
 
         // content
         SpriteFont _font;
@@ -28,6 +30,8 @@ namespace MCFire.Modules.Test3D.Models
 
         // input
         MouseManager _mouse;
+        MouseState _mousePrevState;
+        bool _mouseRightDragging;
         KeyboardManager _keyboard;
 
         // model
@@ -36,13 +40,11 @@ namespace MCFire.Modules.Test3D.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
         /// </summary>
-        public D3DTestGame()
+        /// <param name="sharpDx">The control used to listen to mouse drag events.</param>
+        public D3DTestGame(SharpDXElement sharpDx)
         {
-            // Creates a graphics manager. This is mandatory.
+            _sharpDx = sharpDx;
             _graphicsDeviceManager = new GraphicsDeviceManager(this);
-
-            // Setup the relative directory to the executable directory
-            // for loading contents with the ContentManager
             Content.RootDirectory = @"Modules/Test3D/Content";
         }
 
@@ -58,10 +60,12 @@ namespace MCFire.Modules.Test3D.Models
             // input
             _mouse = new MouseManager(this);
             _mouse.Initialize();
+            _mousePrevState = _mouse.GetState();
             _keyboard = new KeyboardManager(this);
             _keyboard.Initialize();
-            _camera = new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) };
+            _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) });
             _camera.LookAt(new Vector3(0, 0, 0));
+
             // content
             _font = Content.Load<SpriteFont>("Segoe12");
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
@@ -110,19 +114,29 @@ namespace MCFire.Modules.Test3D.Models
             base.LoadContent();
         }
 
-        protected override void Initialize()
-        {
-            Window.Title = "MiniCube demo";
-
-            base.Initialize();
-        }
-
         protected override void Update(GameTime gameTime)
         {
-            var keystate = _keyboard.GetState();
-            _camera.Update(keystate);
+            var keyState = _keyboard.GetState();
+            _camera.Update(keyState);
 
-            // Handle base.Update
+            var mouseState = _mouse.GetState();
+            var mousePos = new Vector2(mouseState.X, mouseState.Y);
+            var mousePrevPos = new Vector2(_mousePrevState.X, _mousePrevState.Y);
+
+            if (mouseState.Right == ButtonState.Pressed && _mousePrevState.Right == ButtonState.Pressed)
+            {// right held
+                if (_mouseRightDragging || mousePos != mousePrevPos)
+                {// right dragging
+                    _mouseRightDragging = true;
+                    // perspective drag
+                    // TODO: refactor into class and event?
+                    var change = new Vector2((mousePrevPos.X - mousePos.X) * GraphicsDevice.AspectRatio(), mousePrevPos.Y - mousePos.Y);
+                    _camera.Pan(change);
+                }
+            }
+
+            _mousePrevState = mouseState;
+
             base.Update(gameTime);
         }
 
