@@ -29,8 +29,9 @@ namespace MCFire.Modules.Test3D.Models
         // input
         MouseManager _mouse;
         KeyboardManager _keyboard;
-        Vector3 _camera;
-        Vector3 _cameraTarget;
+
+        // model
+        Camera _camera;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -59,8 +60,8 @@ namespace MCFire.Modules.Test3D.Models
             _mouse.Initialize();
             _keyboard = new KeyboardManager(this);
             _keyboard.Initialize();
-            _camera = new Vector3(0, 0, -5);
-            _cameraTarget = Vector3.ForwardLH;
+            _camera = new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) };
+            _camera.LookAt(new Vector3(0, 0, 0));
             // content
             _font = Content.Load<SpriteFont>("Segoe12");
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
@@ -118,48 +119,8 @@ namespace MCFire.Modules.Test3D.Models
 
         protected override void Update(GameTime gameTime)
         {
-            // Rotate the cube.
-            //var time = (float)gameTime.TotalGameTime.TotalSeconds;
-            //_basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
-            //_basicEffect.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f);
-
             var keystate = _keyboard.GetState();
-
-            // move forward, back
-            if (keystate.IsKeyDown(Keys.W))
-                _camera += _cameraTarget * .1f;
-
-            if (keystate.IsKeyDown(Keys.S))
-                _camera -= _cameraTarget * .1f;
-
-            // move left, right
-            if (keystate.IsKeyDown(Keys.D))
-                _camera = Vector3.Cross(_cameraTarget, Vector3.Down) * .1f + _camera;
-
-            if (keystate.IsKeyDown(Keys.A))
-                _camera = Vector3.Cross(_cameraTarget, Vector3.Up) * .1f + _camera;
-
-            // rotate yaw
-            if (keystate.IsKeyDown(Keys.E))
-                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(1)));
-
-            if (keystate.IsKeyDown(Keys.Q))
-                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(-1)));
-
-            // rotate pitch
-            if (keystate.IsKeyDown(Keys.R))
-            {
-                var left = Vector3.Cross(_cameraTarget, Vector3.Up);
-                var pitchMatrix = Matrix.RotationAxis(left, MathUtil.DegreesToRadians(1));
-                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, pitchMatrix);
-            }
-
-            if (keystate.IsKeyDown(Keys.F))
-            {
-                var right = Vector3.Cross(_cameraTarget, Vector3.Down);
-                var pitchmatrix = Matrix.RotationAxis(right, MathUtil.DegreesToRadians(1));
-                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, pitchmatrix);
-            }
+            _camera.Update(keystate);
 
             // Handle base.Update
             base.Update(gameTime);
@@ -172,9 +133,8 @@ namespace MCFire.Modules.Test3D.Models
 
             // Calculate matrices
             _basicEffect.World = Matrix.Identity;
-            _basicEffect.View = Matrix.LookAtLH(_camera, _cameraTarget + _camera, Vector3.Up);
-            _basicEffect.Projection = Matrix.PerspectiveFovLH(MathUtil.Pi/3,
-                (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 1000.0f);
+            _basicEffect.View = _camera.ViewMatrix;
+            _basicEffect.Projection = _camera.ProjectionMatrix;
 
             // Setup the vertices
             GraphicsDevice.SetVertexBuffer(_vertices);
@@ -187,8 +147,8 @@ namespace MCFire.Modules.Test3D.Models
             // Draw debug
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
-            _spriteBatch.DrawString(_font, String.Format("Camera: {0}", _camera), new Vector2(0, 15), Color.Black);
-            _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _cameraTarget), new Vector2(0, 30), Color.Black);
+            _spriteBatch.DrawString(_font, String.Format("Camera: {0}", _camera.Position), new Vector2(0, 15), Color.Black);
+            _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _camera.Direction), new Vector2(0, 30), Color.Black);
             _spriteBatch.End();
 
             // Handle base.Draw
