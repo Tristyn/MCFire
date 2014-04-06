@@ -73,7 +73,7 @@ namespace MCFire.Modules.Test3D.Models
         {
             // TODO: clamp Y, because when you look to far down or up, X gets flipped.
             var yaw = Matrix.RotationY(magnitude.X);
-            var pitch = Matrix.RotationYawPitchRoll(0, magnitude.Y, 0);
+            var pitch = Matrix.RotationX(magnitude.Y);
             var rotation = yaw * pitch;
             Direction = Vector3.TransformCoordinate(Direction, rotation).ToNormal();
         }

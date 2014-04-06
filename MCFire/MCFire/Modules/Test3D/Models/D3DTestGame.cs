@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using Caliburn.Micro;
 using MCFire.Modules.Test3D.Extensions;
+using MCFire.Modules.WorldExplorer.Services;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
+using Substrate;
+using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Test3D.Models
 {
@@ -33,6 +39,8 @@ namespace MCFire.Modules.Test3D.Models
 
         // model
         Camera _camera;
+        Buffer<VertexPositionColor> _chunkVertices;
+        VertexInputLayout _chunkInputLayout;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -57,7 +65,7 @@ namespace MCFire.Modules.Test3D.Models
             // input
             _keyboard = ToDispose(new KeyboardManager(this));
             _keyboard.Initialize();
-            _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) });
+            _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
             _camera.LookAt(new Vector3(0, 0, 0));
             _mouse = ToDispose(new Mouse(new MouseManager(this)));
 
@@ -98,7 +106,6 @@ namespace MCFire.Modules.Test3D.Models
 
             // content
             _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
-            _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
             _vertices = ToDisposeContent(Buffer.Vertex.New(
                 GraphicsDevice,
                 new[]
@@ -140,6 +147,49 @@ namespace MCFire.Modules.Test3D.Models
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange)
                     }));
+            _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
+
+            var worlds = IoC.Get<WorldExplorerService>().Installations.First().Worlds;
+            var createThings = from world in worlds
+                               let lastIndex = world.Path.LastIndexOf("\\", StringComparison.Ordinal)
+                               where lastIndex != -1 && world.Path.Substring(lastIndex + 1) == "create things"
+                               select world;
+            var chunkBlocks = createThings.First().GetChunkManager().GetChunk(0, 0).Blocks;
+
+            var chunkVerticesList = new List<VertexPositionColor>(500);
+            for (var y = 0; y < chunkBlocks.YDim; y++)
+                for (var x = 0; x < chunkBlocks.XDim; x++)
+                    for (var z = 0; z < chunkBlocks.ZDim; z++)
+                    {
+                        var block = chunkBlocks.GetBlock(x, y, z);
+
+                        if (block.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            continue;
+                        // block isn't air, assume its solid.
+                        // at this point, texture coordinates should be calculated
+                        // block specific shapes should happen (eg water)
+
+                        if (x + 1 < chunkBlocks.XDim)
+                        {
+                            var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
+                            if (xPlusBlock.Info == BlockInfo.Air)
+                            {
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z), Color.LightGray));
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z + 1.0f),
+                                    Color.LightGray));
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z + 1.0f),
+                                    Color.LightGray));
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z), Color.LightGray));
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z),
+                                    Color.LightGray));
+                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z + 1.0f),
+                                    Color.LightGray));
+                            }
+                        }
+                    }
+
+            _chunkVertices = ToDisposeContent(Buffer.Vertex.New(GraphicsDevice, chunkVerticesList.ToArray()));
+            _chunkInputLayout = VertexInputLayout.FromBuffer(0, _chunkVertices);
 
             base.LoadContent();
         }
@@ -162,13 +212,17 @@ namespace MCFire.Modules.Test3D.Models
             _basicEffect.View = _camera.ViewMatrix;
             _basicEffect.Projection = _camera.ProjectionMatrix;
 
-            // Setup the vertices
+            // Draw the cube
             GraphicsDevice.SetVertexBuffer(_vertices);
             GraphicsDevice.SetVertexInputLayout(_inputLayout);
-
-            // Apply the basic effect technique and draw the rotating cube
             _basicEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
+
+            // Draw chunks
+            GraphicsDevice.SetVertexBuffer(_chunkVertices);
+            GraphicsDevice.SetVertexInputLayout(_chunkInputLayout);
+            _basicEffect.CurrentTechnique.Passes[0].Apply();
+            GraphicsDevice.Draw(PrimitiveType.TriangleList, _chunkVertices.ElementCount);
 
             // Draw debug
             _spriteBatch.Begin();
