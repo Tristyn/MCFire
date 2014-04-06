@@ -110,7 +110,7 @@ namespace MCFire.Modules.Test3D.Models
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange)
                     }));
-
+            
             base.LoadContent();
         }
 
