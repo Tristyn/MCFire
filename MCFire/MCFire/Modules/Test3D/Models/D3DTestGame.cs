@@ -151,6 +151,9 @@ namespace MCFire.Modules.Test3D.Models
             _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _camera.Direction), new Vector2(0, 30), Color.Black);
             _spriteBatch.End();
 
+            // Reset
+            GraphicsDevice.Flush();
+
             // Handle base.Draw
             base.Draw(gameTime);
         }

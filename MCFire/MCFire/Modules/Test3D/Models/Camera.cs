@@ -46,16 +46,12 @@ namespace MCFire.Modules.Test3D.Models
             // rotate pitch
             if (keystate.IsKeyDown(Keys.R))
             {
-                var left = Vector3.Cross(Direction, Vector3.Up);
-                var pitchMatrix = Matrix.RotationAxis(left, MathUtil.DegreesToRadians(1));
-                Direction = Vector3.TransformCoordinate(Direction, pitchMatrix);
+                Pan(new Vector2(0, -0.0174532925f));
             }
 
             if (keystate.IsKeyDown(Keys.F))
             {
-                var left = Vector3.Cross(Direction, Vector3.Up);
-                var pitchmatrix = Matrix.RotationAxis(left, MathUtil.DegreesToRadians(-1));
-                Direction = Vector3.TransformCoordinate(Direction, pitchmatrix);
+                Pan(new Vector2(0, 0.0174532925f));
             }
         }
 
