@@ -29,7 +29,7 @@ namespace MCFire.Modules.Test3D.Models
         Buffer<VertexPositionColor> _vertices;
 
         // input
-        MouseManager _mouse;
+        Mouse _mouse;
         MouseState _mousePrevState;
         bool _mouseRightDragging;
         KeyboardManager _keyboard;
@@ -58,16 +58,20 @@ namespace MCFire.Modules.Test3D.Models
             });
 
             // input
-            _mouse = new MouseManager(this);
-            _mouse.Initialize();
-            _mousePrevState = _mouse.GetState();
-            _keyboard = new KeyboardManager(this);
+            _keyboard = ToDispose(new KeyboardManager(this));
             _keyboard.Initialize();
             _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) });
             _camera.LookAt(new Vector3(0, 0, 0));
+            _mouse = ToDispose(new Mouse(new MouseManager(this)));
+            _mouse.Right.DragMove += (s, e) =>
+            {
+                // perspective drag
+                var change = (e.PrevPosition - e.Position) * new Vector2(GraphicsDevice.AspectRatio(), 1);
+                _camera.Pan(change);
+            };
 
             // content
-            _font = Content.Load<SpriteFont>("Segoe12");
+            _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
             _vertices = ToDisposeContent(Buffer.Vertex.New(
                 GraphicsDevice,
@@ -110,32 +114,14 @@ namespace MCFire.Modules.Test3D.Models
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange)
                     }));
-            
+
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            var keyState = _keyboard.GetState();
-            _camera.Update(keyState);
-
-            var mouseState = _mouse.GetState();
-            var mousePos = new Vector2(mouseState.X, mouseState.Y);
-            var mousePrevPos = new Vector2(_mousePrevState.X, _mousePrevState.Y);
-
-            if (mouseState.Right == ButtonState.Pressed && _mousePrevState.Right == ButtonState.Pressed)
-            {// right held
-                if (_mouseRightDragging || mousePos != mousePrevPos)
-                {// right dragging
-                    _mouseRightDragging = true;
-                    // perspective drag
-                    // TODO: refactor into class and event?
-                    var change = new Vector2((mousePrevPos.X - mousePos.X) * GraphicsDevice.AspectRatio(), mousePrevPos.Y - mousePos.Y);
-                    _camera.Pan(change);
-                }
-            }
-
-            _mousePrevState = mouseState;
+            _camera.Update(_keyboard.GetState());
+            _mouse.Update();
 
             base.Update(gameTime);
         }

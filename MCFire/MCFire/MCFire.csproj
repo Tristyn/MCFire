@@ -191,6 +191,7 @@
     <Compile Include="Modules\Test3D\Models\CoolGame.cs" />
     <Compile Include="Modules\Test3D\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Test3D\Models\D3DTestGame.cs" />
+    <Compile Include="Modules\Test3D\Models\KeyEventArgs.cs" />
     <Compile Include="Modules\Test3D\Models\Mouse.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
     <Compile Include="Modules\Test3D\ViewModels\D3DViewModel.cs" />
