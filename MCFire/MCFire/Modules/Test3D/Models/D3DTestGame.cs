@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using Caliburn.Micro;
 using MCFire.Modules.Test3D.Extensions;
 using MCFire.Modules.WorldExplorer.Services;
@@ -69,7 +70,11 @@ namespace MCFire.Modules.Test3D.Models
             _camera.LookAt(new Vector3(0, 0, 0));
             _mouse = ToDispose(new Mouse(new MouseManager(this)));
 
-            _mouse.Right.DragStart += (s, e) => _sharpDx.CaptureMouse();
+            _mouse.Right.DragStart += (s, e) =>
+            {
+                _sharpDx.CaptureMouse();
+                System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
+            };
             _mouse.Right.DragMove += (s, e) =>
             {
                 // perspective drag
@@ -102,7 +107,11 @@ namespace MCFire.Modules.Test3D.Models
                 }
                 // ReSharper restore CompareOfFloatsByEqualityOperator
             };
-            _mouse.Right.DragEnd += (s, e) => _sharpDx.ReleaseMouseCapture();
+            _mouse.Right.DragEnd += (s, e) =>
+            {
+                _sharpDx.ReleaseMouseCapture();
+                System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
+            };
 
             // content
             _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));

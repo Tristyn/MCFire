@@ -72,10 +72,11 @@ namespace MCFire.Modules.Test3D.Models
         public void Pan(Vector2 magnitude)
         {
             // TODO: clamp Y, because when you look to far down or up, X gets flipped.
-            var yaw = Matrix.RotationY(magnitude.X);
-            var pitch = Matrix.RotationX(magnitude.Y);
+            var yaw = Quaternion.RotationAxis(Vector3.Down, magnitude.X);
+            var pitch = Quaternion.RotationAxis(Vector3.Cross(Direction, Vector3.Up), magnitude.Y);
             var rotation = yaw * pitch;
-            Direction = Vector3.TransformCoordinate(Direction, rotation).ToNormal();
+            rotation.Normalize();
+            Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationQuaternion(rotation)).ToNormal();
         }
 
         public void Dispose()
@@ -106,7 +107,7 @@ namespace MCFire.Modules.Test3D.Models
 
         public Matrix ViewMatrix
         {
-            get { return Matrix.LookAtLH(Position, Direction + Position, Vector3.Up); }
+            get{ return Matrix.LookAtLH(Position, Direction + Position, Vector3.Up); }
         }
 
         public Matrix ProjectionMatrix
