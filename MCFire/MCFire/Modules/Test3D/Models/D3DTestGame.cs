@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Input;
+using System.Windows;
 using MCFire.Modules.Test3D.Extensions;
 using SharpDX;
 using SharpDX.Toolkit;
@@ -18,7 +18,6 @@ namespace MCFire.Modules.Test3D.Models
     public class D3DTestGame : Game
     {
         // rendering
-        GraphicsDeviceManager _graphicsDeviceManager;
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
         SharpDXElement _sharpDx;
@@ -30,8 +29,6 @@ namespace MCFire.Modules.Test3D.Models
 
         // input
         Mouse _mouse;
-        MouseState _mousePrevState;
-        bool _mouseRightDragging;
         KeyboardManager _keyboard;
 
         // model
@@ -43,8 +40,8 @@ namespace MCFire.Modules.Test3D.Models
         /// <param name="sharpDx">The control used to listen to mouse drag events.</param>
         public D3DTestGame(SharpDXElement sharpDx)
         {
+            ToDispose(new GraphicsDeviceManager(this));
             _sharpDx = sharpDx;
-            _graphicsDeviceManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = @"Modules/Test3D/Content";
         }
 
@@ -63,12 +60,41 @@ namespace MCFire.Modules.Test3D.Models
             _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5) });
             _camera.LookAt(new Vector3(0, 0, 0));
             _mouse = ToDispose(new Mouse(new MouseManager(this)));
+
+            _mouse.Right.DragStart += (s, e) => _sharpDx.CaptureMouse();
             _mouse.Right.DragMove += (s, e) =>
             {
                 // perspective drag
                 var change = (e.PrevPosition - e.Position) * new Vector2(GraphicsDevice.AspectRatio(), 1);
                 _camera.Pan(change);
+                Console.WriteLine(e.Position);
+
+                // If mouse escapes the bounds of the SharpDxElement, loop it to the other side.
+                // ReSharper disable CompareOfFloatsByEqualityOperator
+                if (e.Position.X == 1)
+                {
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(1, e.Position.Y * _sharpDx.ActualHeight));
+                    _mouse.Move(newPos.ToVector2());
+                }
+                else if (e.Position.X == 0)
+                {
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(_sharpDx.ActualWidth - 1, e.Position.Y * _sharpDx.ActualHeight));
+                    _mouse.Move(newPos.ToVector2());
+                }
+
+                if (e.Position.Y == 1)
+                {
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, 1));
+                    _mouse.Move(newPos.ToVector2());
+                }
+                else if (e.Position.Y == 0)
+                {
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, _sharpDx.ActualHeight - 1));
+                    _mouse.Move(newPos.ToVector2());
+                }
+                // ReSharper restore CompareOfFloatsByEqualityOperator
             };
+            _mouse.Right.DragEnd += (s, e) => _sharpDx.ReleaseMouseCapture();
 
             // content
             _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));

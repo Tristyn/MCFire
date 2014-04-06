@@ -187,6 +187,8 @@
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Modules\Test3D\Extensions\GraphicsDeviceExtensions.cs" />
+    <Compile Include="Modules\Test3D\Extensions\PointExtensions.cs" />
+    <Compile Include="Modules\Test3D\Extensions\Vector3Extensions.cs" />
     <Compile Include="Modules\Test3D\Models\Camera.cs" />
     <Compile Include="Modules\Test3D\Models\CoolGame.cs" />
     <Compile Include="Modules\Test3D\Models\CustomEffectGame.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using MCFire.Modules.Test3D.Extensions;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
@@ -38,10 +39,10 @@ namespace MCFire.Modules.Test3D.Models
 
             // rotate yaw
             if (keystate.IsKeyDown(Keys.E))
-                Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(1)));
+                Pan(new Vector2(0.0174532925f, 0));
 
             if (keystate.IsKeyDown(Keys.Q))
-                Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(-1)));
+                Pan(new Vector2(-0.0174532925f, 0));
 
             // rotate pitch
             if (keystate.IsKeyDown(Keys.R))
@@ -61,7 +62,7 @@ namespace MCFire.Modules.Test3D.Models
         /// <param name="target"></param>
         public void LookAt(Vector3 target)
         {
-            Direction = Vector3.Normalize(target - Position);
+            Direction = (target - Position).ToNormal();
         }
 
         /// <summary>
@@ -71,8 +72,10 @@ namespace MCFire.Modules.Test3D.Models
         public void Pan(Vector2 magnitude)
         {
             // TODO: clamp Y, because when you look to far down or up, X gets flipped.
-            var rotation = Matrix.RotationYawPitchRoll(magnitude.X, magnitude.Y, 0);
-            Direction = Vector3.TransformCoordinate(Direction, rotation);
+            var yaw = Matrix.RotationY(magnitude.X);
+            var pitch = Matrix.RotationYawPitchRoll(0, magnitude.Y, 0);
+            var rotation = yaw * pitch;
+            Direction = Vector3.TransformCoordinate(Direction, rotation).ToNormal();
         }
 
         public void Dispose()
@@ -91,8 +94,7 @@ namespace MCFire.Modules.Test3D.Models
             get { return _direction; }
             set
             {
-                value.Normalize();
-                _direction = value;
+                _direction = value.ToNormal();
             }
         }
 
