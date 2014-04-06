@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
@@ -15,12 +16,21 @@ namespace MCFire.Modules.Test3D.Models
     /// </summary>
     public class D3DTestGame : Game
     {
-        private GraphicsDeviceManager _graphicsDeviceManager;
-        private BasicEffect _basicEffect;
-        private Buffer<VertexPositionColor> _vertices;
-        private VertexInputLayout _inputLayout;
-        private MouseManager _mouse;
-        private KeyboardManager _keyboard;
+        // rendering
+        GraphicsDeviceManager _graphicsDeviceManager;
+        SpriteBatch _spriteBatch;
+        BasicEffect _basicEffect;
+
+        // content
+        SpriteFont _font;
+        VertexInputLayout _inputLayout;
+        Buffer<VertexPositionColor> _vertices;
+
+        // input
+        MouseManager _mouse;
+        KeyboardManager _keyboard;
+        Vector3 _camera;
+        Vector3 _cameraTarget;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -37,21 +47,23 @@ namespace MCFire.Modules.Test3D.Models
 
         protected override void LoadContent()
         {
-            _mouse=new MouseManager(this);
-            _mouse.Initialize();
-            _keyboard=new KeyboardManager(this);
-            _keyboard.Initialize();
-
-            // Creates a basic effect
+            // rendering
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             _basicEffect = ToDisposeContent(new BasicEffect(GraphicsDevice)
             {
                 VertexColorEnabled = true,
-                View = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY),
-                Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f),
-                World = Matrix.Identity
             });
 
-            // Creates vertices for the cube
+            // input
+            _mouse = new MouseManager(this);
+            _mouse.Initialize();
+            _keyboard = new KeyboardManager(this);
+            _keyboard.Initialize();
+            _camera = new Vector3(0, 0, -5);
+            _cameraTarget = Vector3.ForwardLH;
+            // content
+            _font = Content.Load<SpriteFont>("Segoe12");
+            _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
             _vertices = ToDisposeContent(Buffer.Vertex.New(
                 GraphicsDevice,
                 new[]
@@ -93,10 +105,6 @@ namespace MCFire.Modules.Test3D.Models
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange)
                     }));
-            ToDisposeContent(_vertices);
-
-            // Create an input layout from the vertices
-            _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
 
             base.LoadContent();
         }
@@ -111,9 +119,47 @@ namespace MCFire.Modules.Test3D.Models
         protected override void Update(GameTime gameTime)
         {
             // Rotate the cube.
-            var time = (float)gameTime.TotalGameTime.TotalSeconds;
-            _basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
-            _basicEffect.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f);
+            //var time = (float)gameTime.TotalGameTime.TotalSeconds;
+            //_basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
+            //_basicEffect.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f);
+
+            var keystate = _keyboard.GetState();
+
+            // move forward, back
+            if (keystate.IsKeyDown(Keys.W))
+                _camera += _cameraTarget * .1f;
+
+            if (keystate.IsKeyDown(Keys.S))
+                _camera -= _cameraTarget * .1f;
+
+            // move left, right
+            if (keystate.IsKeyDown(Keys.D))
+                _camera = Vector3.Cross(_cameraTarget, Vector3.Down) * .1f + _camera;
+
+            if (keystate.IsKeyDown(Keys.A))
+                _camera = Vector3.Cross(_cameraTarget, Vector3.Up) * .1f + _camera;
+
+            // rotate yaw
+            if (keystate.IsKeyDown(Keys.E))
+                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(1)));
+
+            if (keystate.IsKeyDown(Keys.Q))
+                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, Matrix.RotationAxis(Vector3.Up, MathUtil.DegreesToRadians(-1)));
+
+            // rotate pitch
+            if (keystate.IsKeyDown(Keys.R))
+            {
+                var left = Vector3.Cross(_cameraTarget, Vector3.Up);
+                var pitchMatrix = Matrix.RotationAxis(left, MathUtil.DegreesToRadians(1));
+                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, pitchMatrix);
+            }
+
+            if (keystate.IsKeyDown(Keys.F))
+            {
+                var right = Vector3.Cross(_cameraTarget, Vector3.Down);
+                var pitchmatrix = Matrix.RotationAxis(right, MathUtil.DegreesToRadians(1));
+                _cameraTarget = Vector3.TransformCoordinate(_cameraTarget, pitchmatrix);
+            }
 
             // Handle base.Update
             base.Update(gameTime);
@@ -124,6 +170,12 @@ namespace MCFire.Modules.Test3D.Models
             // Clears the screen with the Color.CornflowerBlue
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            // Calculate matrices
+            _basicEffect.World = Matrix.Identity;
+            _basicEffect.View = Matrix.LookAtLH(_camera, _cameraTarget + _camera, Vector3.Up);
+            _basicEffect.Projection = Matrix.PerspectiveFovLH(MathUtil.Pi/3,
+                (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 1000.0f);
+
             // Setup the vertices
             GraphicsDevice.SetVertexBuffer(_vertices);
             GraphicsDevice.SetVertexInputLayout(_inputLayout);
@@ -131,6 +183,13 @@ namespace MCFire.Modules.Test3D.Models
             // Apply the basic effect technique and draw the rotating cube
             _basicEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
+
+            // Draw debug
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(_font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
+            _spriteBatch.DrawString(_font, String.Format("Camera: {0}", _camera), new Vector2(0, 15), Color.Black);
+            _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _cameraTarget), new Vector2(0, 30), Color.Black);
+            _spriteBatch.End();
 
             // Handle base.Draw
             base.Draw(gameTime);
