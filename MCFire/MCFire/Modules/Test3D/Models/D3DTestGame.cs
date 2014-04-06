@@ -1,6 +1,7 @@
 ﻿using System;
 using SharpDX;
 using SharpDX.Toolkit;
+using SharpDX.Toolkit.Input;
 
 namespace MCFire.Modules.Test3D.Models
 {
@@ -18,6 +19,8 @@ namespace MCFire.Modules.Test3D.Models
         private BasicEffect _basicEffect;
         private Buffer<VertexPositionColor> _vertices;
         private VertexInputLayout _inputLayout;
+        private MouseManager _mouse;
+        private KeyboardManager _keyboard;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -34,6 +37,11 @@ namespace MCFire.Modules.Test3D.Models
 
         protected override void LoadContent()
         {
+            _mouse=new MouseManager(this);
+            _mouse.Initialize();
+            _keyboard=new KeyboardManager(this);
+            _keyboard.Initialize();
+
             // Creates a basic effect
             _basicEffect = ToDisposeContent(new BasicEffect(GraphicsDevice)
             {

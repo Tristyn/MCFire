@@ -1,4 +1,6 @@
-﻿namespace MCFire.Modules.Test3D.Views
+﻿using System.Windows.Input;
+
+namespace MCFire.Modules.Test3D.Views
 {
     /// <summary>
     /// Interaction logic for D3DView.xaml
@@ -8,6 +10,12 @@
         public D3DView()
         {
             InitializeComponent();
+        }
+
+        private void SetSharpDxFocus(object sender, MouseButtonEventArgs e)
+        {
+            // a hack to let the sharpdx control regain focus when clicked.
+            Keyboard.Focus(SharpDx);
         }
     }
 }

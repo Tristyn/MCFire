@@ -22,6 +22,8 @@ namespace MCFire
 
         protected override IEnumerable<Assembly> SelectAssemblies()
         {
+            if(Execute.InDesignMode) return new List<Assembly>();
+
             // get the application assembly, and the Metro assembly.
             var assemblies = new List<Assembly>();
             // get assemblies in mods folder
@@ -104,6 +106,8 @@ namespace MCFire
         /// </summary>
         protected override void Configure()
         {
+            if (Execute.InDesignMode) return;
+
             var ignoredAssembies = new[]
             {
                 "Assimp32.dll",
