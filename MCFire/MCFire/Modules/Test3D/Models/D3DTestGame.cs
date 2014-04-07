@@ -119,42 +119,42 @@ namespace MCFire.Modules.Test3D.Models
                 GraphicsDevice,
                 new[]
                     {
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange), // Front
+                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange), // Front
                         new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.Orange),
+                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange),
+                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.Orange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange),
                         new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange), // BACK
+                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.Orange), // BACK
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.Orange),
                         new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.Orange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed), // Top
+                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.Orange),
+                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange),
+                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed), // Top
                         new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.OrangeRed),
+                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed),
+                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.OrangeRed),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed),
                         new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed), // Bottom
+                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.OrangeRed), // Bottom
                         new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.OrangeRed),
                         new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.OrangeRed),
                         new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange), // Left
+                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.OrangeRed),
+                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed),
+                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange), // Left
                         new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.DarkOrange),
+                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange),
+                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange), // Right
+                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.DarkOrange), // Right
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange),
+                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
                         new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange)
+                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange)
                     }));
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
 
@@ -180,19 +180,56 @@ namespace MCFire.Modules.Test3D.Models
 
                         if (x + 1 < chunkBlocks.XDim)
                         {
+                            // face with normal x+
                             var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
-                            if (xPlusBlock.Info == BlockInfo.Air)
+                            if (xPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z), Color.LightGray));
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z + 1.0f),
-                                    Color.LightGray));
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z + 1.0f),
-                                    Color.LightGray));
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y, z), Color.LightGray));
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z),
-                                    Color.LightGray));
-                                chunkVerticesList.Add(new VertexPositionColor(new Vector3(x + 1.0f, y + 1.0f, z + 1.0f),
-                                    Color.LightGray));
+                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList);
+                            }
+                        }
+
+                        if (y + 1 < chunkBlocks.YDim)
+                        {
+                            var yPlusBlock = chunkBlocks.GetBlock(x, y + 1, z);
+                            if (yPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            {
+                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList);
+                            }
+                        }
+
+                        if (z + 1 < chunkBlocks.ZDim)
+                        {
+                            var zPlubBlock = chunkBlocks.GetBlock(x, y, z + 1);
+                            if (zPlubBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            {
+                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList);
+                            }
+                        }
+
+                        if (x - 1 >= 0)
+                        {
+                            var xMinusBlock = chunkBlocks.GetBlock(x - 1, y, z);
+                            if (xMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            {
+                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList);
+                            }
+                        }
+
+                        if (y - 1 >= 0)
+                        {
+                            var yMinusBlock = chunkBlocks.GetBlock(x, y - 1, z);
+                            if (yMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            {
+                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList);
+                            }
+                        }
+
+                        if (z - 1 >= 0)
+                        {
+                            var zMinusBlock = chunkBlocks.GetBlock(x, y, z - 1);
+                            if (zMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
+                            {
+                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList);
                             }
                         }
                     }
@@ -201,6 +238,52 @@ namespace MCFire.Modules.Test3D.Models
             _chunkInputLayout = VertexInputLayout.FromBuffer(0, _chunkVertices);
 
             base.LoadContent();
+        }
+
+        //static readonly Quaternion Up = Quaternion.RotationAxis(Vector3.Right, 0);
+        //static readonly Quaternion Forward = Quaternion.RotationAxis(Vector3.Right, MathUtil.PiOverTwo);
+        //static readonly Quaternion Down = Quaternion.RotationAxis(Vector3.Right, MathUtil.Pi);
+        //static readonly Quaternion Backward = Quaternion.RotationAxis(Vector3.Right, MathUtil.Pi + MathUtil.PiOverTwo);
+        //static readonly Quaternion Right = Quaternion.RotationAxis(Vector3.ForwardLH, -MathUtil.PiOverTwo);
+        //static readonly Quaternion Left = Quaternion.RotationAxis(Vector3.ForwardLH, MathUtil.PiOverTwo);
+        static readonly Matrix Up = Matrix.Identity;
+        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0,0,1); // -z
+        static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
+        static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0); // +z
+        static readonly Matrix Right = Matrix.RotationZ(-MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
+        static readonly Matrix Left = Matrix.RotationZ(MathUtil.PiOverTwo) * Matrix.Translation(1, 0, 0);
+
+        static readonly Vector3[] QuadVertices =
+        {
+            new Vector3(1,1,1),
+            new Vector3(0,1,1),
+            new Vector3(0,1,0),
+            new Vector3(1,1,0),
+            new Vector3(1,1,1),
+            new Vector3(0,1,0),
+            
+        };
+
+        private static readonly Random Random = new Random();
+
+        void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh)
+        {
+            foreach (var vertex in QuadVertices)
+            {
+                // rotate the vector to face the direction specified
+                var transformed = Vector3.TransformCoordinate(vertex, direction);
+                // if any values are negative, set them to zero,
+                // that way, in the big picture a 6 faced cube will be 1x1x1
+                //if (transformed.X < 0) transformed.X += 0;
+                //if (transformed.Y < 0) transformed.Y += 1;
+                //if (transformed.Z < 0) transformed.Z += 0;
+
+                // translate the vector into world space
+                transformed += location;
+
+                // add the vector to the list as a vertex
+                triangleMesh.Add(new VertexPositionColor(transformed, new Color(Random.Next())));
+            }
         }
 
         protected override void Update(GameTime gameTime)

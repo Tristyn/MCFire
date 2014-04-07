@@ -16,7 +16,7 @@ namespace MCFire.Modules.Test3D.Models
         public Camera(GraphicsDevice graphicsDevice)
         {
             Fov = MathUtil.Pi / 3;
-            Direction = Vector3.ForwardLH;
+            Direction = Vector3.ForwardRH;
             Position = new Vector3(0, 0, -5);
             _graphicsDevice = graphicsDevice;
         }
@@ -32,10 +32,10 @@ namespace MCFire.Modules.Test3D.Models
 
             // move left, right
             if (keystate.IsKeyDown(Keys.D))
-                Position = Vector3.Cross(Direction, Vector3.Down) * .1f + Position;
+                Position = Vector3.Cross(Direction, Vector3.Up) * .1f + Position;
 
             if (keystate.IsKeyDown(Keys.A))
-                Position = Vector3.Cross(Direction, Vector3.Up) * .1f + Position;
+                Position = Vector3.Cross(Direction, Vector3.Down) * .1f + Position;
 
             // rotate yaw
             if (keystate.IsKeyDown(Keys.E))
@@ -47,12 +47,12 @@ namespace MCFire.Modules.Test3D.Models
             // rotate pitch
             if (keystate.IsKeyDown(Keys.R))
             {
-                Pan(new Vector2(0, -0.0174532925f));
+                Pan(new Vector2(0, 0.0174532925f));
             }
 
             if (keystate.IsKeyDown(Keys.F))
             {
-                Pan(new Vector2(0, 0.0174532925f));
+                Pan(new Vector2(0, -0.0174532925f));
             }
         }
 
@@ -72,10 +72,9 @@ namespace MCFire.Modules.Test3D.Models
         public void Pan(Vector2 magnitude)
         {
             // TODO: clamp Y, because when you look to far down or up, X gets flipped.
-            var yaw = Quaternion.RotationAxis(Vector3.Down, magnitude.X);
+            var yaw = Quaternion.RotationAxis(Vector3.Up, magnitude.X);
             var pitch = Quaternion.RotationAxis(Vector3.Cross(Direction, Vector3.Up), magnitude.Y);
             var rotation = yaw * pitch;
-            rotation.Normalize();
             Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationQuaternion(rotation)).ToNormal();
         }
 
@@ -107,14 +106,14 @@ namespace MCFire.Modules.Test3D.Models
 
         public Matrix ViewMatrix
         {
-            get{ return Matrix.LookAtLH(Position, Direction + Position, Vector3.Up); }
+            get{ return Matrix.LookAtRH(Position, Direction + Position, Vector3.Up); }
         }
 
         public Matrix ProjectionMatrix
         {
             get
             {
-                return Matrix.PerspectiveFovLH(Fov,
+                return Matrix.PerspectiveFovRH(Fov,
                     (float)_graphicsDevice.BackBuffer.Width / _graphicsDevice.BackBuffer.Height, 0.1f, 1000.0f);
             }
         }
