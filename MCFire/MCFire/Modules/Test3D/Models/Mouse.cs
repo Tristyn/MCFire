@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SharpDX;
 using SharpDX.Toolkit.Input;
@@ -14,7 +13,7 @@ namespace MCFire.Modules.Test3D.Models
         {
             _mouse = mouse;
             mouse.Initialize();
-            State = _mouse.GetState();
+
             Left = new Key();
             Right = new Key();
             Middle = new Key();
@@ -22,22 +21,25 @@ namespace MCFire.Modules.Test3D.Models
 
         public void Update()
         {
+            System.Windows.Input.Mouse.Synchronize();
+            System.Windows.Input.Mouse.UpdateCursor();
+
             var state = _mouse.GetState();
             var pos = new Vector2(state.X, state.Y);
 
             Left.Update(state.Left, pos);
             Right.Update(state.Right, pos);
             Middle.Update(state.Middle, pos);
-            State = State;
         }
 
         /// <summary>
         /// Moves the mouse to a new position. This will not fire any events or changed their arguments.
         /// </summary>
-        /// <param name="position"></param>
-        public void Move(Vector2 position)
+        /// <param name="position">The new mouse position in desktop space.</param>
+        public void MoveSilently(Vector2 position)
         {
             SetCursorPos((int)position.X, (int)position.Y);
+
             Left.IgnoreNextMoveEvent();
             Right.IgnoreNextMoveEvent();
             Middle.IgnoreNextMoveEvent();
@@ -55,7 +57,6 @@ namespace MCFire.Modules.Test3D.Models
         public Key Left { get; private set; }
         public Key Right { get; private set; }
         public Key Middle { get; private set; }
-        public MouseState State { get; private set; }
     }
 
     public class Key

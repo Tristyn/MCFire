@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
 using MCFire.Modules.Test3D.Extensions;
@@ -27,7 +26,7 @@ namespace MCFire.Modules.Test3D.Models
         // rendering
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
-        SharpDXElement _sharpDx;
+        readonly SharpDXElement _sharpDx;
 
         // content
         SpriteFont _font;
@@ -37,6 +36,7 @@ namespace MCFire.Modules.Test3D.Models
         // input
         Mouse _mouse;
         KeyboardManager _keyboard;
+        bool _ignoreNextMoveEvent;
 
         // model
         Camera _camera;
@@ -84,26 +84,34 @@ namespace MCFire.Modules.Test3D.Models
 
                 // If mouse escapes the bounds of the SharpDxElement, loop it to the other side.
                 // ReSharper disable CompareOfFloatsByEqualityOperator
+                if (_ignoreNextMoveEvent)
+                {
+                    _ignoreNextMoveEvent = false;
+                    return;
+                }
                 if (e.Position.X == 1)
                 {
                     var newPos = _sharpDx.PointToScreen(new System.Windows.Point(1, e.Position.Y * _sharpDx.ActualHeight));
-                    _mouse.Move(newPos.ToVector2());
+                    _mouse.MoveSilently(newPos.ToVector2());
+                    _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.X == 0)
                 {
                     var newPos = _sharpDx.PointToScreen(new System.Windows.Point(_sharpDx.ActualWidth - 1, e.Position.Y * _sharpDx.ActualHeight));
-                    _mouse.Move(newPos.ToVector2());
+                    _mouse.MoveSilently(newPos.ToVector2());
+                    _ignoreNextMoveEvent = true;
                 }
-
                 if (e.Position.Y == 1)
                 {
                     var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, 1));
-                    _mouse.Move(newPos.ToVector2());
+                    _mouse.MoveSilently(newPos.ToVector2());
+                    _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.Y == 0)
                 {
                     var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, _sharpDx.ActualHeight - 1));
-                    _mouse.Move(newPos.ToVector2());
+                    _mouse.MoveSilently(newPos.ToVector2());
+                    _ignoreNextMoveEvent = true;
                 }
                 // ReSharper restore CompareOfFloatsByEqualityOperator
             };
@@ -247,9 +255,9 @@ namespace MCFire.Modules.Test3D.Models
         //static readonly Quaternion Right = Quaternion.RotationAxis(Vector3.ForwardLH, -MathUtil.PiOverTwo);
         //static readonly Quaternion Left = Quaternion.RotationAxis(Vector3.ForwardLH, MathUtil.PiOverTwo);
         static readonly Matrix Up = Matrix.Identity;
-        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0,0,1); // -z
+        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0,0,1);
         static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
-        static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0); // +z
+        static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
         static readonly Matrix Right = Matrix.RotationZ(-MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
         static readonly Matrix Left = Matrix.RotationZ(MathUtil.PiOverTwo) * Matrix.Translation(1, 0, 0);
 
@@ -260,8 +268,7 @@ namespace MCFire.Modules.Test3D.Models
             new Vector3(0,1,0),
             new Vector3(1,1,0),
             new Vector3(1,1,1),
-            new Vector3(0,1,0),
-            
+            new Vector3(0,1,0)
         };
 
         private static readonly Random Random = new Random();
@@ -272,11 +279,6 @@ namespace MCFire.Modules.Test3D.Models
             {
                 // rotate the vector to face the direction specified
                 var transformed = Vector3.TransformCoordinate(vertex, direction);
-                // if any values are negative, set them to zero,
-                // that way, in the big picture a 6 faced cube will be 1x1x1
-                //if (transformed.X < 0) transformed.X += 0;
-                //if (transformed.Y < 0) transformed.Y += 1;
-                //if (transformed.Z < 0) transformed.Z += 0;
 
                 // translate the vector into world space
                 transformed += location;

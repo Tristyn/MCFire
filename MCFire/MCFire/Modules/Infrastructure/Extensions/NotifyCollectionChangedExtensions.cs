@@ -154,7 +154,7 @@ namespace MCFire.Modules.Infrastructure.Extensions
 
     // This kind of synchrony is very hard to achieve, and if it were implemented would be riddled with many edge cases.
     // For example, what if SubModels.Insert(5, new model()) was called? SubModelAdded would fire and a new SubViewModel instance would be created, but the new SubViewModel is at the back of the list while the SubModel is somewhere in the middle. The index value was lost.
-    // Other calls to SubViewModels would require their own special events: AddRange, RemoveRange, Clear, Move and RemoveAt.
+    // Other calls to SubViewModels would require their own special events: AddRange, RemoveRange, Clear, MoveSilently and RemoveAt.
 
     // Wpf handles these issues with stride, leveraging ObservableCollection.CollectionChanged to synchronize view items to any ObservableCollection.
     // By changing the type of SubModels to an ObservableCollection, we can leverage CollectionChanged events too, but it requires excessive amounts of boilerplate code per implementation that cant be hidden well via inheritance.
@@ -200,8 +200,8 @@ namespace MCFire.Modules.Infrastructure.Extensions
     //                     select new SubViewModel { Model = item }
     //                     ).First();
     //                break;
-    //            case NotifyCollectionChangedAction.Move:
-    //                SubViewModels.Move(e.OldStartingIndex, e.NewStartingIndex);
+    //            case NotifyCollectionChangedAction.MoveSilently:
+    //                SubViewModels.MoveSilently(e.OldStartingIndex, e.NewStartingIndex);
     //                break;
     //            case NotifyCollectionChangedAction.Reset:
     //                SubViewModels.Clear();
