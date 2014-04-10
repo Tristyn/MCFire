@@ -1,5 +1,5 @@
 ﻿using MCFire.Modules.Files.ViewModels;
-using MCFire.Modules.Infrastructure.Framework;
+using MCFire.Modules.Infrastructure.Interfaces;
 
 namespace MCFire.Modules.Files.Commands
 {

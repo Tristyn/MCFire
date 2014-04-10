@@ -1,4 +1,4 @@
-﻿namespace MCFire.Modules.Infrastructure.Framework
+﻿namespace MCFire.Modules.Infrastructure.Interfaces
 {
     public interface ICommand
     {

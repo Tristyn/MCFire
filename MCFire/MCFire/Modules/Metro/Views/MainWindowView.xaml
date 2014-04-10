@@ -3,11 +3,14 @@
 					 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					 xmlns:mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 					 xmlns:cal="http://www.caliburnproject.org" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.Controls"
+                     xmlns:converters="clr-namespace:MCFire.Modules.Infrastructure.Converters"
+                     mc:Ignorable="d"
                      Title="{Binding Title}" Icon="{Binding Icon}" 
 					 Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
 					 WindowStartupLocation="CenterScreen"
-					 WindowState="{Binding WindowState}" d:DataContext="{d:DesignData IMainWindow}">
+					 WindowState="{Binding WindowState}" d:DataContext="{d:DesignData MainWindowViewModel}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,12 +20,17 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/accents/blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+                <ResourceDictionary Source="/MCFire;component/Themes/Generic.xaml" />
+                <ResourceDictionary>
+                    <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+                    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
     <mahapps:MetroWindow.WindowCommands>
-        <mahapps:WindowCommands>
+        <mahapps:WindowCommands IsEnabled="{Binding DialogueVisible, Converter={StaticResource InverseBooleanConverter}}">
             <ItemsControl ItemsSource="{Binding Commands}" Padding="0,5,0,0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -35,5 +43,35 @@
 
     <Grid>
         <ContentControl cal:View.Model="{Binding Shell}"/>
+
+        <Grid Visibility="{Binding DialogueVisible, Converter={StaticResource VisibilityConverter}}" x:Name="FadingOverlay" Background="#FF808080" Opacity="0">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0" To="0.5" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                        <Trigger Property="Visibility" Value="Hidden">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0.5" To="0" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        </Grid>
+        <controls:AnimatedContentControl cal:View.Model="{Binding Dialogue}" />
     </Grid>
 </mahapps:MetroWindow>

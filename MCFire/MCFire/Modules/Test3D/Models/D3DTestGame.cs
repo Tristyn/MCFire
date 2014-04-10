@@ -79,7 +79,7 @@ namespace MCFire.Modules.Test3D.Models
             {
                 // perspective drag
                 var change = (e.PrevPosition - e.Position) * new Vector2(GraphicsDevice.AspectRatio(), 1);
-                _camera.Pan(change);
+                _camera.Pan(change * 2);
                 Console.WriteLine(e.Position);
 
                 // If mouse escapes the bounds of the SharpDxElement, loop it to the other side.
@@ -91,25 +91,25 @@ namespace MCFire.Modules.Test3D.Models
                 }
                 if (e.Position.X == 1)
                 {
-                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(1, e.Position.Y * _sharpDx.ActualHeight));
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(0.01f, e.Position.Y * _sharpDx.ActualHeight));
                     _mouse.MoveSilently(newPos.ToVector2());
                     _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.X == 0)
                 {
-                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(_sharpDx.ActualWidth - 1, e.Position.Y * _sharpDx.ActualHeight));
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(_sharpDx.ActualWidth - 0.99f, e.Position.Y * _sharpDx.ActualHeight));
                     _mouse.MoveSilently(newPos.ToVector2());
                     _ignoreNextMoveEvent = true;
                 }
                 if (e.Position.Y == 1)
                 {
-                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, 1));
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, 0.01f));
                     _mouse.MoveSilently(newPos.ToVector2());
                     _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.Y == 0)
                 {
-                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, _sharpDx.ActualHeight - 1));
+                    var newPos = _sharpDx.PointToScreen(new System.Windows.Point(e.Position.X * _sharpDx.ActualWidth, _sharpDx.ActualHeight - 0.99f));
                     _mouse.MoveSilently(newPos.ToVector2());
                     _ignoreNextMoveEvent = true;
                 }

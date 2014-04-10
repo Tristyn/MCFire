@@ -132,12 +132,6 @@ namespace MCFire
                 }
             }
 
-            //var directoryCatalog = new DirectoryCatalog(@"./",);
-            //AssemblySource.Instance.AddRange(
-            //    directoryCatalog.Parts
-            //        .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly)
-            //        .Where(assembly => !AssemblySource.Instance.Contains(assembly)));
-
 
             // Prioritise the executable assembly. This allows the client project to override exports, including IShell.
             // The client project can override SelectAssemblies to choose which assemblies are prioritised.
