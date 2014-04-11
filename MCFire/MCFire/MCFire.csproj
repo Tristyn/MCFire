@@ -36,21 +36,33 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;FIRSTRUN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>MCFire.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'FirstRun|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\FirstRun\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FIRSTRUN</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro">
@@ -164,6 +176,9 @@
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\IModalOverlay.cs" />
+    <Compile Include="Modules\Infrastructure\Resources\Animations.xaml.cs">
+      <DependentUpon>Animations.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>
@@ -197,6 +212,10 @@
       <DependentUpon>OverlayTestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Startup\Module.cs" />
+    <Compile Include="Modules\Startup\ViewModels\ConfigureInstallationsViewModel.cs" />
+    <Compile Include="Modules\Startup\Views\ConfigureInstallationsView.xaml.cs">
+      <DependentUpon>ConfigureInstallationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\Test3D\Extensions\GraphicsDeviceExtensions.cs" />
     <Compile Include="Modules\Test3D\Extensions\PointExtensions.cs" />
     <Compile Include="Modules\Test3D\Extensions\Vector3Extensions.cs" />
@@ -278,6 +297,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Modules\Infrastructure\Resources\Animations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Modules\Infrastructure\Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -303,6 +326,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Modules\OverlayTest\Views\OverlayTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Startup\Views\ConfigureInstallationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,8 +13,8 @@ namespace MCFire.Modules.Metro.ViewModels
     [Export(typeof(IOverlayHost))]
     public class MainWindowViewModel : Gemini.Modules.MainWindow.ViewModels.MainWindowViewModel, IOverlayHost
     {
-        private BindableCollection<IWindowCommand> _commands;
-        private IModalOverlay _dialogue;
+        BindableCollection<IWindowCommand> _commands;
+        IModalOverlay _dialogue;
 
         public bool TrySetOverlay<TOverlay>() where TOverlay : IModalOverlay
         {

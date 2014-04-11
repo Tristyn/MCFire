@@ -44,7 +44,7 @@
     <Grid>
         <ContentControl cal:View.Model="{Binding Shell}"/>
 
-        <Grid Visibility="{Binding DialogueVisible, Converter={StaticResource VisibilityConverter}}" x:Name="FadingOverlay" Background="#FF808080" Opacity="0">
+        <Grid Visibility="{Binding DialogueVisible, Converter={StaticResource VisibilityConverter}}" x:Name="FadingOverlay" Background="#FF3C3C3C" Opacity="0">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
@@ -53,7 +53,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                         From="0" To="0.5" Duration="0:0:0.2"/>
+                                                         From="0" To="0.5" Duration="0:0:0.4"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -63,7 +63,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                         From="0.5" To="0" Duration="0:0:0.2"/>
+                                                         From="0.5" To="0" Duration="0:0:0.4"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>

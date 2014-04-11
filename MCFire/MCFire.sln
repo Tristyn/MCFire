@@ -10,15 +10,20 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		FirstRun|Any CPU = FirstRun|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.FirstRun|Any CPU.ActiveCfg = FirstRun|Any CPU
+		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.FirstRun|Any CPU.Build.0 = FirstRun|Any CPU
 		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.FirstRun|Any CPU.ActiveCfg = Debug|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.FirstRun|Any CPU.Build.0 = Debug|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
