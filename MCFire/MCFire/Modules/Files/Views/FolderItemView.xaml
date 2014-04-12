@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MCFire;component/Modules/Infrastructure/Resources/Icons.xaml" />
+                <ResourceDictionary Source="/Resources\Icons.xaml" />
                 
                 <ResourceDictionary>
                     <conv:BoolToVisibilityConverter x:Key="VisibilityConverter" />

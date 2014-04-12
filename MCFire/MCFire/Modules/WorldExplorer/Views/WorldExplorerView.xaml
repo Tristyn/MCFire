@@ -11,7 +11,7 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData WorldExplorerView}">
     <UserControl.Resources>
         <!--Tree View Button-->
-        <ResourceDictionary Source="/MCFire;component/Modules/Infrastructure/Resources/TreeView.xaml" />
+        <ResourceDictionary Source="/Resources\TreeView.xaml" />
     </UserControl.Resources>
 
     <DockPanel>

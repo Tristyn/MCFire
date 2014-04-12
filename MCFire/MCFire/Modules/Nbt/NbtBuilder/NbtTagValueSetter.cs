@@ -53,7 +53,7 @@ namespace MCFire.Modules.Nbt.NbtBuilder
             // You could potentially throw an exception here.
 
             //Console.WriteLine("Unable to set property {0} on instance of type {1} using {2} due to incompatible types. Assignable types are {3} and {4}.",
-            //    Info.Name, target.GetType(), value.TagType, value.GetType().Name, objectValue.GetType().Name);
+            //    Info.Name, target.GetMode(), value.TagType, value.GetMode().Name, objectValue.GetMode().Name);
 
             return false;
         }

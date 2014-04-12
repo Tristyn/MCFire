@@ -38,5 +38,14 @@ namespace MCFire.Modules.WorldExplorer.Models
             }
             protected set { _worlds = value; }
         }
+
+        public override string Title
+        {
+            get
+            {
+                var title= base.Title;
+                return title == ".minecraft" ? "Mine Craft" : title;
+            }
+        }
     }
 }

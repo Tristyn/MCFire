@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Button x:Name="AddFolder" Visibility="{Binding Visible}">
         <Button.Resources>
-            <ResourceDictionary Source="/MCFire;component/Modules/Infrastructure/Resources/Icons.xaml"></ResourceDictionary>
+            <ResourceDictionary Source="/Resources\Icons.xaml"></ResourceDictionary>
         </Button.Resources>
         <Path Stretch="Uniform" Data="{StaticResource IconPlus}"/>
     </Button>

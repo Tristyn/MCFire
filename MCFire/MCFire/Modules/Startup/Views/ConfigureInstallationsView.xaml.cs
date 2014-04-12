@@ -1,28 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Media.Animation;
 
 namespace MCFire.Modules.Startup.Views
 {
     /// <summary>
     /// Interaction logic for ConfigureInstallationsView.xaml
     /// </summary>
-    public partial class ConfigureInstallationsView : UserControl
+    public partial class ConfigureInstallationsView
     {
         public ConfigureInstallationsView()
         {
+            Loaded += LoadAnimations;
             InitializeComponent();
+        }
+
+        async void LoadAnimations(object sender, RoutedEventArgs e)
+        {
+            var anim = FindResource(@"AnimateMargin50DownTo0") as Storyboard;
+            if (anim == null) return;
+
+            // set all elements to be invisible
+            foreach (var element in LowerPanel.Children.OfType<FrameworkElement>())
+            {
+                element.Margin = new Thickness(0,50,0,0);
+            }
+
+            // play cascading animation
+            foreach (var element in LowerPanel.Children.OfType<FrameworkElement>())
+            {
+                await Task.Delay(250);
+                element.BeginStoryboard(anim);
+            }
         }
     }
 }

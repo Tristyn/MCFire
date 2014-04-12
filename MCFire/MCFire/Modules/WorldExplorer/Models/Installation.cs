@@ -8,12 +8,12 @@ namespace MCFire.Modules.WorldExplorer.Models
 {
     public abstract class Installation : WorldBrowserItem
     {
-        protected readonly string Path;
+        readonly string _path;
         protected readonly DirectoryInfo Directory;
 
         protected Installation([NotNull] string path)
         {
-            Path = path;
+            _path = path;
             Directory = new DirectoryInfo(path);
         }
 
@@ -47,6 +47,11 @@ namespace MCFire.Modules.WorldExplorer.Models
         public override string Title
         {
             get { return Directory.Name; }
+        }
+
+        public string Path
+        {
+            get { return _path; }
         }
     }
 

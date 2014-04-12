@@ -41,8 +41,8 @@ namespace MCFire.Modules.Files.Services
             //        }
 
             //        // resolve extension by hierarchy
-            //        var setType = _extensionDictionary[extension].GetType();
-            //        var currentType = format.GetType();
+            //        var setType = _extensionDictionary[extension].GetMode();
+            //        var currentType = format.GetMode();
 
             //        // if current format doesn't derive from the set format, continue
             //        if (!setType.IsAssignableFrom(currentType)) continue;
