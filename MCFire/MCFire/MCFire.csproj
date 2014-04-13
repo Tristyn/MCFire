@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>0.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -143,6 +143,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="MCFireBootstrapper.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Modules\Infrastructure\Controls\AnimatedContentControl.cs" />
     <Compile Include="Modules\Infrastructure\Controls\ExtendedTreeView.cs" />
     <Compile Include="Modules\Infrastructure\Converters\GameTypeToImageUriConverter.cs" />
+    <Compile Include="Modules\Infrastructure\Converters\GameTypeToNameConverter.cs" />
     <Compile Include="Modules\Infrastructure\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Modules\Infrastructure\Enums\DimensionType.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
@@ -420,6 +422,7 @@
     <Resource Include="Resources\UnknownBlock.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Barrier.png" />
     <Content Include="Resources\EnchantmentTable.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

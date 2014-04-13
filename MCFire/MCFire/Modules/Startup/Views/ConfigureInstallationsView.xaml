@@ -12,10 +12,12 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Icons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
                 <ResourceDictionary>
                     <Brush x:Key="GrayForeground">#FFEEEEEE</Brush>
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
-                    <converters:GameTypeToImageUriConverter x:Key="GameTypeToImageConverter"></converters:GameTypeToImageUriConverter>
+                    <converters:GameTypeToImageUriConverter x:Key="GameTypeToImageConverter" />
+                    <converters:GameTypeToNameConverter x:Key="GameTypeToNameConverter" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -68,7 +70,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="viewModels:WorldState">
                                     <StackPanel Orientation="Horizontal" Margin="5">
-                                        <Image Width="30" Stretch="Uniform" VerticalAlignment="Center">
+                                        <Image Width="30" Stretch="Uniform" VerticalAlignment="Center" ToolTip="{Binding GameType, Converter={StaticResource GameTypeToNameConverter}}">
                                             <Image.Source>
                                                 <BitmapImage UriSource="{Binding GameType, Converter={StaticResource GameTypeToImageConverter}}"></BitmapImage>
                                             </Image.Source>
@@ -81,11 +83,6 @@
                             <!--Animation-->
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="LayoutTransform">
-                                        <Setter.Value>
-                                            <ScaleTransform x:Name="transform" />
-                                        </Setter.Value>
-                                    </Setter>
                                     <Style.Triggers>
                                         <EventTrigger RoutedEvent="Loaded">
                                             <EventTrigger.Actions>
@@ -109,7 +106,67 @@
                 </StackPanel>
 
             </Grid>
-            <Grid Visibility="{Binding MinecraftUnknown, Converter={StaticResource VisibilityConverter}}"></Grid>
+            <!--Minecraft Unknown-->
+            <Grid Visibility="{Binding MinecraftUnknown, Converter={StaticResource VisibilityConverter}}">
+                <!--As soon as a install is added, it switches to the Minecraft Found panel-->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="30">
+                    <Image Stretch="Uniform" Height="80">
+                        <Image.Source>
+                            <BitmapImage UriSource="/MCFire;component/Resources/Barrier.png"/>
+                        </Image.Source>
+                    </Image>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <!--Header-->
+                        <DockPanel Grid.Row="0" Margin="0,25,0,0">
+                            <TextBlock Text="Minecraft is missing!" VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18" Margin="5" FontWeight="Bold"></TextBlock>
+                        </DockPanel>
+
+                        <!--Commands-->
+                        <ListBox Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" Margin="15,0,0,0" Background="{x:Null}">
+
+                            <!--Animation-->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <EventTrigger.Actions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:.3" />
+                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin" From="50,2,2,2" To="2" Duration="0:0:.8">
+                                                            <ThicknessAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseOut" />
+                                                            </ThicknessAnimation.EasingFunction>
+                                                        </ThicknessAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger.Actions>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            
+                            <!--Find Installation-->
+                            <Button Content="Download Minecraft" x:Name="DownloadMinecraft"
+                                    ToolTip="Open a browser window to the Minecraft homepage."/>
+                            <Button Content="Find Minecraft" x:Name="FindMainInstall"
+                                    ToolTip="Browse for the folder where minecraft has been installed."/>
+                            <Button Content="Use Sample Map" x:Name="UseSampleMap"
+                                    ToolTip="Use the sample map the is built into MC Fire. This features has not been implemented." IsEnabled="False"/>
+                            <Button Content="Continue Anyway" x:Name="ContinueNoInstall" 
+                                    ToolTip="Use MC Fire without setting any installations, the program will be useless!"/>
+                            
+                        </ListBox>
+                    </Grid>
+                </StackPanel>
+
+            </Grid>
+            <!--Fake Busy-->
             <xctk:BusyIndicator IsBusy="{Binding Loading}" BusyContent="Detecting Mine Craft Installation" x:Name="BusyIndicator" />
         </Grid>
 
@@ -117,14 +174,14 @@
         <Border Grid.Row="2" Background="{DynamicResource GrayForeground}">
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" CanHorizontallyScroll="True" FlowDirection="RightToLeft" x:Name="LowerPanel">
                 <Button x:Name="Continue" Width="50" Height="50" RenderTransformOrigin="0.5,0.5" Background="Transparent">
-                    <Path Data="{StaticResource IconArrowRight}" Fill="Black" />
+                    <Path Data="{StaticResource IconArrowRight}" Fill="{Binding Foreground, ElementName=Continue}"/>
                     <Button.RenderTransform>
                         <ScaleTransform ScaleX="-1"></ScaleTransform>
                     </Button.RenderTransform>
                 </Button>
-                <Button x:Name="Close" Width="50" Height="50" Background="Transparent">
+                <!--<Button x:Name="Close" Width="50" Height="50" Background="Transparent">
                     <Path Data="{StaticResource IconClose}" Fill="Black" />
-                </Button>
+                </Button>-->
             </StackPanel>
         </Border>
     </Grid>

@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.Diagnostics;
 using System.IO;
 using System.Security;
-using System.Security.Principal;
 using System.Windows;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Gemini.Framework.Services;
+using MCFire.Bootstrapper;
 
 namespace MCFire
 {
@@ -110,6 +110,11 @@ namespace MCFire
         {
             if (Execute.InDesignMode) return;
 
+            // only output errors if in release
+#if !DEBUG
+            Dispatcher.CurrentDispatcher.UnhandledException += UnhandleException;
+#endif
+
             var ignoredAssembies = new[]
             {
                 "Assimp32.dll",
@@ -158,6 +163,22 @@ namespace MCFire
             batch.AddExportedValue(mainCatalog);
 
             Container.Compose(batch);
+        }
+
+        static void UnhandleException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            if (e.Exception == null)
+            {
+                Application.Current.Shutdown();
+                return;
+            }
+            var errorMessage = string.Format("An application error occurred. We recommend that you save your work and restart the application. \n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close).\n\nError Details:\n\n{0}", ExceptionHelper.WriteExceptionDetails(e.Exception));
+            //insert code to log exception here
+            if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
+            {
+                Application.Current.Shutdown();
+            }
+            e.Handled = true;
         }
 
         protected virtual void BindServices(CompositionBatch batch)
