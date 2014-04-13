@@ -31,7 +31,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MCFire\MCFire.csproj">
 			<Name>MCFire</Name>
-			<Project>{E973C683-9B54-4534-B22A-1ABCA6C1D254}</Project>
+			<Project>{28074F5E-4369-4210-8008-F1CF2D3A2CC6}</Project>
 		</ProjectReference>
 	</ItemGroup>
 </Project>

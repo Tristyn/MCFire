@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -58,7 +57,7 @@ namespace MCFire.Modules.Files.ViewModels
                 _folderService.GetOrCreateFolder(dialog.SelectedPath);
         }
 
-        public async Task OnDoubleClick()
+        public void OnDoubleClick()
         {
             // expands the tree view automatically
             if (SelectedItem == null) return;

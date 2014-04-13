@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
+using System.Diagnostics;
 using System.IO;
 using System.Security;
+using System.Security.Principal;
 using System.Windows;
 using Caliburn.Micro;
 using System;
@@ -22,7 +24,7 @@ namespace MCFire
 
         protected override IEnumerable<Assembly> SelectAssemblies()
         {
-            if(Execute.InDesignMode) return new List<Assembly>();
+            if (Execute.InDesignMode) return new List<Assembly>();
 
             // get the application assembly, and the Metro assembly.
             var assemblies = new List<Assembly>();
@@ -120,7 +122,7 @@ namespace MCFire
             {
                 try
                 {
-                    var assemblyCatalog=new AssemblyCatalog(Assembly.LoadFrom(fileInfo.Name));
+                    var assemblyCatalog = new AssemblyCatalog(Assembly.LoadFrom(fileInfo.Name));
                     var parts = assemblyCatalog.Parts
                         .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly).Where(assembly => !AssemblySource.Instance.Contains(assembly));
                     AssemblySource.Instance.AddRange(parts);

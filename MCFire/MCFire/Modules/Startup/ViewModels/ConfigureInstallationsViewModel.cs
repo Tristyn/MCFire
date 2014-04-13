@@ -4,7 +4,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Caliburn.Micro;
+using JetBrains.Annotations;
 using MCFire.Modules.Infrastructure.Interfaces;
 using MCFire.Modules.WorldExplorer.Models;
 using MCFire.Modules.WorldExplorer.Services;
@@ -38,28 +40,38 @@ namespace MCFire.Modules.Startup.ViewModels
         public async void Loaded()
         {
             await Task.Delay(1500);
-
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft").ToLower();
-
-            // if .minecraft has already been added
-            var minecraftInstall = _explorerService.Installations.FirstOrDefault(install => install.Path.ToLower() == path);
-            if (minecraftInstall != null)
+            try
             {
-                Install = minecraftInstall;
-                return;
-            }
+                var path =
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft")
+                        .ToLower();
 
-            // if minecraft exists on disk.
-            var newInstall = Installation.New(path);
-            if (newInstall != null)
+                // if .minecraft has already been added
+                var minecraftInstall =
+                    _explorerService.Installations.FirstOrDefault(install => install.Path.ToLower() == path);
+                if (minecraftInstall != null)
+                {
+                    Install = minecraftInstall;
+                    return;
+                }
+
+                // if minecraft exists on disk.
+                var newInstall = Installation.New(path);
+                if (newInstall != null)
+                {
+                    _explorerService.Installations.Add(newInstall);
+                    Install = newInstall;
+                }
+
+                MinecraftExists = false;
+            }
+            catch (Exception ex)
             {
-                _explorerService.Installations.Add(newInstall);
-                Install = newInstall;
+                MessageBox.Show(ex.Message);
             }
-
-            MinecraftExists = false;
         }
 
+        [CanBeNull]
         public Installation Install
         {
             get { return _install; }
@@ -68,8 +80,9 @@ namespace MCFire.Modules.Startup.ViewModels
                 _install = value;
                 MinecraftExists = _install != null;
                 MinecraftUnknown = _install == null;
-                Worlds = from world in value.Worlds
-                         select new WorldState(world.Level.GameType, world.Level.LevelName);
+                if (value != null)
+                    Worlds = from world in value.Worlds
+                        select new WorldState(world.Level.GameType, world.Level.LevelName);
                 Loading = false;
                 NotifyOfPropertyChange(() => Install);
             }
@@ -108,6 +121,7 @@ namespace MCFire.Modules.Startup.ViewModels
             }
         }
 
+        [CanBeNull]
         public IEnumerable<WorldState> Worlds
         {
             get { return _worlds; }
@@ -115,7 +129,8 @@ namespace MCFire.Modules.Startup.ViewModels
             {
                 if (Equals(value, _worlds)) return;
                 _worlds = value;
-                WorldCount = _worlds.Count();
+
+                WorldCount = value != null ? value.Count() : 0;
                 NotifyOfPropertyChange(() => Worlds);
             }
         }
