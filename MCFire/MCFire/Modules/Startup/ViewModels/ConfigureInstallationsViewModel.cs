@@ -24,6 +24,7 @@ namespace MCFire.Modules.Startup.ViewModels
     {
         [Import]
         WorldExplorerService _explorerService;
+        
         Installation _install;
         IEnumerable<WorldState> _worlds;
         Timer _refreshTimer;
@@ -61,7 +62,7 @@ namespace MCFire.Modules.Startup.ViewModels
         {
             var dialog = new FolderBrowserDialog
             {
-                Description = "Select a folder to be added to the File Explorer.",
+                Description = "Select the folder that Minecraft is installed in.",
                 SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             };
             if (dialog.ShowDialog() != DialogResult.OK)
@@ -82,6 +83,16 @@ namespace MCFire.Modules.Startup.ViewModels
         public void UseSampleMap()
         {
             throw new NotImplementedException();
+        }
+
+        public void AddGame()
+        {
+            
+        }
+
+        public void AddServer()
+        {
+            
         }
 
         public async void Loaded()
@@ -138,6 +149,7 @@ namespace MCFire.Modules.Startup.ViewModels
                 Loading = false;
                 NotifyOfPropertyChange(() => Install);
                 NotifyOfPropertyChange(() => CanClose);
+                NotifyOfPropertyChange(() => CanContinue);
             }
         }
 

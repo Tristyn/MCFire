@@ -9,14 +9,16 @@ namespace MCFire.Modules.Infrastructure.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null) 
+                return @"pack://application:,,,/MCFire;component/Resources/UnknownBlock.png"; 
             switch ((GameType)value)
             {
                 case GameType.SURVIVAL:
-                    return @"/MCFire;component/Resources/CraftingTable.png";
+                    return @"pack://application:,,,/MCFire;component/Resources/CraftingTable.png";
                 case GameType.CREATIVE:
-                    return @"/MCFire;component/Resources/CommandBlock.png";
+                    return @"pack://application:,,,/MCFire;component/Resources/CommandBlock.png";
                 default:
-                    return @"/MCFire;component/Resources/UnknownBlock.png";
+                    return @"pack://application:,,,/MCFire;component/Resources/UnknownBlock.png";
             }
         }
 

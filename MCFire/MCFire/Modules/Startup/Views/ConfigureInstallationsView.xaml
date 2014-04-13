@@ -18,6 +18,7 @@
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
                     <converters:GameTypeToImageUriConverter x:Key="GameTypeToImageConverter" />
                     <converters:GameTypeToNameConverter x:Key="GameTypeToNameConverter" />
+                    <converters:InstallationToImageUriConverter x:Key="InstallationToImageUriConverter" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -38,73 +39,78 @@
             <TextBlock Text="Welcome To MC Fire!" ScrollViewer.VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontFamily="/MCFire;component/Resources/#Novecento sans wide UltraLight"></TextBlock>
         </Border>
 
-        <!--Worlds-->
+        <!--Installations-->
         <Grid Grid.Row="1">
 
             <!--Minecraft Found-->
-            <Grid Visibility="{Binding MinecraftExists, Converter={StaticResource VisibilityConverter}}" Background="#FFCFCFCF">
+            <Grid Visibility="{Binding MinecraftExists, Converter={StaticResource VisibilityConverter}}" Background="#FFBBBBBB">
+                <!--Content-->
+                <DockPanel Dock="Top" LastChildFill="False">
+                    
+                    <!--This is 1 installation-->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="30" DockPanel.Dock="Top">
+                        <Image Stretch="Uniform" Height="50" Source="{Binding Install, Converter={StaticResource InstallationToImageUriConverter}}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="30">
-                    <Image Stretch="Uniform" Height="80">
-                        <Image.Source>
-                            <BitmapImage UriSource="/MCFire;component/Resources/Dirt.png"/>
-                        </Image.Source>
-                    </Image>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                            <!--Header-->
+                            <DockPanel Grid.Row="0" Margin="0,75,0,0">
+                                <TextBlock Text="{Binding Install.Title}" VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18" Margin="5,0" FontWeight="Bold"></TextBlock>
+                                <TextBlock Text="{Binding WorldCount, StringFormat={}{0} Worlds}" VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="12" FontWeight="Black" Foreground="Gray" />
+                            </DockPanel>
 
-                        <!--Header-->
-                        <DockPanel Grid.Row="0" Margin="0,25,0,0">
-                            <TextBlock Text="{Binding Install.Title}" VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18" Margin="5" FontWeight="Bold"></TextBlock>
-                            <TextBlock Text="{Binding WorldCount, StringFormat={}{0} Worlds}" VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="12" FontWeight="Black" Foreground="Gray" />
-                        </DockPanel>
+                            <!--Worlds-->
+                            <ListBox Grid.Row="1" VerticalAlignment="Top"
+                                 ItemsSource="{Binding Worlds}" IsHitTestVisible="False" Background="{x:Null}" DockPanel.Dock="Top">
 
-                        <!--Worlds-->
-                        <ListBox Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,0,0,0"
-                                 ItemsSource="{Binding Worlds}" IsHitTestVisible="False" Background="{x:Null}">
+                                <!--Template-->
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="viewModels:WorldState">
+                                        <StackPanel Orientation="Horizontal" Margin="2">
+                                            <Image Source="{Binding GameType, Converter={StaticResource GameTypeToImageConverter}}" Width="30" Stretch="Uniform" VerticalAlignment="Center" ToolTip="{Binding GameType, Converter={StaticResource GameTypeToNameConverter}}" ToolTipService.ShowOnDisabled="True"/>
+                                            <TextBlock Text="{Binding Title, StringFormat=- {0}}" FontSize="16" FontFamily="Segoe UI Semibold" Margin="2,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
 
-                            <!--Template-->
-                            <ListBox.ItemTemplate>
-                                <DataTemplate DataType="viewModels:WorldState">
-                                    <StackPanel Orientation="Horizontal" Margin="5">
-                                        <Image Width="30" Stretch="Uniform" VerticalAlignment="Center" ToolTip="{Binding GameType, Converter={StaticResource GameTypeToNameConverter}}">
-                                            <Image.Source>
-                                                <BitmapImage UriSource="{Binding GameType, Converter={StaticResource GameTypeToImageConverter}}"></BitmapImage>
-                                            </Image.Source>
-                                        </Image>
-                                        <TextBlock Text="{Binding Title, StringFormat=- {0}}" FontSize="16" FontFamily="Segoe UI Semibold" Margin="2,0,0,0" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
+                                <!--Animation-->
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Style.Triggers>
+                                            <EventTrigger RoutedEvent="Loaded">
+                                                <EventTrigger.Actions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:.3" />
+                                                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="50,0,0,0" To="0" Duration="0:0:.8">
+                                                                <ThicknessAnimation.EasingFunction>
+                                                                    <CubicEase EasingMode="EaseOut" />
+                                                                </ThicknessAnimation.EasingFunction>
+                                                            </ThicknessAnimation>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger.Actions>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </Grid>
+                    </StackPanel>
 
-                            <!--Animation-->
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Style.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <EventTrigger.Actions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:.3" />
-                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin" From="50,0,0,0" To="0" Duration="0:0:.8">
-                                                            <ThicknessAnimation.EasingFunction>
-                                                                <CubicEase EasingMode="EaseOut" />
-                                                            </ThicknessAnimation.EasingFunction>
-                                                        </ThicknessAnimation>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger.Actions>
-                                        </EventTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                        </ListBox>
-                    </Grid>
-                </StackPanel>
+                    <!--World Actions-->
+                    <TextBlock Text="MC Fire can edit from multiple minecraft installations at once." DockPanel.Dock="Top" HorizontalAlignment="Center"/>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Button Content="Add a Minecraft installation" x:Name="AddGame" IsEnabled="False" Margin="3,0"
+                                ToolTip="Browse for a folder where a Minecraft installation is." />
+                        <Button Content="Add a Server installation" x:Name="AddServer" IsEnabled="False" Margin="3,0"
+                                ToolTip="Browse for a folder where a Minecraft server is."/>
+                    </StackPanel>
 
+                </DockPanel>
             </Grid>
             <!--Minecraft Unknown-->
             <Grid Visibility="{Binding MinecraftUnknown, Converter={StaticResource VisibilityConverter}}">
@@ -150,7 +156,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </ListBox.ItemContainerStyle>
-                            
+
                             <!--Find Installation-->
                             <Button Content="Download Minecraft" x:Name="DownloadMinecraft"
                                     ToolTip="Open a browser window to the Minecraft homepage."/>
@@ -160,7 +166,7 @@
                                     ToolTip="Use the sample map the is built into MC Fire. This features has not been implemented." IsEnabled="False"/>
                             <Button Content="Continue Anyway" x:Name="ContinueNoInstall" 
                                     ToolTip="Use MC Fire without setting any installations, the program will be useless!"/>
-                            
+
                         </ListBox>
                     </Grid>
                 </StackPanel>

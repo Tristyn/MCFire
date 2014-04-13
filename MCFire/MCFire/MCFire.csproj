@@ -190,6 +190,7 @@
     <Compile Include="Modules\Infrastructure\Controls\ExtendedTreeView.cs" />
     <Compile Include="Modules\Infrastructure\Converters\GameTypeToImageUriConverter.cs" />
     <Compile Include="Modules\Infrastructure\Converters\GameTypeToNameConverter.cs" />
+    <Compile Include="Modules\Infrastructure\Converters\InstallationToImageUriConverter.cs" />
     <Compile Include="Modules\Infrastructure\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Modules\Infrastructure\Enums\DimensionType.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
@@ -422,6 +423,8 @@
     <Resource Include="Resources\UnknownBlock.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Egg.png" />
+    <Resource Include="Resources\Grass.png" />
     <Resource Include="Resources\Barrier.png" />
     <Content Include="Resources\EnchantmentTable.ico" />
   </ItemGroup>
