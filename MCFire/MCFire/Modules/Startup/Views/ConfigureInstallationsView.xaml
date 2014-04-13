@@ -40,10 +40,10 @@
         </Border>
 
         <!--Installations-->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="#FFBBBBBB">
 
             <!--Minecraft Found-->
-            <Grid Visibility="{Binding MinecraftExists, Converter={StaticResource VisibilityConverter}}" Background="#FFBBBBBB">
+            <Grid Visibility="{Binding MinecraftExists, Converter={StaticResource VisibilityConverter}}">
                 <!--Content-->
                 <DockPanel Dock="Top" LastChildFill="False">
                     
