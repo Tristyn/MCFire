@@ -243,6 +243,8 @@
     <Compile Include="Modules\Test3D\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Test3D\Models\D3DTestGame.cs" />
     <Compile Include="Modules\Test3D\Models\KeyEventArgs.cs" />
+    <Compile Include="Modules\Test3D\Models\ModelMesh.cs" />
+    <Compile Include="Modules\Test3D\Models\ModelMeshPart.cs" />
     <Compile Include="Modules\Test3D\Models\Mouse.cs" />
     <Compile Include="Modules\Test3D\Module.cs" />
     <Compile Include="Modules\Test3D\ViewModels\D3DViewModel.cs" />
@@ -426,8 +428,10 @@
     <Resource Include="Resources\Egg.png" />
     <Resource Include="Resources\Grass.png" />
     <Resource Include="Resources\Barrier.png" />
+    <ToolkitFxc Include="Modules\Test3D\Content\VertexLit.fx" />
     <Content Include="Resources\EnchantmentTable.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SharpDXSdkDir)\SharpDX.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

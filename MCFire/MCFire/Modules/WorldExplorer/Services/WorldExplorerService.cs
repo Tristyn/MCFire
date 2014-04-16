@@ -15,7 +15,7 @@ namespace MCFire.Modules.WorldExplorer.Services
         {
 #if DEBUG && !FIRSTRUN
             // if debug, add game installation automatically
-            if(Installations.Count==0)
+            if(Installations.Count!=0)
                 return;
             var path =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft")

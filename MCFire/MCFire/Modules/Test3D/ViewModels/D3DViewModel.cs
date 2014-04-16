@@ -9,14 +9,17 @@ namespace MCFire.Modules.Test3D.ViewModels
     [Export]
     public class D3DViewModel : SharpDxViewModelBase
     {
+        D3DTestGame _game;
         protected override void OnViewLoaded(object view)
         {
             base.OnViewLoaded(view);
-
+            
             var d3DView = view as D3DView;
             if (d3DView == null)
                 return;
-            RunGame(new D3DTestGame(d3DView.SharpDx), d3DView.SharpDx);
+
+            _game= new D3DTestGame(d3DView.SharpDx);
+            RunGame(_game, d3DView.SharpDx);
         }
     }
 }

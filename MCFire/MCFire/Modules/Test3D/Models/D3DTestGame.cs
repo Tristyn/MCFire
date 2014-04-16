@@ -42,6 +42,8 @@ namespace MCFire.Modules.Test3D.Models
         Camera _camera;
         Buffer<VertexPositionColor> _chunkVertices;
         VertexInputLayout _chunkInputLayout;
+        ModelMesh _chunkMesh;
+        Effect _chunkEffect;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -123,6 +125,7 @@ namespace MCFire.Modules.Test3D.Models
 
             // content
             _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
+
             _vertices = ToDisposeContent(Buffer.Vertex.New(
                 GraphicsDevice,
                 new[]
@@ -166,12 +169,18 @@ namespace MCFire.Modules.Test3D.Models
                     }));
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
 
-            var worlds = IoC.Get<WorldExplorerService>().Installations.First().Worlds;
-            var createThings = from world in worlds
-                               let lastIndex = world.Path.LastIndexOf("\\", StringComparison.Ordinal)
-                               where lastIndex != -1 && world.Path.Substring(lastIndex + 1) == "create things"
-                               select world;
-            var chunkBlocks = createThings.First().GetChunkManager().GetChunk(0, 0).Blocks;
+            var install = IoC.Get<WorldExplorerService>().Installations.FirstOrDefault();
+            if(install==null || !install.Worlds.Any())
+                throw new Exception("Add an installation and a world to MC Fire before using the 3D test. The (0,0) coordinate must be generated for that world.");
+            var worlds = install.Worlds;
+
+            //var createThings = from world in worlds
+            //                   let lastIndex = world.Path.LastIndexOf("\\", StringComparison.Ordinal)
+            //                   where lastIndex != -1 && world.Path.Substring(lastIndex + 1) == "create things"
+            //                   select world;
+            var createThings = worlds.First();
+
+            var chunkBlocks = createThings.GetChunkManager().GetChunk(0, 0).Blocks;
 
             var chunkVerticesList = new List<VertexPositionColor>(500);
             for (var y = 0; y < chunkBlocks.YDim; y++)
@@ -192,7 +201,7 @@ namespace MCFire.Modules.Test3D.Models
                             var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
                             if (xPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x+1, y, z), chunkBlocks.GetSkyLight(x+1, y , z)));
                             }
                         }
 
@@ -201,7 +210,7 @@ namespace MCFire.Modules.Test3D.Models
                             var yPlusBlock = chunkBlocks.GetBlock(x, y + 1, z);
                             if (yPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y+1, z), chunkBlocks.GetSkyLight(x, y +1, z)));
                             }
                         }
 
@@ -210,7 +219,7 @@ namespace MCFire.Modules.Test3D.Models
                             var zPlubBlock = chunkBlocks.GetBlock(x, y, z + 1);
                             if (zPlubBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y , z+1), chunkBlocks.GetSkyLight(x, y , z+1)));
                             }
                         }
 
@@ -219,7 +228,7 @@ namespace MCFire.Modules.Test3D.Models
                             var xMinusBlock = chunkBlocks.GetBlock(x - 1, y, z);
                             if (xMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x-1, y , z), chunkBlocks.GetSkyLight(x-1, y , z)));
                             }
                         }
 
@@ -228,7 +237,7 @@ namespace MCFire.Modules.Test3D.Models
                             var yMinusBlock = chunkBlocks.GetBlock(x, y - 1, z);
                             if (yMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y-1, z), chunkBlocks.GetSkyLight(x, y - 1, z)));
                             }
                         }
 
@@ -237,13 +246,25 @@ namespace MCFire.Modules.Test3D.Models
                             var zMinusBlock = chunkBlocks.GetBlock(x, y, z - 1);
                             if (zMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList);
+                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y, z-1), chunkBlocks.GetSkyLight(x, y , z-1)));
                             }
                         }
                     }
 
+            // create chunk mesh
+            _chunkEffect = Content.Load<Effect>(@"VertexLit");
+
             _chunkVertices = ToDisposeContent(Buffer.Vertex.New(GraphicsDevice, chunkVerticesList.ToArray()));
             _chunkInputLayout = VertexInputLayout.FromBuffer(0, _chunkVertices);
+
+            _chunkMesh = new ModelMesh();
+            _chunkMesh.MeshParts.Add(
+                new ModelMeshPart
+                {
+                    Effect = _basicEffect,
+                    VertexBuffer = _chunkVertices,
+                    VertexInputLayout = _chunkInputLayout
+                });
 
             base.LoadContent();
         }
@@ -255,7 +276,7 @@ namespace MCFire.Modules.Test3D.Models
         //static readonly Quaternion Right = Quaternion.RotationAxis(Vector3.ForwardLH, -MathUtil.PiOverTwo);
         //static readonly Quaternion Left = Quaternion.RotationAxis(Vector3.ForwardLH, MathUtil.PiOverTwo);
         static readonly Matrix Up = Matrix.Identity;
-        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0,0,1);
+        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0, 0, 1);
         static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
         static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
         static readonly Matrix Right = Matrix.RotationZ(-MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
@@ -273,8 +294,11 @@ namespace MCFire.Modules.Test3D.Models
 
         private static readonly Random Random = new Random();
 
-        void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh)
+        static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)
         {
+            // 0-15 to 0-255
+            luminance *= 16;
+
             foreach (var vertex in QuadVertices)
             {
                 // rotate the vector to face the direction specified
@@ -284,7 +308,8 @@ namespace MCFire.Modules.Test3D.Models
                 transformed += location;
 
                 // add the vector to the list as a vertex
-                triangleMesh.Add(new VertexPositionColor(transformed, new Color(Random.Next())));
+                triangleMesh.Add(new VertexPositionColor(transformed, new Color(luminance, luminance, luminance, 255)));
+                //triangleMesh.Add(new VertexPositionColor(transformed, new Color(luminance)));
             }
         }
 
@@ -312,11 +337,15 @@ namespace MCFire.Modules.Test3D.Models
             _basicEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
 
-            // Draw chunks
-            GraphicsDevice.SetVertexBuffer(_chunkVertices);
-            GraphicsDevice.SetVertexInputLayout(_chunkInputLayout);
-            _basicEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Draw(PrimitiveType.TriangleList, _chunkVertices.ElementCount);
+            // Draw chunk
+            //GraphicsDevice.SetVertexBuffer(_chunkVertices);
+            //GraphicsDevice.SetVertexInputLayout(_chunkInputLayout);
+            //_basicEffect.CurrentTechnique.Passes[0].Apply();
+            //GraphicsDevice.Draw(PrimitiveType.TriangleList, _chunkVertices.ElementCount);
+
+            // Draw chunk using ModelMesh
+            _chunkEffect.Parameters["TransformMatrix"].SetValue(Matrix.Identity * _camera.ViewMatrix * _camera.ProjectionMatrix);
+            _chunkMesh.Draw(GraphicsDevice);
 
             // Draw debug
             _spriteBatch.Begin();
