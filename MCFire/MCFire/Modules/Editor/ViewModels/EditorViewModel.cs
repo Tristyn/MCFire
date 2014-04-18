@@ -1,44 +1,62 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
+using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Editor.Views;
+using MCFire.Modules.Explorer.Models;
+using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Infrastructure.ViewModels;
-using MCFire.Modules.WorldExplorer.Services;
+using Action = System.Action;
 
 namespace MCFire.Modules.Editor.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export]
-    public class D3DViewModel : SharpDxViewModelBase
+    public class EditorViewModel : SharpDxViewModelBase
     {
-        [Import]
-        WorldExplorerService _explorer;
-
         [CanBeNull]
-        D3DTestGame _game;
+        EditorGame _game;
+        [CanBeNull]
+        EditorView _view;
+        [CanBeNull]
+        Action _viewGained;
 
-        protected override async void OnViewLoaded(object view)
+        EditorBridge _bridge;
+
+        public EditorViewModel()
         {
-            base.OnViewLoaded(view);
+            InitializeTo(IoC.Get<WorldExplorerService>().Installations.First().Worlds.First(), 0);
+        }
 
-            var d3DView = view as D3DView;
-            if (d3DView == null)
-                return;
-
-            _game = new D3DTestGame(d3DView.SharpDx);
-            _game.Disposing += (s, e) => _game = null;
-            if (_game != null) RunGame(_game, d3DView.SharpDx);
-
-            // TODO: remove
-            await Task.Delay(1000);
-            var chunkManager = _explorer.Installations.First().Worlds.First().GetChunkManager();
-            for (int i = 0; i < 3; i++)
+        public void InitializeTo(MCFireWorld world, int dimension)
+        {
+            if (_view != null)
             {
-                var visual = new ChunkVisual(_game.GraphicsDevice, chunkManager, 0, i);
-                _game.AddChunkVisual(visual);
+                InitializeToInternal(world, dimension);
+                return;
             }
+
+            // we dont have the view yet. when we do, this will be called
+            _viewGained = () => InitializeToInternal(world, dimension);
+        }
+
+        private void InitializeToInternal(MCFireWorld world, int dimension)
+        {
+            if (_game != null)
+                _game.Dispose();
+
+            _game = new EditorGame(_view.SharpDx);
+            _game.Disposing += (s, e) => _game = null;
+            if (_game != null) RunGame(_game, _view.SharpDx);
+            _bridge = new EditorBridge(world, dimension, _game);
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            _view = view as EditorView;
+            if (_viewGained != null) _viewGained();
         }
     }
 }

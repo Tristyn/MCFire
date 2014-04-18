@@ -5,7 +5,7 @@ using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Results;
 using Gemini.Modules.MainMenu.Models;
-using MCFire.Modules.WorldExplorer.ViewModels;
+using MCFire.Modules.Explorer.ViewModels;
 
 namespace MCFire.Modules.WorldExplorer
 {

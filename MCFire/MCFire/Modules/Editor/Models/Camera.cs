@@ -71,10 +71,13 @@ namespace MCFire.Modules.Editor.Models
         /// <param name="magnitude">The angle, in radians, to pan the camera. +X is right, +Y is down.</param>
         public void Pan(Vector2 magnitude)
         {
-            // TODO: clamp Y, because when you look to far down or up, X gets flipped.
             var yaw = Quaternion.RotationAxis(Vector3.Up, magnitude.X);
             var pitch = Quaternion.RotationAxis(Vector3.Cross(Direction, Vector3.Up), magnitude.Y);
-            var rotation = yaw * pitch;
+
+            var pitchHack = Direction.Y + magnitude.Y;
+
+            Quaternion rotation = pitchHack >= 1 || pitchHack <= -1 ? yaw : yaw * pitch;
+
             Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationQuaternion(rotation)).ToNormal();
         }
 
@@ -106,7 +109,7 @@ namespace MCFire.Modules.Editor.Models
 
         public Matrix ViewMatrix
         {
-            get{ return Matrix.LookAtRH(Position, Direction + Position, Vector3.Up); }
+            get { return Matrix.LookAtRH(Position, Direction + Position, Vector3.Up); }
         }
 
         public Matrix ProjectionMatrix

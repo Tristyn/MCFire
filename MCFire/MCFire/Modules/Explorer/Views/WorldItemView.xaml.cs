@@ -1,4 +1,4 @@
-﻿namespace MCFire.Modules.WorldExplorer.Views
+﻿namespace MCFire.Modules.Explorer.Views
 {
     /// <summary>
     /// Interaction logic for InstallationModel.xaml

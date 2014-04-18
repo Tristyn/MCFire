@@ -1,4 +1,4 @@
-﻿namespace MCFire.Modules.WorldExplorer.Commands
+﻿namespace MCFire.Modules.Explorer.Commands
 {
     interface IWorldExplorerCommand
     {

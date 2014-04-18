@@ -3,24 +3,27 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
 using Gemini.Framework;
-using Gemini.Framework.Results;
 using Gemini.Modules.MainMenu.Models;
-using MCFire.Modules.Editor.ViewModels;
+using MCFire.Modules.Editor.Actions;
+using MCFire.Modules.Explorer.Services;
 
 namespace MCFire.Modules.Editor
 {
     [Export(typeof(IModule))]
     public class Module : ModuleBase
     {
+        [Import] 
+        WorldExplorerService _explorer;
+
         public override void Initialize()
         {
             MainMenu.All.First(menu => menu.Name=="View")
-                .Add(new MenuItem("3D Test", Open3DTest));
+                .Add(new MenuItem("3D Test",Open3DTest));
         }
 
-        static IEnumerable<IResult> Open3DTest()
+        IEnumerable<IResult> Open3DTest()
         {
-            yield return Show.Document<D3DViewModel>();
+            yield return new OpenEditorTo(_explorer.Installations.First().Worlds.First(), 0);
         }
     }
 }

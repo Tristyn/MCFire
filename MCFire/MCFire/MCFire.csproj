@@ -28,7 +28,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <MinimumRequiredVersion>0.0.3.0</MinimumRequiredVersion>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>0.0.3.%2a</ApplicationVersion>
+    <ApplicationVersion>0.0.4.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -153,7 +153,11 @@
     </Compile>
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
+    <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
+    <Compile Include="Modules\Editor\Models\Meshalyzer.cs" />
+    <Compile Include="Modules\Editor\Models\VertexLitEffect.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
+    <Compile Include="Modules\Explorer\Models\MCFireWorld.cs" />
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
     <Compile Include="Modules\Files\Converters\BoolToVisibilityConverter.cs" />
@@ -250,12 +254,12 @@
     <Compile Include="Modules\Editor\Extensions\Vector3Extensions.cs" />
     <Compile Include="Modules\Editor\Models\Camera.cs" />
     <Compile Include="Modules\Editor\Models\ChunkCreationPolicy.cs" />
-    <Compile Include="Modules\Editor\Models\ChunkVisual.cs" />
+    <Compile Include="Modules\Editor\Models\VisualChunk.cs" />
     <Compile Include="Modules\Editor\Models\CoolGame.cs" />
     <Compile Include="Modules\Editor\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Editor\Models\EditorGame.cs" />
     <Compile Include="Modules\Editor\Models\EditorBridge.cs" />
-    <Compile Include="Modules\Editor\Models\EditorChunk.cs" />
+    <Compile Include="Modules\Editor\Models\MCFireChunk.cs" />
     <Compile Include="Modules\Editor\Models\KeyEventArgs.cs" />
     <Compile Include="Modules\Editor\Models\Mesh.cs" />
     <Compile Include="Modules\Editor\Models\Mouse.cs" />
@@ -277,7 +281,7 @@
     <Compile Include="Modules\Explorer\Models\ServerInstallation.cs" />
     <Compile Include="Modules\Explorer\Models\WorldBrowserItem.cs" />
     <Compile Include="Modules\Explorer\Module.cs" />
-    <Compile Include="Modules\Explorer\Services\WorldExplorerService.cs" />
+    <Compile Include="Modules\Explorer\Services\ExplorerService.cs" />
     <Compile Include="Modules\Explorer\ViewModels\WorldExplorerViewModel.cs" />
     <Compile Include="Modules\Explorer\ViewModels\WorldItemViewModel.cs" />
     <Compile Include="Modules\Explorer\Views\WorldExplorerView.xaml.cs">
@@ -442,6 +446,7 @@
     <Resource Include="Resources\Grass.png" />
     <Resource Include="Resources\Barrier.png" />
     <ToolkitFxc Include="Modules\Editor\Content\VertexLit.fx" />
+    <ToolkitTexture Include="Modules\Editor\Content\Error.png" />
     <Content Include="Resources\EnchantmentTable.ico" />
   </ItemGroup>
   <ItemGroup />

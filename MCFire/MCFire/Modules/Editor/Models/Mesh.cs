@@ -1,11 +1,12 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using System;
+using SharpDX.Toolkit.Graphics;
 
 namespace MCFire.Modules.Editor.Models
 {
     /// <summary>
     /// A simple wrapper for a SharpDx vertex buffer, and its Effect and VertexInputLayout.
     /// </summary>
-    public class Mesh
+    public class Mesh : IDisposable
     {
         public VertexInputLayout VertexInputLayout;
 
@@ -17,6 +18,8 @@ namespace MCFire.Modules.Editor.Models
         /// <summary>Gets or sets the material Effect for this mesh part.  Reference page contains code sample.</summary>
         public Effect Effect;
 
+        bool _disposed;
+
         /// <summary>
         /// Draws this <see cref="Mesh"/>. See remarks for difference with XNA.
         /// </summary>
@@ -27,6 +30,9 @@ namespace MCFire.Modules.Editor.Models
         /// </remarks>
         public void Draw(GraphicsDevice graphicsDevice)
         {
+            if (_disposed)
+                throw new ObjectDisposedException("Mesh");
+
             graphicsDevice.SetVertexBuffer(VertexBuffer);
             graphicsDevice.SetVertexInputLayout(VertexInputLayout);
 
@@ -37,5 +43,20 @@ namespace MCFire.Modules.Editor.Models
                 graphicsDevice.Draw(PrimitiveType.TriangleList, VertexBuffer.ElementCount);
             }
         }
+
+        /// <summary>
+        /// Disposes the VertexBuffer, but not the Effect(!)
+        /// </summary>
+        public void Dispose()
+        {
+            if (VertexBuffer != null)
+            {
+                VertexBuffer.Dispose();
+                VertexBuffer = null;
+            }
+
+            _disposed = true;
+        }
+
     }
 }

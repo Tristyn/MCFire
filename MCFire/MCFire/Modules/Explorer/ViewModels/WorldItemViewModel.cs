@@ -2,7 +2,7 @@
 using Caliburn.Micro;
 using MCFire.Modules.Explorer.Models;
 
-namespace MCFire.Modules.WorldExplorer.ViewModels
+namespace MCFire.Modules.Explorer.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export]

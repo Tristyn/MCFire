@@ -10,8 +10,8 @@ using System.Windows.Forms;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Explorer.Models;
+using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Infrastructure.Interfaces;
-using MCFire.Modules.WorldExplorer.Services;
 using Substrate;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -87,12 +87,12 @@ namespace MCFire.Modules.Startup.ViewModels
 
         public void AddGame()
         {
-            
+            throw new NotImplementedException();
         }
 
         public void AddServer()
         {
-            
+            throw new NotImplementedException();
         }
 
         public async void Loaded()
@@ -145,7 +145,7 @@ namespace MCFire.Modules.Startup.ViewModels
                 MinecraftUnknown = value == null ? (bool?)true : null;
                 if (value != null)
                     Worlds = from world in value.Worlds
-                             select new WorldState(world.Level.GameType, world.Level.LevelName);
+                             select new WorldState(world.NbtWorld.Level.GameType, world.NbtWorld.Level.LevelName);
                 Loading = false;
                 NotifyOfPropertyChange(() => Install);
                 NotifyOfPropertyChange(() => CanClose);

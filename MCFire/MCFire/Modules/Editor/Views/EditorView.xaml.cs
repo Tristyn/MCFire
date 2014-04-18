@@ -3,11 +3,11 @@
 namespace MCFire.Modules.Editor.Views
 {
     /// <summary>
-    /// Interaction logic for D3DView.xaml
+    /// Interaction logic for EditorView.xaml
     /// </summary>
-    public partial class D3DView
+    public partial class EditorView
     {
-        public D3DView()
+        public EditorView()
         {
             InitializeComponent();
         }

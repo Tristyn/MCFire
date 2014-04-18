@@ -4,11 +4,11 @@ using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
 using MCFire.Modules.Explorer.Models;
+using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Metro.Commands;
-using MCFire.Modules.WorldExplorer.Services;
 
-namespace MCFire.Modules.WorldExplorer.ViewModels
+namespace MCFire.Modules.Explorer.ViewModels
 {
     [Export]
     public class WorldExplorerViewModel : Tool

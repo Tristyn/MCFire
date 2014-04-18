@@ -2,13 +2,12 @@
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Modules.Infrastructure.Extensions;
-using Substrate;
 
 namespace MCFire.Modules.Explorer.Models
 {
     class ServerInstallation : Installation
     {
-        private ObservableCollection<NbtWorld> _worlds;
+        private ObservableCollection<MCFireWorld> _worlds;
 
         public ServerInstallation([NotNull] string folder) : base(folder)
         {
@@ -19,21 +18,20 @@ namespace MCFire.Modules.Explorer.Models
             get { return InstallationType.Server; }
         }
 
-        public override ObservableCollection<NbtWorld> Worlds
+        public override ObservableCollection<MCFireWorld> Worlds
         {
             get
             {
                 if (_worlds != null) return _worlds;
 
-                _worlds = new ObservableCollection<NbtWorld>();
+                _worlds = new ObservableCollection<MCFireWorld>();
                 _worlds.AddForeach(
                     Directory.EnumerateDirectories()
-                    .Select(folder => NbtWorld.Open(folder.FullName))
+                    .Select(folder => new MCFireWorld(folder.FullName))
                     .Where(world => world != null));
 
                 return _worlds;
             }
-            protected set { _worlds = value; }
         }
     }
 }

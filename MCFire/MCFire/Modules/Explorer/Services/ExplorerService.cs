@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using MCFire.Modules.Explorer.Models;
 
-namespace MCFire.Modules.WorldExplorer.Services
+namespace MCFire.Modules.Explorer.Services
 {
     [Export]
     public class WorldExplorerService

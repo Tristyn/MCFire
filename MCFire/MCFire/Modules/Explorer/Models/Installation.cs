@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using Substrate;
 
 namespace MCFire.Modules.Explorer.Models
 {
@@ -19,7 +18,7 @@ namespace MCFire.Modules.Explorer.Models
 
         public abstract InstallationType Type { get; }
 
-        public abstract ObservableCollection<NbtWorld> Worlds { get; protected set; }
+        public abstract ObservableCollection<MCFireWorld> Worlds { get; }
 
         /// <summary>
         /// Detects if an installation is a server or game, and returns an instance.

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using SharpDX;
 using SharpDX.Toolkit.Input;
 
@@ -21,9 +20,6 @@ namespace MCFire.Modules.Editor.Models
 
         public void Update()
         {
-            System.Windows.Input.Mouse.Synchronize();
-            System.Windows.Input.Mouse.UpdateCursor();
-
             var state = _mouse.GetState();
             var pos = new Vector2(state.X, state.Y);
 
@@ -38,15 +34,12 @@ namespace MCFire.Modules.Editor.Models
         /// <param name="position">The new mouse position in desktop space.</param>
         public void MoveSilently(Vector2 position)
         {
-            SetCursorPos((int)position.X, (int)position.Y);
+            _mouse.SetPosition(position);
 
             Left.IgnoreNextMoveEvent();
             Right.IgnoreNextMoveEvent();
             Middle.IgnoreNextMoveEvent();
         }
-
-        [DllImport("User32.dll")]
-        private static extern bool SetCursorPos(int x, int y);
 
         public void Dispose()
         {
@@ -138,7 +131,7 @@ namespace MCFire.Modules.Editor.Models
         {
             if (!_ignoreNextMove)
                 return _previousPosition;
-
+            
             _ignoreNextMove = false;
             return currentPosition;
         }

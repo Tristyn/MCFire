@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Threading;
+using MCFire.Modules.Explorer.Models;
 using SharpDX;
-using Substrate;
-using Substrate.Core;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -11,22 +10,25 @@ namespace MCFire.Modules.Editor.Models
     /// </summary>
     public class EditorBridge
     {
-        readonly D3DTestGame _game;
-        readonly Dictionary<Point, EditorChunk> _chunkDict;
+        private readonly int _dimension;
+        readonly EditorGame _game;
+        readonly Dictionary<Point, MCFireChunk> _chunkDict;
         ChunkCreationPolicy _policy;
-        IChunkManager _manager;
+        Meshalyzer _meshalyzer;
 
-        public EditorBridge(NbtWorld world, int dimension, D3DTestGame game)
+        public EditorBridge(MCFireWorld world, int dimension, EditorGame game)
         {
+            _dimension = dimension;
             _game = game;
             World = world;
-            _manager = world.GetChunkManager(dimension);
-            _chunkDict = new Dictionary<Point, EditorChunk>();
-            Chunks = new List<EditorChunk>();
+            _chunkDict = new Dictionary<Point, MCFireChunk>();
+            Chunks = new List<MCFireChunk>();
             _game.ChunkSource = _chunkDict;
+            _meshalyzer = new Meshalyzer(game);
+            SetChunkCreationPolicy(ChunkCreationPolicy.Run);
         }
 
-        public async void SetChunkCreationPolicy(ChunkCreationPolicy policy)
+        public void SetChunkCreationPolicy(ChunkCreationPolicy policy)
         {
             if (policy == _policy)
                 return;
@@ -34,21 +36,36 @@ namespace MCFire.Modules.Editor.Models
             _policy = policy;
 
             if (policy == ChunkCreationPolicy.Run)
-                await BuildChunks();
+                BeginBuildChunks();
         }
 
-        private async Task BuildChunks()
+        /// <summary>
+        /// Creates chunks on a background thread until policy changes.
+        /// </summary>
+        private void BeginBuildChunks()
         {
-            if (_policy != ChunkCreationPolicy.Run)
-                return;
-
-            var task = Task.Factory.StartNew(() =>
+            // ReSharper disable once ObjectCreationAsStatement
+            var meshingThread = new Thread(() =>
             {
-                
+                while (_policy == ChunkCreationPolicy.Run)
+                {
+                    Point chunkPoint;
+                    if (!_game.GetNextDesiredChunk(out chunkPoint))
+                    {
+                        Thread.Sleep(5000); // wait because there is no work to do
+                        continue;
+                    }
+
+                    var chunk = World.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
+                    if (chunk == null) return;
+                    _meshalyzer.Meshalyze(chunk);
+                }
             });
+            Thread.CurrentThread.IsBackground = true;
+            meshingThread.Start();
         }
 
-        public NbtWorld World { get; private set; }
-        public List<EditorChunk> Chunks { get; private set; }
+        public MCFireWorld World { get; private set; }
+        public List<MCFireChunk> Chunks { get; private set; }
     }
 }
