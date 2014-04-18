@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Caliburn.Micro;
+using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Test3D.Extensions;
 using MCFire.Modules.WorldExplorer.Services;
+using MoreLinq;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
 using Substrate;
+using Substrate.Core;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Test3D.Models
@@ -42,8 +45,12 @@ namespace MCFire.Modules.Test3D.Models
         Camera _camera;
         Buffer<VertexPositionColor> _chunkVertices;
         VertexInputLayout _chunkInputLayout;
-        ModelMesh _chunkMesh;
+        Mesh _chunkMesh;
         Effect _chunkEffect;
+
+        // new fields
+        readonly List<ChunkVisual> _chunks = new List<ChunkVisual>();
+        readonly object _drawLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="D3DTestGame" /> class.
@@ -54,6 +61,7 @@ namespace MCFire.Modules.Test3D.Models
             ToDispose(new GraphicsDeviceManager(this));
             _sharpDx = sharpDx;
             Content.RootDirectory = @"Modules/Test3D/Content";
+            ViewDistance = 10;
         }
 
         protected override void LoadContent()
@@ -170,7 +178,7 @@ namespace MCFire.Modules.Test3D.Models
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
 
             var install = IoC.Get<WorldExplorerService>().Installations.FirstOrDefault();
-            if(install==null || !install.Worlds.Any())
+            if (install == null || !install.Worlds.Any())
                 throw new Exception("Add an installation and a world to MC Fire before using the 3D test. The (0,0) coordinate must be generated for that world.");
             var worlds = install.Worlds;
 
@@ -201,7 +209,7 @@ namespace MCFire.Modules.Test3D.Models
                             var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
                             if (xPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x+1, y, z), chunkBlocks.GetSkyLight(x+1, y , z)));
+                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x + 1, y, z), chunkBlocks.GetSkyLight(x + 1, y, z)));
                             }
                         }
 
@@ -210,7 +218,7 @@ namespace MCFire.Modules.Test3D.Models
                             var yPlusBlock = chunkBlocks.GetBlock(x, y + 1, z);
                             if (yPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y+1, z), chunkBlocks.GetSkyLight(x, y +1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y + 1, z), chunkBlocks.GetSkyLight(x, y + 1, z)));
                             }
                         }
 
@@ -219,7 +227,7 @@ namespace MCFire.Modules.Test3D.Models
                             var zPlubBlock = chunkBlocks.GetBlock(x, y, z + 1);
                             if (zPlubBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y , z+1), chunkBlocks.GetSkyLight(x, y , z+1)));
+                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y, z + 1), chunkBlocks.GetSkyLight(x, y, z + 1)));
                             }
                         }
 
@@ -228,7 +236,7 @@ namespace MCFire.Modules.Test3D.Models
                             var xMinusBlock = chunkBlocks.GetBlock(x - 1, y, z);
                             if (xMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x-1, y , z), chunkBlocks.GetSkyLight(x-1, y , z)));
+                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x - 1, y, z), chunkBlocks.GetSkyLight(x - 1, y, z)));
                             }
                         }
 
@@ -237,7 +245,7 @@ namespace MCFire.Modules.Test3D.Models
                             var yMinusBlock = chunkBlocks.GetBlock(x, y - 1, z);
                             if (yMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y-1, z), chunkBlocks.GetSkyLight(x, y - 1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y - 1, z), chunkBlocks.GetSkyLight(x, y - 1, z)));
                             }
                         }
 
@@ -246,7 +254,7 @@ namespace MCFire.Modules.Test3D.Models
                             var zMinusBlock = chunkBlocks.GetBlock(x, y, z - 1);
                             if (zMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y, z-1), chunkBlocks.GetSkyLight(x, y , z-1)));
+                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList, (byte)Math.Max(chunkBlocks.GetBlockLight(x, y, z - 1), chunkBlocks.GetSkyLight(x, y, z - 1)));
                             }
                         }
                     }
@@ -257,24 +265,16 @@ namespace MCFire.Modules.Test3D.Models
             _chunkVertices = ToDisposeContent(Buffer.Vertex.New(GraphicsDevice, chunkVerticesList.ToArray()));
             _chunkInputLayout = VertexInputLayout.FromBuffer(0, _chunkVertices);
 
-            _chunkMesh = new ModelMesh();
-            _chunkMesh.MeshParts.Add(
-                new ModelMeshPart
-                {
-                    Effect = _basicEffect,
-                    VertexBuffer = _chunkVertices,
-                    VertexInputLayout = _chunkInputLayout
-                });
+            _chunkMesh = new Mesh
+            {
+                Effect = _basicEffect,
+                VertexBuffer = _chunkVertices,
+                VertexInputLayout = _chunkInputLayout
+            };
 
             base.LoadContent();
         }
 
-        //static readonly Quaternion Up = Quaternion.RotationAxis(Vector3.Right, 0);
-        //static readonly Quaternion Forward = Quaternion.RotationAxis(Vector3.Right, MathUtil.PiOverTwo);
-        //static readonly Quaternion Down = Quaternion.RotationAxis(Vector3.Right, MathUtil.Pi);
-        //static readonly Quaternion Backward = Quaternion.RotationAxis(Vector3.Right, MathUtil.Pi + MathUtil.PiOverTwo);
-        //static readonly Quaternion Right = Quaternion.RotationAxis(Vector3.ForwardLH, -MathUtil.PiOverTwo);
-        //static readonly Quaternion Left = Quaternion.RotationAxis(Vector3.ForwardLH, MathUtil.PiOverTwo);
         static readonly Matrix Up = Matrix.Identity;
         static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0, 0, 1);
         static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
@@ -292,7 +292,60 @@ namespace MCFire.Modules.Test3D.Models
             new Vector3(0,1,0)
         };
 
-        private static readonly Random Random = new Random();
+        public void AddChunkVisual(ChunkVisual chunk)
+        {
+            // TODO: use coordinate system, and replace the chunk that shares the same coordinate
+
+            lock (_drawLock)
+            {
+                chunk.Initialize(_chunkEffect);
+                _chunks.Add(chunk);
+            }
+        }
+
+        /// <summary>
+        /// Returns the position of the chunk that the game should generate next.
+        /// </summary>
+        /// <param name="point">The point in chunk space that should be generated</param>
+        /// <returns>If any chunks should be generated</returns>
+        public bool GetNextDesiredChunk(out Point point)
+        {
+            var cameraChunkPosition = new Point((int)_camera.Position.X / 16, (int)_camera.Position.Z / 16);
+
+            foreach (var chunkPoint in _chunkPoints)
+            {
+                EditorChunk chunk;
+                Point worldSpaceChunkPoint = chunkPoint.Add(cameraChunkPosition);
+                if (!ChunkSource.TryGetValue(worldSpaceChunkPoint, out chunk))
+                {
+                    point = chunkPoint;
+                    return true;
+                }
+            }
+
+            // all chunks generated
+            point = new Point();
+            return false;
+        }
+
+        void GenerateChunkPoints()
+        {
+            var distance = ViewDistance;
+            var points = new List<Point>(ViewDistance * ViewDistance * 4);
+            //create points
+            for (var i = -ViewDistance; i < ViewDistance; i++)
+            {
+                for (var j = -ViewDistance; j < ViewDistance; j++)
+                {
+                    points.Add(new Point(i, j));
+                }
+            }
+
+            _chunkPoints = from point in points
+                           // order by hypotenuse distance to (0,0)
+                           orderby point.X * point.X + point.Y * point.Y
+                           select point;
+        }
 
         static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)
         {
@@ -323,42 +376,74 @@ namespace MCFire.Modules.Test3D.Models
 
         protected override void Draw(GameTime gameTime)
         {
-            // Clears the screen with the Color.CornflowerBlue
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            lock (_drawLock)
+            {
+                // Clears the screen with the Color.CornflowerBlue
+                GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // Calculate matrices
-            _basicEffect.World = Matrix.Identity;
-            _basicEffect.View = _camera.ViewMatrix;
-            _basicEffect.Projection = _camera.ProjectionMatrix;
+                // Calculate matrices
+                _basicEffect.World = Matrix.Identity;
+                _basicEffect.View = _camera.ViewMatrix;
+                _basicEffect.Projection = _camera.ProjectionMatrix;
 
-            // Draw the cube
-            GraphicsDevice.SetVertexBuffer(_vertices);
-            GraphicsDevice.SetVertexInputLayout(_inputLayout);
-            _basicEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
+                // Draw the cube
+                GraphicsDevice.SetVertexBuffer(_vertices);
+                GraphicsDevice.SetVertexInputLayout(_inputLayout);
+                _basicEffect.CurrentTechnique.Passes[0].Apply();
+                GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
 
-            // Draw chunk
-            //GraphicsDevice.SetVertexBuffer(_chunkVertices);
-            //GraphicsDevice.SetVertexInputLayout(_chunkInputLayout);
-            //_basicEffect.CurrentTechnique.Passes[0].Apply();
-            //GraphicsDevice.Draw(PrimitiveType.TriangleList, _chunkVertices.ElementCount);
+                // Draw chunk
+                //GraphicsDevice.SetVertexBuffer(_chunkVertices);
+                //GraphicsDevice.SetVertexInputLayout(_chunkInputLayout);
+                //_basicEffect.CurrentTechnique.Passes[0].Apply();
+                //GraphicsDevice.Draw(PrimitiveType.TriangleList, _chunkVertices.ElementCount);
 
-            // Draw chunk using ModelMesh
-            _chunkEffect.Parameters["TransformMatrix"].SetValue(Matrix.Identity * _camera.ViewMatrix * _camera.ProjectionMatrix);
-            _chunkMesh.Draw(GraphicsDevice);
+                // Draw chunk using ModelMesh
+                _chunkEffect.Parameters["TransformMatrix"].SetValue(Matrix.Identity * _camera.ViewMatrix * _camera.ProjectionMatrix);
+                _chunkMesh.Draw(GraphicsDevice);
+                foreach (var chunk in _chunks)
+                {
+                    chunk.Draw(GraphicsDevice, _camera);
+                }
+                // Draw debug
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(_font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
+                _spriteBatch.DrawString(_font, String.Format("Camera: {0}", _camera.Position), new Vector2(0, 15), Color.Black);
+                _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _camera.Direction), new Vector2(0, 30), Color.Black);
+                _spriteBatch.End();
 
-            // Draw debug
-            _spriteBatch.Begin();
-            _spriteBatch.DrawString(_font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
-            _spriteBatch.DrawString(_font, String.Format("Camera: {0}", _camera.Position), new Vector2(0, 15), Color.Black);
-            _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", _camera.Direction), new Vector2(0, 30), Color.Black);
-            _spriteBatch.End();
+                // Reset
+                GraphicsDevice.Flush();
 
-            // Reset
-            GraphicsDevice.Flush();
-
-            // Handle base.Draw
-            base.Draw(gameTime);
+                // Handle base.Draw
+                base.Draw(gameTime);
+            }
         }
+
+        public Dictionary<Point, EditorChunk> ChunkSource { get; set; }
+
+        /// <summary>
+        /// Must be greater than 0. Anything over 10 is pushing it.
+        /// </summary>
+        public int ViewDistance
+        {
+            get { return _viewDistance; }
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentException("ViewDistance");
+
+                _viewDistance = value;
+                GenerateChunkPoints();
+            }
+        }
+
+        /// <summary>
+        /// A list of all whole number points in a square of (√Length) width and height with the center of the square being the (0,0) point.
+        /// This represents all of the visible chunks
+        /// </summary>
+        IEnumerable<Point> _chunkPoints;
+
+        int _viewDistance;
     }
 }

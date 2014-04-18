@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace MCFire.Modules.Infrastructure.Extensions
 {
+    // TODO: fix memory leaks by looking into this article http://www.codeproject.com/Articles/149369/NotifyParentObservableCollection-Part-monitors-c
     public static class NotifyCollectionChangedExtensions
     {
         /// <summary>

@@ -11,7 +11,7 @@ struct ProjectionOut
 	float4  color : COLOR0;
 };
 
-ProjectionOut VSProjection(float4 position : POSITION, float4 color : COLOR0)
+ProjectionOut VSProjection(float4 position : SV_Position, float4 color : COLOR0)
 {
 	ProjectionOut output = (ProjectionOut)0;
 
