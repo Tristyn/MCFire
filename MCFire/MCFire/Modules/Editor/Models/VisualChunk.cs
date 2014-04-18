@@ -7,14 +7,16 @@ namespace MCFire.Modules.Editor.Models
     public class VisualChunk : IDisposable
     {
         VertexLitEffect _vertexLitEffect;
+        readonly int _cX;
+        readonly int _cY;
         Mesh _mesh;
-        public readonly int Cx;
-        public readonly int Cy;
         bool _disposed;
 
-        public VisualChunk(Buffer<VertexPositionColor> vertexBuffer, VertexLitEffect vertexLitEffect)
+        public VisualChunk(Buffer<VertexPositionColor> vertexBuffer, VertexLitEffect vertexLitEffect,int cX,int cY)
         {
             _vertexLitEffect = vertexLitEffect;
+            _cX = cX;
+            _cY = cY;
             _mesh = new Mesh
             {
                 VertexBuffer = vertexBuffer,
@@ -28,7 +30,7 @@ namespace MCFire.Modules.Editor.Models
             if (_disposed)
                 throw new ObjectDisposedException("VisualChunk");
 
-            _vertexLitEffect.TransformMatrix = Matrix.Translation(Cx*16, 0, Cy*16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
+            _vertexLitEffect.TransformMatrix = Matrix.Translation(_cX * 16, 0, _cY * 16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
             _mesh.Draw(game.GraphicsDevice);
         }
 

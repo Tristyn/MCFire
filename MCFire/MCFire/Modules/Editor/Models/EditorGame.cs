@@ -229,7 +229,7 @@ namespace MCFire.Modules.Editor.Models
                 _chunks.Add(chunk);
             }
         }
-
+        // TODO: remove chunks that are out of range of ViewDistance
         /// <summary>
         /// Returns the position of the chunk that the game should generate next.
         /// </summary>
