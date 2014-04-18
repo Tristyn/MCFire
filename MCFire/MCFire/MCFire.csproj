@@ -152,7 +152,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
-    <Compile Include="MCFireBootstrapper.cs" />
+    <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
@@ -245,24 +245,24 @@
     <Compile Include="Modules\Startup\Views\ConfigureInstallationsView.xaml.cs">
       <DependentUpon>ConfigureInstallationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\Test3D\Extensions\GraphicsDeviceExtensions.cs" />
-    <Compile Include="Modules\Test3D\Extensions\PointExtensions.cs" />
-    <Compile Include="Modules\Test3D\Extensions\Vector3Extensions.cs" />
-    <Compile Include="Modules\Test3D\Models\Camera.cs" />
-    <Compile Include="Modules\Test3D\Models\ChunkCreationPolicy.cs" />
-    <Compile Include="Modules\Test3D\Models\ChunkVisual.cs" />
-    <Compile Include="Modules\Test3D\Models\CoolGame.cs" />
-    <Compile Include="Modules\Test3D\Models\CustomEffectGame.cs" />
-    <Compile Include="Modules\Test3D\Models\D3DTestGame.cs" />
-    <Compile Include="Modules\Test3D\Models\EditorBridge.cs" />
-    <Compile Include="Modules\Test3D\Models\EditorChunk.cs" />
-    <Compile Include="Modules\Test3D\Models\KeyEventArgs.cs" />
-    <Compile Include="Modules\Test3D\Models\Mesh.cs" />
-    <Compile Include="Modules\Test3D\Models\Mouse.cs" />
-    <Compile Include="Modules\Test3D\Module.cs" />
-    <Compile Include="Modules\Test3D\ViewModels\D3DViewModel.cs" />
-    <Compile Include="Modules\Test3D\Views\D3DView.xaml.cs">
-      <DependentUpon>D3DView.xaml</DependentUpon>
+    <Compile Include="Modules\Editor\Extensions\GraphicsDeviceExtensions.cs" />
+    <Compile Include="Modules\Editor\Extensions\PointExtensions.cs" />
+    <Compile Include="Modules\Editor\Extensions\Vector3Extensions.cs" />
+    <Compile Include="Modules\Editor\Models\Camera.cs" />
+    <Compile Include="Modules\Editor\Models\ChunkCreationPolicy.cs" />
+    <Compile Include="Modules\Editor\Models\ChunkVisual.cs" />
+    <Compile Include="Modules\Editor\Models\CoolGame.cs" />
+    <Compile Include="Modules\Editor\Models\CustomEffectGame.cs" />
+    <Compile Include="Modules\Editor\Models\EditorGame.cs" />
+    <Compile Include="Modules\Editor\Models\EditorBridge.cs" />
+    <Compile Include="Modules\Editor\Models\EditorChunk.cs" />
+    <Compile Include="Modules\Editor\Models\KeyEventArgs.cs" />
+    <Compile Include="Modules\Editor\Models\Mesh.cs" />
+    <Compile Include="Modules\Editor\Models\Mouse.cs" />
+    <Compile Include="Modules\Editor\Module.cs" />
+    <Compile Include="Modules\Editor\ViewModels\EditorViewModel.cs" />
+    <Compile Include="Modules\Editor\Views\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\TextEditor\Models\TextContent.cs" />
     <Compile Include="Modules\TextEditor\Module.cs" />
@@ -271,19 +271,19 @@
     <Compile Include="Modules\TextEditor\Views\TextEditorView.xaml.cs">
       <DependentUpon>TextEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\WorldExplorer\Commands\IWorldExplorerCommand.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\GameInstallation.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\Installation.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\ServerInstallation.cs" />
-    <Compile Include="Modules\WorldExplorer\Models\WorldBrowserItem.cs" />
-    <Compile Include="Modules\WorldExplorer\Module.cs" />
-    <Compile Include="Modules\WorldExplorer\Services\WorldExplorerService.cs" />
-    <Compile Include="Modules\WorldExplorer\ViewModels\WorldExplorerViewModel.cs" />
-    <Compile Include="Modules\WorldExplorer\ViewModels\WorldItemViewModel.cs" />
-    <Compile Include="Modules\WorldExplorer\Views\WorldExplorerView.xaml.cs">
+    <Compile Include="Modules\Explorer\Commands\IWorldExplorerCommand.cs" />
+    <Compile Include="Modules\Explorer\Models\GameInstallation.cs" />
+    <Compile Include="Modules\Explorer\Models\Installation.cs" />
+    <Compile Include="Modules\Explorer\Models\ServerInstallation.cs" />
+    <Compile Include="Modules\Explorer\Models\WorldBrowserItem.cs" />
+    <Compile Include="Modules\Explorer\Module.cs" />
+    <Compile Include="Modules\Explorer\Services\WorldExplorerService.cs" />
+    <Compile Include="Modules\Explorer\ViewModels\WorldExplorerViewModel.cs" />
+    <Compile Include="Modules\Explorer\ViewModels\WorldItemViewModel.cs" />
+    <Compile Include="Modules\Explorer\Views\WorldExplorerView.xaml.cs">
       <DependentUpon>WorldExplorerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\WorldExplorer\Views\WorldItemView.xaml.cs">
+    <Compile Include="Modules\Explorer\Views\WorldItemView.xaml.cs">
       <DependentUpon>WorldItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -302,8 +302,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <ToolkitModel Include="Modules\Test3D\Content\Ship.fbx" />
-    <ToolkitTexture Include="Modules\Test3D\Content\ShipDiffuse.dds" />
+    <ToolkitModel Include="Modules\Editor\Content\Ship.fbx" />
+    <ToolkitTexture Include="Modules\Editor\Content\ShipDiffuse.dds" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -356,7 +356,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Modules\Test3D\Views\D3DView.xaml">
+    <Page Include="Modules\Editor\Views\EditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -364,11 +364,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Modules\WorldExplorer\Views\WorldExplorerView.xaml">
+    <Page Include="Modules\Explorer\Views\WorldExplorerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Modules\WorldExplorer\Views\WorldItemView.xaml">
+    <Page Include="Modules\Explorer\Views\WorldItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -386,10 +386,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFxc Include="Modules\Test3D\Content\Bloom.fx" />
+    <ToolkitFxc Include="Modules\Editor\Content\Bloom.fx" />
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFxc Include="Modules\Test3D\Content\metatunnel.fx" />
+    <ToolkitFxc Include="Modules\Editor\Content\metatunnel.fx" />
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\splash.png">
@@ -420,7 +420,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFont Include="Modules\Test3D\Content\Segoe12.xml" />
+    <ToolkitFont Include="Modules\Editor\Content\Segoe12.xml" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\Novecento.otf" />
@@ -441,7 +441,7 @@
     <Resource Include="Resources\Egg.png" />
     <Resource Include="Resources\Grass.png" />
     <Resource Include="Resources\Barrier.png" />
-    <ToolkitFxc Include="Modules\Test3D\Content\VertexLit.fx" />
+    <ToolkitFxc Include="Modules\Editor\Content\VertexLit.fx" />
     <Content Include="Resources\EnchantmentTable.ico" />
   </ItemGroup>
   <ItemGroup />

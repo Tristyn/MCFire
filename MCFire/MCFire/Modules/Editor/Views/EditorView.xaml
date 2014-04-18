@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="MCFire.Modules.Editor.Views.D3DView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:toolkit="clr-namespace:SharpDX.Toolkit;assembly=SharpDX.Toolkit.Game"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" >
+    <toolkit:SharpDXElement MouseDown="SetSharpDxFocus" MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50"
+                            SendResizeToGame="True" Focusable="True"/>
+</UserControl>

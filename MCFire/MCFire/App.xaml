@@ -1,13 +1,14 @@
 ﻿<Application x:Class="MCFire.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:fire="clr-namespace:MCFire">
+             xmlns:fire="clr-namespace:MCFire"
+             xmlns:bootstrapper="clr-namespace:MCFire.Bootstrapper">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <!-- ReSharper disable once InconsistentNaming -->
-                    <fire:MCFireBootstrapper x:Key="bootstrapper" />
+                    <bootstrapper:MCFireBootstrapper x:Key="bootstrapper" />
                 </ResourceDictionary>
 
                 <!--Animations-->

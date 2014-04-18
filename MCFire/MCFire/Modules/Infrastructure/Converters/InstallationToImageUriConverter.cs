@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using MCFire.Modules.WorldExplorer.Models;
+using MCFire.Modules.Explorer.Models;
 
 namespace MCFire.Modules.Infrastructure.Converters
 {
