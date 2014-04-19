@@ -32,10 +32,18 @@ namespace MCFire.Modules.Editor.Models
 
             // move left, right
             if (keystate.IsKeyDown(Keys.D))
-                Position = Vector3.Cross(Direction, Vector3.Up) * .5f + Position;
+            {
+                var cross = Vector3.Cross(Direction, Vector3.Up);
+                cross.Normalize();
+                Position = cross * .5f + Position;
+            }
 
             if (keystate.IsKeyDown(Keys.A))
-                Position = Vector3.Cross(Direction, Vector3.Down) * .5f + Position;
+            {
+                var cross = Vector3.Cross(Direction, Vector3.Down);
+                cross.Normalize();
+                Position = cross * .5f + Position;
+            }
 
             // rotate yaw
             if (keystate.IsKeyDown(Keys.E))
