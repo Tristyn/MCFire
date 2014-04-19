@@ -150,7 +150,8 @@ namespace MCFire.Modules.Editor.Models
         }
 
         /// <summary>
-        /// Adds a VisualChunk to this editor.
+        /// Adds a VisualChunk to this editor. 
+        /// It will be disposed of properly when the time comes.
         /// This is a threadsafe call.
         /// </summary>
         /// <param name="visual"></param>

@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 
@@ -11,21 +12,29 @@ namespace MCFire.Modules.Editor.Models
     /// </summary>
     public class VisualChunk : IDisposable
     {
-        VertexLitEffect _vertexLitEffect;
-        public readonly Point ChunkPosition;
+        PopulationState _state;
+        [CanBeNull]
         Mesh _mesh;
+        [CanBeNull]
+        VertexLitEffect _vertexLitEffect;
         bool _disposed;
+        public readonly Point ChunkPosition;
 
-        public VisualChunk(Buffer<VertexPositionColor> vertexBuffer, VertexLitEffect vertexLitEffect, Point position)
+        public VisualChunk(PopulationState state, [CanBeNull] Buffer<VertexPositionColor> mainBuffer,
+            [NotNull] VertexLitEffect vertexLitEffect, Point position)
         {
+            if (vertexLitEffect == null) throw new ArgumentNullException("vertexLitEffect");
+
+            _state = state;
             _vertexLitEffect = vertexLitEffect;
             ChunkPosition = position;
-            _mesh = new Mesh
-            {
-                VertexBuffer = vertexBuffer,
-                VertexInputLayout = VertexInputLayout.FromBuffer(0, vertexBuffer),
-                Effect = _vertexLitEffect.Effect
-            };
+            if (mainBuffer != null)
+                _mesh = new Mesh
+                {
+                    VertexBuffer = mainBuffer,
+                    VertexInputLayout = VertexInputLayout.FromBuffer(0, mainBuffer),
+                    Effect = _vertexLitEffect.Effect
+                };
         }
 
         public void Draw(EditorGame game)
@@ -33,16 +42,26 @@ namespace MCFire.Modules.Editor.Models
             if (_disposed)
                 throw new ObjectDisposedException("VisualChunk");
 
+            if (_vertexLitEffect == null)
+                return;
+
             _vertexLitEffect.TransformMatrix = Matrix.Translation(ChunkPosition.X * 16, 0, ChunkPosition.Y * 16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
-            _mesh.Draw(game.GraphicsDevice);
+            if (_mesh != null)
+                _mesh.Draw(game.GraphicsDevice);
         }
 
         public void Dispose()
         {
             _vertexLitEffect = null;
-            _mesh.Dispose();
+            if (_mesh != null) _mesh.Dispose();
             _mesh = null;
             _disposed = true;
         }
+    }
+
+    public enum PopulationState
+    {
+        Populated,
+        NotPopulated
     }
 }

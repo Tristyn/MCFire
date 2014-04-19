@@ -35,9 +35,19 @@ namespace MCFire.Modules.Editor.Models
             if (!_game.GetNextDesiredChunk(out chunkPoint))
                 return false;
             var chunk = _world.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
-            if (chunk == null) 
-                return false;
+            Buffer<VertexPositionColor> buffer = null;
 
+            if (chunk != null)
+                buffer = GenerateMainMesh(chunk);
+
+            var chunkVisual = new VisualChunk(PopulationState.Populated, buffer, _vertexLit, chunkPoint);
+
+            _game.AddChunk(chunkVisual);
+            return true;
+        }
+
+        private Buffer<VertexPositionColor> GenerateMainMesh(ChunkRef chunk)
+        {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
             for (var y = 0; y < chunkBlocks.YDim; y++)
@@ -108,11 +118,7 @@ namespace MCFire.Modules.Editor.Models
                         }
                     }
 
-
-            var chunkVisual = new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()), _vertexLit, chunk.ChunkPosition());
-
-            _game.AddChunk(chunkVisual);
-            return true;
+            return Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray());
         }
 
         static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)
