@@ -111,7 +111,7 @@ namespace MCFire.Modules.Editor.Models
 
             var chunkVisual = new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()), _vertexLit, chunk.ChunkPosition());
 
-            _game.AddChunk(chunk, chunkVisual);
+            _game.AddChunk(chunkVisual);
             return true;
         }
 

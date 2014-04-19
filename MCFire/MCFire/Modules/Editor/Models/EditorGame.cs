@@ -49,9 +49,7 @@ namespace MCFire.Modules.Editor.Models
         /// </summary>
         IEnumerable<Point> _chunkPoints;
         int _viewDistance;
-        readonly List<ChunkRef> _chunks = new List<ChunkRef>();
         readonly List<VisualChunk> _chunkVisuals = new List<VisualChunk>();
-        readonly Stack<ChunkRef> _chunksToBeAdded = new Stack<ChunkRef>();
         readonly Stack<VisualChunk> _chunkVisualsToBeAdded = new Stack<VisualChunk>();
         readonly object _chunksToBeAddedLock = new object();
 
@@ -152,7 +150,7 @@ namespace MCFire.Modules.Editor.Models
             return base.ToDisposeContent(asset);
         }
 
-        public void AddChunk(ChunkRef chunk, VisualChunk visual)
+        public void AddChunk(VisualChunk visual)
         {
             /* TODO: make the editor not rely on any ChunkRefs, interaction code (hit tests, ect) should be in VisualChunk.
              * therefor, EditorBridge can infer the data of the chunk based on VisualChunk.
@@ -161,7 +159,6 @@ namespace MCFire.Modules.Editor.Models
              * */
             lock (_chunksToBeAddedLock)
             {
-                _chunksToBeAdded.Push(chunk);
                 _chunkVisualsToBeAdded.Push(visual);
             }
         }
@@ -173,31 +170,28 @@ namespace MCFire.Modules.Editor.Models
             {
                 lock (_chunksToBeAddedLock)
                 {
-                    if (_chunksToBeAdded.Any())
+                    if (_chunkVisualsToBeAdded.Any())
                         isCullingChunks = true;
 
-                    while (_chunksToBeAdded.Any())
+                    while (_chunkVisualsToBeAdded.Any())
                     {
                         // this would be faster if the last element is removed, but im lazy.
-                        var chunk = _chunksToBeAdded.Pop();
                         var chunkVisual = _chunkVisualsToBeAdded.Pop();
 
-                        var chunkPoint = chunk.ChunkPosition();
+                        var chunkPoint = chunkVisual.ChunkPosition;
 
                         // If a chunk with the same coords is found, replace it.
-                        for (var j = 0; j < _chunks.Count; j++)
+                        for (var j = 0; j < _chunkVisuals.Count; j++)
                         {
-                            var existingChunkPoint = _chunks[j].ChunkPosition();
+                            var existingChunkPoint = _chunkVisuals[j].ChunkPosition;
                             if (chunkPoint != existingChunkPoint) continue;
 
                             // replace the chunk
-                            _chunks[j] = chunk;
                             _chunkVisuals[j] = chunkVisual;
                             return;
                         }
 
                         // no old chunk found, just add it.
-                        _chunks.Add(chunk);
                         _chunkVisuals.Add(chunkVisual);
                     }
                 }
@@ -211,21 +205,21 @@ namespace MCFire.Modules.Editor.Models
         /// </summary>
         public void CullChunks()
         {
-            if (_chunks.Count <= ViewDistance * ViewDistance * 4 * 1.1f)
+            if (_chunkVisuals.Count <= ViewDistance * ViewDistance * 4 * 1.1f)
                 return;
 
             var cameraPos = _camera.ChunkPosition;
 
-            for (var i = 0; i < _chunks.Count; i++)
+            for (var i = 0; i < _chunkVisuals.Count; i++)
             {
-                var chunk = _chunks[i];
-                if (!(Math.Abs(chunk.X - cameraPos.X) > ViewDistance ||
-                      Math.Abs(chunk.Z - cameraPos.Y) > ViewDistance))
+                var chunk = _chunkVisuals[i];
+                if (!(Math.Abs(chunk.ChunkPosition.X - cameraPos.X) > ViewDistance ||
+                      Math.Abs(chunk.ChunkPosition.Y - cameraPos.Y) > ViewDistance))
                     continue;
 
-                _chunks.Remove(chunk);
+                _chunkVisuals.RemoveAt(i);
             }
-            Console.WriteLine("Culled chunks, {0} chunks active.", _chunks.Count);
+            Console.WriteLine("Culled chunks, {0} chunks active.", _chunkVisuals.Count);
         }
 
         // TODO: remove chunks that are out of range of ViewDistance
