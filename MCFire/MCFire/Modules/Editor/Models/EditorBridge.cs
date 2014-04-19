@@ -9,13 +9,13 @@ namespace MCFire.Modules.Editor.Models
     public class EditorBridge
     {
         ChunkCreationPolicy _policy;
-        readonly Meshalyzer _meshalyzer;
+        readonly Meshalyzer.Meshalyzer _meshalyzer;
         Thread _meshingThread;
 
         public EditorBridge(MCFireWorld world, int dimension, EditorGame game)
         {
             World = world;
-            _meshalyzer = new Meshalyzer(game, world, dimension);
+            _meshalyzer = new Meshalyzer.Meshalyzer(game, world, dimension);
             game.Disposing += (s, e) => { if (_meshingThread != null)_meshingThread.Abort(); };
             SetChunkCreationPolicy(ChunkCreationPolicy.Run);
         }

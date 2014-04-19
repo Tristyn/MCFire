@@ -6,8 +6,6 @@ using Gemini.Framework;
 using MCFire.Modules.Editor.Actions;
 using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Metro.ViewModels;
-using MCFire.Modules.Startup.ViewModels;
-using MCFire.Properties;
 
 namespace MCFire.Modules.Startup
 {
@@ -35,7 +33,11 @@ namespace MCFire.Modules.Startup
 #if EDITOR
         public override void PostInitialize()
         {
-            var action = new OpenEditorTo(IoC.Get<WorldExplorerService>().Installations.First().Worlds.First(), 0);
+            var install = IoC.Get<WorldExplorerService>().Installations.FirstOrDefault();
+            if(install==null)return;
+            var world = install.Worlds.First();
+            if(world==null) return;
+            var action = new OpenEditorTo(world, 0);
             IoC.BuildUp(action);
             action.Execute(new ActionExecutionContext());
         }

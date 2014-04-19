@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Explorer.Models;
-using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 using Vector3 = SharpDX.Vector3;
 
-namespace MCFire.Modules.Editor.Models
+namespace MCFire.Modules.Editor.Meshalyzer
 {
     /// <summary>
     /// Service for creating meshes for the 3D editor.
@@ -19,7 +19,7 @@ namespace MCFire.Modules.Editor.Models
         readonly MCFireWorld _world;
         readonly int _dimension;
         readonly VertexLitEffect _vertexLit;
-
+        // TODO: use new meshalying system (BlockMeshalyzer)
         public Meshalyzer(EditorGame game, MCFireWorld world, int dimension)
         {
             _game = game;
@@ -50,6 +50,7 @@ namespace MCFire.Modules.Editor.Models
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
+            
             for (var y = 0; y < chunkBlocks.YDim; y++)
                 for (var x = 0; x < chunkBlocks.XDim; x++)
                     for (var z = 0; z < chunkBlocks.ZDim; z++)

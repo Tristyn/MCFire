@@ -258,7 +258,7 @@ namespace MCFire.Modules.Editor.Models
                 foreach (var chunkPoint in _chunkPoints)
                 {
                     var worldSpaceChunkPoint = chunkPoint.Add(_camera.ChunkPosition);
-                    // TODO: replace _chunks with Dictionary of Point, Chunk for fast lookup.
+                    // TODO: replace _chunks with Dictionary of Point, CurrentChunk for fast lookup.
                     // if a chunk with the position already exists, continue
                     if (_chunkVisuals.Any(testChunk => testChunk.ChunkPosition == worldSpaceChunkPoint))
                         continue;

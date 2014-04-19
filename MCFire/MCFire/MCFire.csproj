@@ -164,8 +164,11 @@
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
+    <Compile Include="Modules\Editor\Meshalyzer\BlockMeshalyzer.cs" />
+    <Compile Include="Modules\Editor\Meshalyzer\Meshalyzer.cs" />
+    <Compile Include="Modules\Editor\Meshalyzer\SolidMeshalyzer.cs" />
     <Compile Include="Modules\Editor\Models\DebugCube.cs" />
-    <Compile Include="Modules\Editor\Models\Meshalyzer.cs" />
+    <Compile Include="Modules\Editor\Models\MeshCollection.cs" />
     <Compile Include="Modules\Editor\Models\VertexLitEffect.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />
     <Compile Include="Modules\Explorer\Models\MCFireWorld.cs" />
