@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using MCFire.Modules.Explorer.Models;
 
 namespace MCFire.Modules.Editor.Models
@@ -16,7 +15,6 @@ namespace MCFire.Modules.Editor.Models
         public EditorBridge(MCFireWorld world, int dimension, EditorGame game)
         {
             World = world;
-            Chunks = new List<MCFireChunk>();
             _meshalyzer = new Meshalyzer(game, world, dimension);
             game.Disposing += (s, e) => { if (_meshingThread != null)_meshingThread.Abort(); };
             SetChunkCreationPolicy(ChunkCreationPolicy.Run);
@@ -55,6 +53,5 @@ namespace MCFire.Modules.Editor.Models
         }
 
         public MCFireWorld World { get; private set; }
-        public List<MCFireChunk> Chunks { get; private set; }
     }
 }

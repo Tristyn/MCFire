@@ -9,7 +9,7 @@ using SharpDX.Toolkit;
 using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Substrate;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -27,15 +27,13 @@ namespace MCFire.Modules.Editor.Models
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
         readonly SharpDXElement _sharpDx;
-        Texture ErrorTexture { get; set; }
 #if DEBUG
         DebugCube _debugCube;
 #endif
 
         // content
         public SpriteFont Font { get; private set; }
-        VertexInputLayout _inputLayout;
-        Buffer<VertexPositionColor> _vertices;
+        Texture ErrorTexture { get; set; }
 
         // input
         Mouse _mouse;
@@ -45,7 +43,17 @@ namespace MCFire.Modules.Editor.Models
         Camera _camera;
 
         // new fields
-        readonly object _drawLock = new object();
+        /// <summary>
+        /// A list of all whole number points in a square of (√Length) wide with the center of the square being the (0,0) point.
+        /// This represents all of the visible chunks
+        /// </summary>
+        IEnumerable<Point> _chunkPoints;
+        int _viewDistance;
+        readonly List<ChunkRef> _chunks = new List<ChunkRef>();
+        readonly List<VisualChunk> _chunkVisuals = new List<VisualChunk>();
+        readonly Stack<ChunkRef> _chunksToBeAdded = new Stack<ChunkRef>();
+        readonly Stack<VisualChunk> _chunkVisualsToBeAdded = new Stack<VisualChunk>();
+        readonly object _chunksToBeAddedLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
@@ -115,49 +123,6 @@ namespace MCFire.Modules.Editor.Models
 
             // content
             Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
-
-            _vertices = ToDisposeContent(Buffer.Vertex.New(
-                GraphicsDevice,
-                new[]
-                    {
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange), // Front
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.Orange), // BACK
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed), // Top
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.OrangeRed), // Bottom
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange), // Left
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.DarkOrange), // Right
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange)
-                    }));
-            _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
 #if DEBUG
             _debugCube = ToDisposeContent(new DebugCube(this));
 #endif
@@ -187,25 +152,57 @@ namespace MCFire.Modules.Editor.Models
             return base.ToDisposeContent(asset);
         }
 
-        public void AddChunk(MCFireChunk chunk)
+        public void AddChunk(ChunkRef chunk, VisualChunk visual)
         {
-            lock (_chunks)
+            /* TODO: make the editor not rely on any ChunkRefs, interaction code (hit tests, ect) should be in VisualChunk.
+             * therefor, EditorBridge can infer the data of the chunk based on VisualChunk.
+             * I guess the only other data needed in VisualChunk other than meshes, is the collision data required for selections.
+             * If _chunkVisuals is a thread safe dictionary, locking wont be necessary (enumerating through values tho? enumerations are evil)
+             * */
+            lock (_chunksToBeAddedLock)
             {
-                // If a chunk with the same coords is found, replace it.
-                for (var i = 0; i < _chunks.Count; i++)
+                _chunksToBeAdded.Push(chunk);
+                _chunkVisualsToBeAdded.Push(visual);
+            }
+        }
+
+        private void IntegrateNewChunks()
+        {
+            var isCullingChunks = false;
+            lock (_chunkVisuals)
+            {
+                lock (_chunksToBeAddedLock)
                 {
-                    var chunk2 = _chunks[i].SubstrateChunk;
-                    if (chunk2.X != chunk.SubstrateChunk.X || chunk2.Z != chunk.SubstrateChunk.Z) continue;
+                    if (_chunksToBeAdded.Any())
+                        isCullingChunks = true;
 
-                    // replace the chunk
-                    _chunks[i] = chunk;
-                    return;
+                    while (_chunksToBeAdded.Any())
+                    {
+                        // this would be faster if the last element is removed, but im lazy.
+                        var chunk = _chunksToBeAdded.Pop();
+                        var chunkVisual = _chunkVisualsToBeAdded.Pop();
+
+                        var chunkPoint = chunk.ChunkPosition();
+
+                        // If a chunk with the same coords is found, replace it.
+                        for (var j = 0; j < _chunks.Count; j++)
+                        {
+                            var existingChunkPoint = _chunks[j].ChunkPosition();
+                            if (chunkPoint != existingChunkPoint) continue;
+
+                            // replace the chunk
+                            _chunks[j] = chunk;
+                            _chunkVisuals[j] = chunkVisual;
+                            return;
+                        }
+
+                        // no old chunk found, just add it.
+                        _chunks.Add(chunk);
+                        _chunkVisuals.Add(chunkVisual);
+                    }
                 }
-
-                // no old chunk found, just add it.
-                _chunks.Add(chunk);
-
-                CullChunks();
+                if (isCullingChunks)
+                    CullChunks();
             }
         }
 
@@ -214,23 +211,21 @@ namespace MCFire.Modules.Editor.Models
         /// </summary>
         public void CullChunks()
         {
-            if (_chunks.Count <= ViewDistance * ViewDistance * 4 * 1.1f) 
+            if (_chunks.Count <= ViewDistance * ViewDistance * 4 * 1.1f)
                 return;
 
             var cameraPos = _camera.ChunkPosition;
 
-            lock (_chunks)
+            for (var i = 0; i < _chunks.Count; i++)
             {
-                foreach (var chunk in _chunks)
-                {
-                    var chunkPoint = new Point(chunk.SubstrateChunk.X, chunk.SubstrateChunk.Z);
-                    if (!(Math.Abs(chunkPoint.X - cameraPos.X) > ViewDistance || Math.Abs(chunkPoint.Y - cameraPos.Y) > ViewDistance))
-                        continue;
+                var chunk = _chunks[i];
+                if (!(Math.Abs(chunk.X - cameraPos.X) > ViewDistance ||
+                      Math.Abs(chunk.Z - cameraPos.Y) > ViewDistance))
+                    continue;
 
-                    _chunks.Remove(chunk);
-                }
-                Console.WriteLine("Culled chunks, {0} chunks active.", _chunks.Count);
+                _chunks.Remove(chunk);
             }
+            Console.WriteLine("Culled chunks, {0} chunks active.", _chunks.Count);
         }
 
         // TODO: remove chunks that are out of range of ViewDistance
@@ -241,21 +236,23 @@ namespace MCFire.Modules.Editor.Models
         /// <returns>If any chunks should be generated</returns>
         public bool GetNextDesiredChunk(out Point point)
         {
-            foreach (var chunkPoint in _chunkPoints)
+            lock (_chunkVisuals)
             {
-                var worldSpaceChunkPoint = chunkPoint.Add(_camera.ChunkPosition);
-                // TODO: replace _chunks with Dictionary of Point, Chunk for fast lookup.
-                lock (_chunks)
+                foreach (var chunkPoint in _chunkPoints)
                 {
-                    if (_chunks.Any(testChunk => testChunk.SubstrateChunk.X == worldSpaceChunkPoint.X && testChunk.SubstrateChunk.Z == worldSpaceChunkPoint.Y))
+                    var worldSpaceChunkPoint = chunkPoint.Add(_camera.ChunkPosition);
+                    // TODO: replace _chunks with Dictionary of Point, Chunk for fast lookup.
+                    // if a chunk with the position already exists, continue
+                    if (_chunkVisuals.Any(testChunk => testChunk.ChunkPosition == worldSpaceChunkPoint))
                         continue;
-                }
 
-                point = worldSpaceChunkPoint;
-                return true;
+                    // chunk doesn't exist yet, return its position
+                    point = worldSpaceChunkPoint;
+                    return true;
+                }
             }
 
-            // all chunks generated
+            // all chunks within ViewDistance are visible, return false
             point = new Point();
             return false;
         }
@@ -283,49 +280,48 @@ namespace MCFire.Modules.Editor.Models
             Camera.Update(_keyboard.GetState());
             _mouse.Update();
 
+            IntegrateNewChunks();
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            lock (_drawLock)
+            // Clears the screen with the Color.CornflowerBlue
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            // Calculate matrices
+            _basicEffect.World = Matrix.Identity;
+            _basicEffect.View = Camera.ViewMatrix;
+            _basicEffect.Projection = Camera.ProjectionMatrix;
+
+            // Draw chunk
+            // TODO: 
+            lock (_chunkVisuals)
             {
-                // Clears the screen with the Color.CornflowerBlue
-                GraphicsDevice.Clear(Color.CornflowerBlue);
-
-                // Calculate matrices
-                _basicEffect.World = Matrix.Identity;
-                _basicEffect.View = Camera.ViewMatrix;
-                _basicEffect.Projection = Camera.ProjectionMatrix;
-
-                // Draw chunk
-                lock (_chunks)
+                foreach (var chunk in _chunkVisuals)
                 {
-                    foreach (var chunk in _chunks)
-                    {
-                        if (chunk.Visual != null)
-                            chunk.Visual.Draw(this);
-                    }
+                    chunk.Draw(this);
                 }
+            }
 
 #if DEBUG
-                // Draw the cube
-                _debugCube.Draw(this);
+            // Draw the cube
+            _debugCube.Draw(this);
 #endif
 
-                // Draw debug
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(Font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
-                _spriteBatch.DrawString(Font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
-                _spriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
-                _spriteBatch.End();
+            // Draw debug
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(Font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
+            _spriteBatch.DrawString(Font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
+            _spriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
+            _spriteBatch.End();
 
-                // Reset
-                GraphicsDevice.Flush();
+            // Reset
+            GraphicsDevice.Flush();
 
-                // Handle base.Draw
-                base.Draw(gameTime);
-            }
+            // Handle base.Draw
+            base.Draw(gameTime);
         }
 
         /// <summary>
@@ -348,14 +344,5 @@ namespace MCFire.Modules.Editor.Models
         {
             get { return _camera; }
         }
-
-        /// <summary>
-        /// A list of all whole number points in a square of (√Length) width and height with the center of the square being the (0,0) point.
-        /// This represents all of the visible chunks
-        /// </summary>
-        IEnumerable<Point> _chunkPoints;
-
-        int _viewDistance;
-        readonly List<MCFireChunk> _chunks = new List<MCFireChunk>();
     }
 }

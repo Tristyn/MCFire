@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
@@ -12,8 +13,10 @@ namespace MCFire.Modules.Editor.Models
         BasicEffect _effect;
         bool _disposed;
 
-        public DebugCube(EditorGame game)
+        public DebugCube([NotNull] EditorGame game)
         {
+            if (game == null) throw new ArgumentNullException("game");
+
             var vertices = game.ToDisposeContent(Buffer.Vertex.New(
                 game.GraphicsDevice,
                 new[]
@@ -73,8 +76,9 @@ namespace MCFire.Modules.Editor.Models
             };
         }
 
-        public void Draw(EditorGame game)
+        public void Draw([NotNull] EditorGame game)
         {
+            if (game == null) throw new ArgumentNullException("game");
             if (_disposed)
                 throw new ObjectDisposedException("DebugCube");
 
@@ -86,9 +90,11 @@ namespace MCFire.Modules.Editor.Models
         public void Dispose()
         {
             if (_disposed) return;
-            _mesh.Dispose();
+            if (_mesh != null)
+                _mesh.Dispose();
             _mesh = null;
-            _effect.Dispose();
+            if (_effect != null)
+                _effect.Dispose();
             _effect = null;
             _disposed = true;
         }

@@ -1,21 +1,25 @@
 ﻿using System;
+using JetBrains.Annotations;
 using SharpDX.Toolkit.Graphics;
 
 namespace MCFire.Modules.Editor.Models
 {
     /// <summary>
-    /// A simple wrapper for a SharpDx vertex buffer, and its Effect and VertexInputLayout.
+    /// A simple wrapper for a SharpDx vertex buffer, its Effect and VertexInputLayout.
     /// </summary>
     public class Mesh : IDisposable
     {
+        [CanBeNull]
         public VertexInputLayout VertexInputLayout;
 
         /// <summary>
         /// The vertex buffer range for this mesh part.
         /// </summary>
+        [CanBeNull]
         public Buffer<VertexPositionColor> VertexBuffer;
 
         /// <summary>Gets or sets the material Effect for this mesh part.  Reference page contains code sample.</summary>
+        [CanBeNull]
         public Effect Effect;
 
         bool _disposed;
@@ -28,7 +32,7 @@ namespace MCFire.Modules.Editor.Models
         /// Unlike XNA, a <see cref="Mesh"/> is not bound to a specific Effect. The effect must have been setup prior calling this method.
         /// This method is only responsible to setup the VertexBuffer, IndexBuffer and call the appropriate <see cref="GraphicsDevice.DrawIndexed"/> method on the <see cref="GraphicsDevice"/>.
         /// </remarks>
-        public void Draw(GraphicsDevice graphicsDevice)
+        public void Draw([NotNull] GraphicsDevice graphicsDevice)
         {
             if (_disposed)
                 throw new ObjectDisposedException("Mesh");
@@ -49,14 +53,13 @@ namespace MCFire.Modules.Editor.Models
         /// </summary>
         public void Dispose()
         {
-            if (VertexBuffer != null)
-            {
-                VertexBuffer.Dispose();
-                VertexBuffer = null;
-            }
+            if (_disposed)
+                return;
 
+            if (VertexBuffer != null)
+                VertexBuffer.Dispose();
+            VertexBuffer = null;
             _disposed = true;
         }
-
     }
 }

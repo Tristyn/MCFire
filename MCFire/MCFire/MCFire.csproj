@@ -216,6 +216,7 @@
     <Compile Include="Modules\Infrastructure\Converters\InstallationToImageUriConverter.cs" />
     <Compile Include="Modules\Infrastructure\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Modules\Infrastructure\Enums\DimensionType.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\ChunkRefExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\PointExtensions.cs" />
@@ -270,7 +271,6 @@
     <Compile Include="Modules\Editor\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Editor\Models\EditorGame.cs" />
     <Compile Include="Modules\Editor\Models\EditorBridge.cs" />
-    <Compile Include="Modules\Editor\Models\MCFireChunk.cs" />
     <Compile Include="Modules\Editor\Models\KeyEventArgs.cs" />
     <Compile Include="Modules\Editor\Models\Mesh.cs" />
     <Compile Include="Modules\Editor\Models\Mouse.cs" />

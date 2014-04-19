@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MCFire.Modules.Explorer.Models;
+using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
@@ -37,7 +38,7 @@ namespace MCFire.Modules.Editor.Models
             if (chunk == null) 
                 return false;
 
-            var chunkBlocks = chunk.SubstrateChunk.Blocks;
+            var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
             for (var y = 0; y < chunkBlocks.YDim; y++)
                 for (var x = 0; x < chunkBlocks.XDim; x++)
@@ -108,9 +109,9 @@ namespace MCFire.Modules.Editor.Models
                     }
 
 
-            chunk.Visual = new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()), _vertexLit, chunk.SubstrateChunk.X, chunk.SubstrateChunk.Z);
+            var chunkVisual = new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()), _vertexLit, chunk.ChunkPosition());
 
-            _game.AddChunk(chunk);
+            _game.AddChunk(chunk, chunkVisual);
             return true;
         }
 
