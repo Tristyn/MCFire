@@ -9,7 +9,6 @@ using SharpDX.Toolkit;
 using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
-using Substrate;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -63,6 +62,7 @@ namespace MCFire.Modules.Editor.Models
             _sharpDx = sharpDx;
             Content.RootDirectory = @"Modules/Editor/Content";
             ViewDistance = 10;
+            Disposing += DisposeAllChunks;
         }
 
         protected override void LoadContent()
@@ -130,15 +130,14 @@ namespace MCFire.Modules.Editor.Models
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
         {
-            T asset = null;
+            T asset;
             try
             {
                 asset = Content.Load<T>(assetName);
             }
             catch (AssetNotFoundException)
             {
-                if (typeof(T).IsAssignableFrom(typeof(Texture2D)))
-                    return ErrorTexture as T;
+                return ErrorTexture as T;
             }
 
             // return asset, if its null then safe cast the error texture to T and return.
@@ -150,6 +149,11 @@ namespace MCFire.Modules.Editor.Models
             return base.ToDisposeContent(asset);
         }
 
+        /// <summary>
+        /// Adds a VisualChunk to this editor.
+        /// This is a threadsafe call.
+        /// </summary>
+        /// <param name="visual"></param>
         public void AddChunk(VisualChunk visual)
         {
             /* TODO: make the editor not rely on any ChunkRefs, interaction code (hit tests, ect) should be in VisualChunk.
@@ -163,7 +167,7 @@ namespace MCFire.Modules.Editor.Models
             }
         }
 
-        private void IntegrateNewChunks()
+        void IntegrateNewChunks()
         {
             var isCullingChunks = false;
             lock (_chunkVisuals)
@@ -196,14 +200,14 @@ namespace MCFire.Modules.Editor.Models
                     }
                 }
                 if (isCullingChunks)
-                    CullChunks();
+                    RemoveDistantChunks();
             }
         }
 
         /// <summary>
-        /// Culls chunks that are out of range of ViewDistance
+        /// Removes chunks that are out of range of ViewDistance
         /// </summary>
-        public void CullChunks()
+        void RemoveDistantChunks()
         {
             if (_chunkVisuals.Count <= ViewDistance * ViewDistance * 4 * 1.1f)
                 return;
@@ -217,9 +221,27 @@ namespace MCFire.Modules.Editor.Models
                       Math.Abs(chunk.ChunkPosition.Y - cameraPos.Y) > ViewDistance))
                     continue;
 
+                // remove it
+                chunk.Dispose();
                 _chunkVisuals.RemoveAt(i);
             }
             Console.WriteLine("Culled chunks, {0} chunks active.", _chunkVisuals.Count);
+        }
+
+        /// <summary>
+        /// Disposes of and removes all chunks in the editor.
+        /// </summary>
+        void DisposeAllChunks(object s, EventArgs e)
+        {
+            lock (_chunkVisuals)
+            {
+                // go backwards cause preformance :)
+                for (var i = _chunkVisuals.Count - 1; i >= 0; i--)
+                {
+                    _chunkVisuals[i].Dispose();
+                    _chunkVisuals.RemoveAt(i);
+                }
+            }
         }
 
         // TODO: remove chunks that are out of range of ViewDistance

@@ -39,7 +39,7 @@ namespace MCFire.Modules.Editor.Models
             // ReSharper disable once ObjectCreationAsStatement
             if (_meshingThread != null && _meshingThread.IsAlive)
                 return;
-
+            // TODO: leverage multiple cores
             _meshingThread = new Thread(() =>
             {
                 while (_policy == ChunkCreationPolicy.Run)

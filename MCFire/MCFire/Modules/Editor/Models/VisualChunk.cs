@@ -4,6 +4,11 @@ using SharpDX.Toolkit.Graphics;
 
 namespace MCFire.Modules.Editor.Models
 {
+    /// <summary>
+    /// Used by the EditorGame, contains all information required to render and interact with chunks.
+    /// Does not contain block data or anything like that.
+    /// NOTE: Effects will not be disposed when disposing.
+    /// </summary>
     public class VisualChunk : IDisposable
     {
         VertexLitEffect _vertexLitEffect;
