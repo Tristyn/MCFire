@@ -100,6 +100,11 @@ namespace MCFire.Modules.Editor.Models
             set { _position = value; }
         }
 
+        public Point ChunkPosition
+        {
+            get { return new Point((int) (_position.X / 16), (int) (_position.Z/16));}
+        }
+
         public Vector3 Direction
         {
             get { return _direction; }

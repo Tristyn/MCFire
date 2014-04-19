@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using MCFire.Modules.Explorer.Models;
-using SharpDX;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -10,21 +9,16 @@ namespace MCFire.Modules.Editor.Models
     /// </summary>
     public class EditorBridge
     {
-        private readonly int _dimension;
-        readonly EditorGame _game;
-        readonly Dictionary<Point, MCFireChunk> _chunkDict;
         ChunkCreationPolicy _policy;
-        Meshalyzer _meshalyzer;
+        readonly Meshalyzer _meshalyzer;
+        Thread _meshingThread;
 
         public EditorBridge(MCFireWorld world, int dimension, EditorGame game)
         {
-            _dimension = dimension;
-            _game = game;
             World = world;
-            _chunkDict = new Dictionary<Point, MCFireChunk>();
             Chunks = new List<MCFireChunk>();
-            _game.ChunkSource = _chunkDict;
-            _meshalyzer = new Meshalyzer(game);
+            _meshalyzer = new Meshalyzer(game, world, dimension);
+            game.Disposing += (s, e) => { if (_meshingThread != null)_meshingThread.Abort(); };
             SetChunkCreationPolicy(ChunkCreationPolicy.Run);
         }
 
@@ -45,24 +39,19 @@ namespace MCFire.Modules.Editor.Models
         private void BeginBuildChunks()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            var meshingThread = new Thread(() =>
+            if (_meshingThread != null && _meshingThread.IsAlive)
+                return;
+
+            _meshingThread = new Thread(() =>
             {
                 while (_policy == ChunkCreationPolicy.Run)
                 {
-                    Point chunkPoint;
-                    if (!_game.GetNextDesiredChunk(out chunkPoint))
-                    {
-                        Thread.Sleep(5000); // wait because there is no work to do
-                        continue;
-                    }
-
-                    var chunk = World.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
-                    if (chunk == null) return;
-                    _meshalyzer.Meshalyze(chunk);
+                    if (!_meshalyzer.MeshalyzeNext())
+                        Thread.Sleep(5000);
                 }
             });
             Thread.CurrentThread.IsBackground = true;
-            meshingThread.Start();
+            _meshingThread.Start();
         }
 
         public MCFireWorld World { get; private set; }

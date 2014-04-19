@@ -164,6 +164,7 @@
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
+    <Compile Include="Modules\Editor\Models\DebugCube.cs" />
     <Compile Include="Modules\Editor\Models\Meshalyzer.cs" />
     <Compile Include="Modules\Editor\Models\VertexLitEffect.cs" />
     <Compile Include="Modules\EventAggregator\MCFireEventAggregator.cs" />

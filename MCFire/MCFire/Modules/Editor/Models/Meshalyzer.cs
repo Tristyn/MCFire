@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MCFire.Modules.Explorer.Models;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
@@ -14,16 +15,28 @@ namespace MCFire.Modules.Editor.Models
     public sealed class Meshalyzer
     {
         readonly EditorGame _game;
+        readonly MCFireWorld _world;
+        readonly int _dimension;
         readonly VertexLitEffect _vertexLit;
 
-        public Meshalyzer(EditorGame game)
+        public Meshalyzer(EditorGame game, MCFireWorld world, int dimension)
         {
             _game = game;
-            _vertexLit =new VertexLitEffect(_game.LoadContent<Effect>(@"VertexLit"));
+            _world = world;
+            _dimension = dimension;
+            _vertexLit = new VertexLitEffect(_game.LoadContent<Effect>(@"VertexLit"));
         }
 
-        public void Meshalyze(MCFireChunk chunk)
+        public bool MeshalyzeNext()
         {
+            Point chunkPoint;
+
+            if (!_game.GetNextDesiredChunk(out chunkPoint))
+                return false;
+            var chunk = _world.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
+            if (chunk == null) 
+                return false;
+
             var chunkBlocks = chunk.SubstrateChunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
             for (var y = 0; y < chunkBlocks.YDim; y++)
@@ -95,9 +108,10 @@ namespace MCFire.Modules.Editor.Models
                     }
 
 
-            chunk.Visual=new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()),_vertexLit,chunk.SubstrateChunk.X,chunk.SubstrateChunk.Z);
+            chunk.Visual = new VisualChunk(Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray()), _vertexLit, chunk.SubstrateChunk.X, chunk.SubstrateChunk.Z);
 
             _game.AddChunk(chunk);
+            return true;
         }
 
         static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)

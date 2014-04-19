@@ -27,28 +27,24 @@ namespace MCFire.Modules.Editor.Models
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
         readonly SharpDXElement _sharpDx;
-        public Meshalyzer Meshalyzer { get; private set; }
-        public Texture ErrorTexture { get; private set; }
+        Texture ErrorTexture { get; set; }
+#if DEBUG
+        DebugCube _debugCube;
+#endif
 
         // content
-        SpriteFont _font;
+        public SpriteFont Font { get; private set; }
         VertexInputLayout _inputLayout;
         Buffer<VertexPositionColor> _vertices;
 
         // input
         Mouse _mouse;
         KeyboardManager _keyboard;
-        bool _ignoreNextMoveEvent;
 
         // model
         Camera _camera;
-        Buffer<VertexPositionColor> _chunkVertices;
-        VertexInputLayout _chunkInputLayout;
-        Mesh _chunkMesh;
-        Effect _chunkEffect;
 
         // new fields
-        readonly List<VisualChunk> _chunksOldOldOld = new List<VisualChunk>();
         readonly object _drawLock = new object();
 
         /// <summary>
@@ -92,32 +88,22 @@ namespace MCFire.Modules.Editor.Models
                 var change = (e.PrevPosition - e.Position) * new Vector2(GraphicsDevice.AspectRatio(), 1);
                 Camera.Pan(change * 2);
 
-                // If mouse escapes the bounds of the SharpDxElement, loop it to the other side.
                 // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (_ignoreNextMoveEvent)
-                {
-                    _ignoreNextMoveEvent = false;
-                    return;
-                }
                 if (e.Position.X == 1)
                 {
                     _mouse.MoveSilently(new Vector2(0.01f, e.Position.Y));
-                    _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.X == 0)
                 {
                     _mouse.MoveSilently(new Vector2(0.99f, e.Position.Y));
-                    _ignoreNextMoveEvent = true;
                 }
                 if (e.Position.Y == 1)
                 {
                     _mouse.MoveSilently(new Vector2(e.Position.X, 0.01f));
-                    _ignoreNextMoveEvent = true;
                 }
                 else if (e.Position.Y == 0)
                 {
                     _mouse.MoveSilently(new Vector2(e.Position.X, 0.99f));
-                    _ignoreNextMoveEvent = true;
                 }
                 // ReSharper restore CompareOfFloatsByEqualityOperator
             };
@@ -128,7 +114,7 @@ namespace MCFire.Modules.Editor.Models
             };
 
             // content
-            _font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
+            Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
 
             _vertices = ToDisposeContent(Buffer.Vertex.New(
                 GraphicsDevice,
@@ -172,6 +158,9 @@ namespace MCFire.Modules.Editor.Models
                         new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange)
                     }));
             _inputLayout = VertexInputLayout.FromBuffer(0, _vertices);
+#if DEBUG
+            _debugCube = ToDisposeContent(new DebugCube(this));
+#endif
 
             base.LoadContent();
         }
@@ -183,7 +172,7 @@ namespace MCFire.Modules.Editor.Models
             {
                 asset = Content.Load<T>(assetName);
             }
-            catch (AssetNotFoundException ex)
+            catch (AssetNotFoundException)
             {
                 if (typeof(T).IsAssignableFrom(typeof(Texture2D)))
                     return ErrorTexture as T;
@@ -193,22 +182,10 @@ namespace MCFire.Modules.Editor.Models
             return asset != null ? ToDisposeContent(asset) : ErrorTexture as T;
         }
 
-        static readonly Matrix Up = Matrix.Identity;
-        static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0, 0, 1);
-        static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
-        static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
-        static readonly Matrix Right = Matrix.RotationZ(-MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
-        static readonly Matrix Left = Matrix.RotationZ(MathUtil.PiOverTwo) * Matrix.Translation(1, 0, 0);
-
-        static readonly Vector3[] QuadVertices =
+        public new T ToDisposeContent<T>(T asset) where T : IDisposable
         {
-            new Vector3(1,1,1),
-            new Vector3(0,1,1),
-            new Vector3(0,1,0),
-            new Vector3(1,1,0),
-            new Vector3(1,1,1),
-            new Vector3(0,1,0)
-        };
+            return base.ToDisposeContent(asset);
+        }
 
         public void AddChunk(MCFireChunk chunk)
         {
@@ -227,8 +204,35 @@ namespace MCFire.Modules.Editor.Models
 
                 // no old chunk found, just add it.
                 _chunks.Add(chunk);
+
+                CullChunks();
             }
         }
+
+        /// <summary>
+        /// Culls chunks that are out of range of ViewDistance
+        /// </summary>
+        public void CullChunks()
+        {
+            if (_chunks.Count <= ViewDistance * ViewDistance * 4 * 1.1f) 
+                return;
+
+            var cameraPos = _camera.ChunkPosition;
+
+            lock (_chunks)
+            {
+                foreach (var chunk in _chunks)
+                {
+                    var chunkPoint = new Point(chunk.SubstrateChunk.X, chunk.SubstrateChunk.Z);
+                    if (!(Math.Abs(chunkPoint.X - cameraPos.X) > ViewDistance || Math.Abs(chunkPoint.Y - cameraPos.Y) > ViewDistance))
+                        continue;
+
+                    _chunks.Remove(chunk);
+                }
+                Console.WriteLine("Culled chunks, {0} chunks active.", _chunks.Count);
+            }
+        }
+
         // TODO: remove chunks that are out of range of ViewDistance
         /// <summary>
         /// Returns the position of the chunk that the game should generate next.
@@ -237,11 +241,9 @@ namespace MCFire.Modules.Editor.Models
         /// <returns>If any chunks should be generated</returns>
         public bool GetNextDesiredChunk(out Point point)
         {
-            var cameraChunkPosition = new Point((int)Camera.Position.X / 16, (int)Camera.Position.Z / 16);
             foreach (var chunkPoint in _chunkPoints)
             {
-                MCFireChunk chunk;
-                Point worldSpaceChunkPoint = chunkPoint.Add(cameraChunkPosition);
+                var worldSpaceChunkPoint = chunkPoint.Add(_camera.ChunkPosition);
                 // TODO: replace _chunks with Dictionary of Point, Chunk for fast lookup.
                 lock (_chunks)
                 {
@@ -249,7 +251,7 @@ namespace MCFire.Modules.Editor.Models
                         continue;
                 }
 
-                point = chunkPoint;
+                point = worldSpaceChunkPoint;
                 return true;
             }
 
@@ -276,25 +278,6 @@ namespace MCFire.Modules.Editor.Models
                            select point;
         }
 
-        static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)
-        {
-            // 0-15 to 0-255
-            luminance *= 16;
-
-            foreach (var vertex in QuadVertices)
-            {
-                // rotate the vector to face the direction specified
-                var transformed = Vector3.TransformCoordinate(vertex, direction);
-
-                // translate the vector into world space
-                transformed += location;
-
-                // add the vector to the list as a vertex
-                triangleMesh.Add(new VertexPositionColor(transformed, new Color(luminance, luminance, luminance, 255)));
-                //triangleMesh.Add(new VertexPositionColor(transformed, new Color(luminance)));
-            }
-        }
-
         protected override void Update(GameTime gameTime)
         {
             Camera.Update(_keyboard.GetState());
@@ -315,12 +298,6 @@ namespace MCFire.Modules.Editor.Models
                 _basicEffect.View = Camera.ViewMatrix;
                 _basicEffect.Projection = Camera.ProjectionMatrix;
 
-                // Draw the cube
-                GraphicsDevice.SetVertexBuffer(_vertices);
-                GraphicsDevice.SetVertexInputLayout(_inputLayout);
-                _basicEffect.CurrentTechnique.Passes[0].Apply();
-                GraphicsDevice.Draw(PrimitiveType.TriangleList, _vertices.ElementCount);
-
                 // Draw chunk
                 lock (_chunks)
                 {
@@ -331,22 +308,25 @@ namespace MCFire.Modules.Editor.Models
                     }
                 }
 
+#if DEBUG
+                // Draw the cube
+                _debugCube.Draw(this);
+#endif
+
                 // Draw debug
                 _spriteBatch.Begin();
-                _spriteBatch.DrawString(_font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
-                _spriteBatch.DrawString(_font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
-                _spriteBatch.DrawString(_font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
+                _spriteBatch.DrawString(Font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
+                _spriteBatch.DrawString(Font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
+                _spriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
                 _spriteBatch.End();
 
                 // Reset
-                //GraphicsDevice.Flush();
+                GraphicsDevice.Flush();
 
                 // Handle base.Draw
                 base.Draw(gameTime);
             }
         }
-
-        public Dictionary<Point, MCFireChunk> ChunkSource { get; set; }
 
         /// <summary>
         /// Must be greater than 0. Anything over 10 is pushing it.
@@ -376,6 +356,6 @@ namespace MCFire.Modules.Editor.Models
         IEnumerable<Point> _chunkPoints;
 
         int _viewDistance;
-        List<MCFireChunk> _chunks = new List<MCFireChunk>();
+        readonly List<MCFireChunk> _chunks = new List<MCFireChunk>();
     }
 }

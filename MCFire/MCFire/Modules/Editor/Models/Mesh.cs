@@ -37,9 +37,9 @@ namespace MCFire.Modules.Editor.Models
             graphicsDevice.SetVertexInputLayout(VertexInputLayout);
 
             var passCount = Effect.CurrentTechnique.Passes.Count;
-            for (var j = 0; j < passCount; j++)
+            for (var i = 0; i < passCount; i++)
             {
-                Effect.CurrentTechnique.Passes[j].Apply();
+                Effect.CurrentTechnique.Passes[i].Apply();
                 graphicsDevice.Draw(PrimitiveType.TriangleList, VertexBuffer.ElementCount);
             }
         }
