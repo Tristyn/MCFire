@@ -56,8 +56,8 @@ namespace MCFire.Modules.Editor.Models
                 {
                     if (_game.GetBlock(enumerator.Current).Info.State == BlockState.SOLID) break;
                 }
-
-            Console.WriteLine(enumerator.Current);
+            // TODO: do something with it :/
+            //Console.WriteLine(enumerator.Current);
         }
     }
 }

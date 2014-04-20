@@ -12,6 +12,7 @@ using MCFire.Modules.Files.ViewModels;
 
 namespace MCFire.Modules.Files
 {
+#if DEBUG
     [Export(typeof(IModule))]
     public class Module : ModuleBase
     {
@@ -23,7 +24,7 @@ namespace MCFire.Modules.Files
         public override void Initialize()
         {
             MainMenu.All.First(item => item.Name == "View")
-                .Add(new MenuItem("File Explorer", OpenFileExplorer));
+                .Add(new MenuItem("File Explorer [Deprecated]", OpenFileExplorer));
 
             _folderService.GetOrCreateFolder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),".minecraft"));
         }
@@ -33,4 +34,5 @@ namespace MCFire.Modules.Files
             yield return Show.Tool<ExplorerViewModel>();
         }
     }
+#endif
 }
