@@ -256,14 +256,6 @@
     <Compile Include="Modules\Nbt\NbtBuilder\NbtTagValueSetter.cs" />
     <Compile Include="Modules\Nbt\NbtBuilder\ValueSetterBase.cs" />
     <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
-    <Compile Include="Modules\OverlayTest\ViewModels\OpenOverlayViewModel.cs" />
-    <Compile Include="Modules\OverlayTest\ViewModels\OverlayTestViewModel.cs" />
-    <Compile Include="Modules\OverlayTest\Views\OpenOverlayView.xaml.cs">
-      <DependentUpon>OpenOverlayView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\OverlayTest\Views\OverlayTestView.xaml.cs">
-      <DependentUpon>OverlayTestView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Modules\Startup\ViewModels\ConfigureInstallationsViewModel.cs" />
     <Compile Include="Modules\Startup\Views\ConfigureInstallationsView.xaml.cs">
@@ -366,14 +358,6 @@
     <Page Include="Modules\Metro\Views\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Modules\OverlayTest\Views\OpenOverlayView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Modules\OverlayTest\Views\OverlayTestView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Modules\Startup\Views\ConfigureInstallationsView.xaml">
       <SubType>Designer</SubType>

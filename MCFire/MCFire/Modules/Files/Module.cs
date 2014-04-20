@@ -16,10 +16,8 @@ namespace MCFire.Modules.Files
     [Export(typeof(IModule))]
     public class Module : ModuleBase
     {
-#pragma warning disable 0649
         [Import]
         FolderService _folderService;
-#pragma warning restore 0649
 
         public override void Initialize()
         {
