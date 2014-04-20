@@ -34,7 +34,7 @@ namespace MCFire.Modules.Explorer.ViewModels
         public WorldItemViewModel SelectedItem { get; set; }
 
         [ImportMany]
-        public IEnumerable<IWindowCommand> Commands { get; private set; }
+        public IEnumerable<IWorldExplorerCommand> Commands { get; private set; }
 
         public override PaneLocation PreferredLocation
         {
