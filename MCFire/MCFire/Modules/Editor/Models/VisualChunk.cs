@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
+using Substrate;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -17,17 +18,19 @@ namespace MCFire.Modules.Editor.Models
         Mesh _mesh;
         [CanBeNull]
         VertexLitEffect _vertexLitEffect;
+        [CanBeNull]
+        public ChunkRef ChunkRef;
         bool _disposed;
         public readonly Point ChunkPosition;
 
-        public VisualChunk(PopulationState state, [CanBeNull] Buffer<VertexPositionColor> mainBuffer,
-            [NotNull] VertexLitEffect vertexLitEffect, Point position)
+        public VisualChunk(PopulationState state, Point position, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] ChunkRef chunkRef = null, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
         {
             if (vertexLitEffect == null) throw new ArgumentNullException("vertexLitEffect");
 
             _state = state;
             _vertexLitEffect = vertexLitEffect;
             ChunkPosition = position;
+            ChunkRef = chunkRef;
             if (mainBuffer != null)
                 _mesh = new Mesh
                 {
@@ -55,6 +58,7 @@ namespace MCFire.Modules.Editor.Models
             _vertexLitEffect = null;
             if (_mesh != null) _mesh.Dispose();
             _mesh = null;
+            ChunkRef = null;
             _disposed = true;
         }
     }

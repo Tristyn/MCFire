@@ -40,7 +40,7 @@ namespace MCFire.Modules.Editor.Meshalyzer
             if (chunk != null)
                 buffer = GenerateMainMesh(chunk);
 
-            var chunkVisual = new VisualChunk(PopulationState.Populated, buffer, _vertexLit, chunkPoint);
+            var chunkVisual = new VisualChunk(PopulationState.Populated, chunkPoint, _vertexLit, chunk, buffer);
 
             _game.AddChunk(chunkVisual);
             return true;
@@ -50,7 +50,7 @@ namespace MCFire.Modules.Editor.Meshalyzer
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
-            
+            // TODO: speed up meshing by reading chunks sections that exist. some 16x16x16 chunks arent saved.
             for (var y = 0; y < chunkBlocks.YDim; y++)
                 for (var x = 0; x < chunkBlocks.XDim; x++)
                     for (var z = 0; z < chunkBlocks.ZDim; z++)

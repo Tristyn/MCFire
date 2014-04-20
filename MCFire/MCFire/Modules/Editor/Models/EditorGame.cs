@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 using MCFire.Modules.Editor.Extensions;
 using MCFire.Modules.Infrastructure.Extensions;
+using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
+using Substrate;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -25,7 +29,7 @@ namespace MCFire.Modules.Editor.Models
         // rendering
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
-        readonly SharpDXElement _sharpDx;
+        readonly SharpDXElement _sharpDxElement;
 #if DEBUG
         DebugCube _debugCube;
 #endif
@@ -36,10 +40,11 @@ namespace MCFire.Modules.Editor.Models
 
         // input
         Mouse _mouse;
-        KeyboardManager _keyboard;
+        Keyboard _keyboard;
 
         // model
         Camera _camera;
+        GameUser _gameUser;
 
         // new fields
         /// <summary>
@@ -55,11 +60,11 @@ namespace MCFire.Modules.Editor.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
         /// </summary>
-        /// <param name="sharpDx">The control used to listen to mouse drag events.</param>
-        public EditorGame(SharpDXElement sharpDx)
+        /// <param name="sharpDxElement">The control used to listen to mouse drag events.</param>
+        public EditorGame(SharpDXElement sharpDxElement)
         {
             ToDispose(new GraphicsDeviceManager(this));
-            _sharpDx = sharpDx;
+            _sharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
             ViewDistance = 10;
             Disposing += DisposeAllChunks;
@@ -77,47 +82,11 @@ namespace MCFire.Modules.Editor.Models
             });
 
             // input
-            _keyboard = ToDispose(new KeyboardManager(this));
-            _keyboard.Initialize();
-            _camera = ToDispose(new Camera(GraphicsDevice) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
-            Camera.LookAt(new Vector3(0, 0, 0));
+            _keyboard = ToDispose(new Keyboard(this));
             _mouse = ToDispose(new Mouse(new MouseManager(this)));
-
-            _mouse.Right.DragStart += (s, e) =>
-            {
-                _sharpDx.CaptureMouse();
-                System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
-            };
-            _mouse.Right.DragMove += (s, e) =>
-            {
-                // perspective drag
-                var change = (e.PrevPosition - e.Position) * new Vector2(GraphicsDevice.AspectRatio(), 1);
-                Camera.Pan(change * 2);
-
-                // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (e.Position.X == 1)
-                {
-                    _mouse.MoveSilently(new Vector2(0.01f, e.Position.Y));
-                }
-                else if (e.Position.X == 0)
-                {
-                    _mouse.MoveSilently(new Vector2(0.99f, e.Position.Y));
-                }
-                if (e.Position.Y == 1)
-                {
-                    _mouse.MoveSilently(new Vector2(e.Position.X, 0.01f));
-                }
-                else if (e.Position.Y == 0)
-                {
-                    _mouse.MoveSilently(new Vector2(e.Position.X, 0.99f));
-                }
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-            };
-            _mouse.Right.DragEnd += (s, e) =>
-            {
-                _sharpDx.ReleaseMouseCapture();
-                System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
-            };
+            _camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
+            Camera.LookAt(new Vector3(0, 0, 0));
+            _gameUser = new GameUser(this);
 
             // content
             Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
@@ -148,6 +117,8 @@ namespace MCFire.Modules.Editor.Models
         {
             return base.ToDisposeContent(asset);
         }
+
+        #region Chunks
 
         /// <summary>
         /// Adds a VisualChunk to this editor. 
@@ -292,10 +263,42 @@ namespace MCFire.Modules.Editor.Models
                            select point;
         }
 
+        public AlphaBlock GetBlock(Point3 position)
+        {
+            return GetBlock(position.X, position.Y, position.Z);
+        }
+
+        /// <summary>
+        /// Returns the block at the specified position.
+        /// Returns air (0) if the coord is in the void, above the sky limit, if the chunk doesn't exist or hasn't been created.
+        /// </summary>
+        public AlphaBlock GetBlock(int x, int y, int z)
+        {
+            if (y < 0) return new AlphaBlock(BlockType.AIR);
+            var chunkPos = new Point(x / 16, z / 16);
+            var chunk = _chunkVisuals.FirstOrDefault(chnk => chnk.ChunkPosition == chunkPos);
+            if (chunk == null) return new AlphaBlock(BlockType.AIR);
+            var chunkRef = chunk.ChunkRef;
+            if (chunkRef == null) return new AlphaBlock(BlockType.AIR);
+            var blocks = chunkRef.Blocks;
+            if (y >= blocks.YDim) return new AlphaBlock(BlockType.AIR);
+            return blocks.GetBlock(Mod(x, 16), y, Mod(z, 16));
+        }
+
+        int Mod(int x, int m)
+        {
+            int r = x % m;
+            return r < 0 ? r + m : r;
+        }
+
+        #endregion
+
         protected override void Update(GameTime gameTime)
         {
-            Camera.Update(_keyboard.GetState());
+            _keyboard.Update();
             _mouse.Update();
+            _camera.Update(gameTime);
+            _gameUser.Update(gameTime);
 
             IntegrateNewChunks();
 
@@ -361,5 +364,13 @@ namespace MCFire.Modules.Editor.Models
         {
             get { return _camera; }
         }
+
+        public Mouse Mouse { get { return _mouse; } }
+
+        public Keyboard Keyboard { get { return _keyboard; } }
+
+        public GameUser GameUser { get { return _gameUser; } }
+
+        public SharpDXElement SharpDxElement { get { return _sharpDxElement; } }
     }
 }

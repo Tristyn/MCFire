@@ -23,6 +23,7 @@ namespace MCFire.Modules.Editor.Models
             var state = _mouse.GetState();
             var pos = new Vector2(state.X, state.Y);
 
+            Position = pos;
             Left.Update(state.Left, pos);
             Right.Update(state.Right, pos);
             Middle.Update(state.Middle, pos);
@@ -50,6 +51,7 @@ namespace MCFire.Modules.Editor.Models
         public Key Left { get; private set; }
         public Key Right { get; private set; }
         public Key Middle { get; private set; }
+        public Vector2 Position { get; private set; }
     }
 
     public class Key
@@ -60,6 +62,8 @@ namespace MCFire.Modules.Editor.Models
 
         public void Update(ButtonState state, Vector2 position)
         {
+            State = state;
+
             var previousPosition = GetPreviousPosition(position);
             switch (state)
             {
@@ -135,6 +139,8 @@ namespace MCFire.Modules.Editor.Models
             _ignoreNextMove = false;
             return currentPosition;
         }
+
+        public ButtonState State { get; private set; }
 
         public event EventHandler<KeyEventArgs> Click;
         public event EventHandler<KeyEventArgs> DragStart;

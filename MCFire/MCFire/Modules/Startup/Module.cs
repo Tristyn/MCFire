@@ -6,6 +6,8 @@ using Gemini.Framework;
 using MCFire.Modules.Editor.Actions;
 using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Metro.ViewModels;
+using MCFire.Modules.Startup.ViewModels;
+using MCFire.Properties;
 
 namespace MCFire.Modules.Startup
 {
