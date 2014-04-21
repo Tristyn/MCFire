@@ -113,11 +113,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NUnrar">
+      <HintPath>..\packages\nunrar.1.0.1\lib\net40\NUnrar.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.14.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.14\lib\portable-net45+win8\System.Threading.Tasks.Dataflow.dll</HintPath>
@@ -232,11 +236,12 @@
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\PointExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\IModalOverlay.cs" />
+    <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point3.cs" />
-    <Compile Include="Modules\Infrastructure\Models\WeakValueDictionary.cs" />
     <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>

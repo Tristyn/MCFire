@@ -34,5 +34,17 @@ namespace MCFire.Properties {
                 this["FirstRun"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DontAddDefaultInstall {
+            get {
+                return ((bool)(this["DontAddDefaultInstall"]));
+            }
+            set {
+                this["DontAddDefaultInstall"] = value;
+            }
+        }
     }
 }

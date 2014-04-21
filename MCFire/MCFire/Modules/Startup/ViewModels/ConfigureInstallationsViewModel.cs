@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +12,12 @@ using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Explorer.Services;
+using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Interfaces;
+using MCFire.Modules.Infrastructure.Models;
+using MCFire.Properties;
+using NUnrar.Archive;
+using NUnrar.Common;
 using Substrate;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -24,7 +30,8 @@ namespace MCFire.Modules.Startup.ViewModels
     {
         [Import]
         WorldExplorerService _explorerService;
-        
+
+        BindableCollection<Installation> _installs;
         Installation _install;
         IEnumerable<WorldState> _worlds;
         Timer _refreshTimer;
@@ -33,6 +40,12 @@ namespace MCFire.Modules.Startup.ViewModels
         bool? _minecraftUnknown;
         bool _loading = true;
         int _worldCount;
+        private string _sampleMapMessage;
+
+        public ConfigureInstallationsViewModel()
+        {
+            SampleMapMessage = "Use Sample Map";
+        }
 
         public void ContinueNoInstall()
         {
@@ -40,17 +53,12 @@ namespace MCFire.Modules.Startup.ViewModels
                 "No Minecraft installations have been set, it is critical that an installation is set. You can set installations later. Are you sure you want to continue? ",
                 "No Minecraft installation has been found.", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
-                Close();
-        }
-
-        public void Close()
-        {
-            if (CloseOverlay != null) CloseOverlay(this, EventArgs.Empty);
+                Continue();
         }
 
         public void Continue()
         {
-            Close(); // TODO:
+            if (CloseOverlay != null) CloseOverlay(this, EventArgs.Empty);
         }
 
         public void DownloadMinecraft()
@@ -58,41 +66,82 @@ namespace MCFire.Modules.Startup.ViewModels
             Process.Start("http://minecraft.net");
         }
 
-        public void FindMainInstall()
+        /// <summary>
+        /// Opens a FolderBrowserDialog for the user to select an installation.
+        /// Message boxes and returns null if no installation was found.
+        /// </summary>
+        /// <returns>An installation. Can be null.</returns>
+        [CanBeNull]
+        static Installation BrowseForInstallation()
         {
             var dialog = new FolderBrowserDialog
             {
                 Description = "Select the folder that Minecraft is installed in.",
-                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                SelectedPath = MCFireDirectories.MinecraftAppdata
             };
             if (dialog.ShowDialog() != DialogResult.OK)
-                return;
+                return null;
 
             var install = Installation.New(dialog.SelectedPath);
             if (install == null)
-            {
                 MessageBox.Show("MC Fire did not detect that the specified folder was a minecraft installation.",
                     "Not a Minecraft installation");
-                return;
-            }
-
-            _explorerService.Installations.Add(install);
-            Install = install;
+            return install;
         }
 
         public void UseSampleMap()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var rarUri = Path.Combine(MCFireDirectories.Install, "Resources", "SampleWorld.rar");
+                var rarDir = new Uri(rarUri).LocalPath;
+                var extractDir = Path.Combine(MCFireDirectories.MCFireAppdata, "SampleWorld");
+
+                Directory.Delete(extractDir, true);
+                RarArchive.WriteToDirectory(rarDir, MCFireDirectories.MCFireAppdata, ExtractOptions.ExtractFullPath);
+                _explorerService.TryAddInstallation(Installation.New(extractDir));
+            }
+            catch (Exception ex)
+            {
+                SampleMapMessage = "Failed extracting sample map";
+            }
         }
 
         public void AddGame()
         {
-            throw new NotImplementedException();
+            var install = BrowseForInstallation();
+            if (install == null) return;
+
+            if (!(install is GameInstallation))
+                MessageBox.Show("MC Fire detected that the specified folder was a server installation.");
+
+            _explorerService.TryAddInstallation(install);
         }
 
         public void AddServer()
         {
-            throw new NotImplementedException();
+            var install = BrowseForInstallation();
+            if (install == null) return;
+
+            if (!(install is ServerInstallation))
+                MessageBox.Show("MC Fire detected that the specified folder was a game installation.");
+
+            _explorerService.TryAddInstallation(install);
+        }
+
+        public void RemoveInstall(object dataContext)
+        {
+            var install = dataContext as Installation;
+            Debug.Assert(install != null);
+            if (Installs.Count == 1)
+            {
+                var result = MessageBox.Show("Are you sure you want to remove the only installation from MC Fire?", "", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No) return;
+            }
+
+            if (install.Path.NormalizePath() == MCFireDirectories.MinecraftAppdata)
+                Settings.Default.DontAddDefaultInstall = true;
+            _explorerService.Installations.Remove(install);
         }
 
         public async void Loaded()
@@ -100,57 +149,62 @@ namespace MCFire.Modules.Startup.ViewModels
             await Task.Delay(1500);
 
             // if minecraft exists on disk, add it to explorer service and display it
-            var newInstall = GetMainInstallation();
-            if (newInstall != null)
-            {
-                // add install to explorer service if it wasn't there already
-                if (!_explorerService.Installations.Contains(newInstall))
-                    _explorerService.Installations.Add(newInstall);
-                Install = newInstall;
-                return;
-            }
+            var newInstall = GetAnyInstallation();
+            if (newInstall == null) return;
 
-            // minecraft not known, setting Install to null will make the ui ask for installations
-            Install = null;
+            // add install to explorer service if it wasn't there already
+            _explorerService.TryAddInstallation(newInstall);
+
+            Installs = _explorerService.Installations.Link<Installation, Installation, BindableCollection<Installation>>();
         }
 
         [CanBeNull]
-        Installation GetMainInstallation()
+        Installation GetAnyInstallation()
         {
-            var minecraftPath =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft")
-                    .ToLower();
-
-            // if .minecraft has already been added
-            var minecraftInstall =
-                _explorerService.Installations.Where(install => install != null).FirstOrDefault(install => install.Path.ToLower() == minecraftPath);
+            // if an install has already been added
+            var minecraftInstall = _explorerService.Installations.FirstOrDefault();
             if (minecraftInstall != null)
             {
                 return minecraftInstall;
             }
 
             // if minecraft exists on disk, add it to explorer service and display it
-            var newInstall = Installation.New(minecraftPath);
+            if (Settings.Default.DontAddDefaultInstall) return null;
+            var newInstall = Installation.New(MCFireDirectories.MinecraftAppdata);
             return newInstall; // null if it doesn't exist/hasn't been initialized
         }
 
-        [CanBeNull]
-        public Installation Install
+        public BindableCollection<Installation> Installs
         {
-            get { return _install; }
-            private set
+            get { return _installs; }
+            set
             {
-                _install = value;
-                MinecraftExists = value != null ? (bool?)true : null;
-                MinecraftUnknown = value == null ? (bool?)true : null;
+                if (value == _installs) return;
+                if (value != null) Loading = false;
+
+                if (_installs != null)
+                    _installs.CollectionChanged -= CheckAnyInstalls;
+                _installs = value;
                 if (value != null)
-                    Worlds = from world in value.Worlds
-                             select new WorldState(world.NbtWorld.Level.GameType, world.NbtWorld.Level.LevelName);
-                Loading = false;
-                NotifyOfPropertyChange(() => Install);
-                NotifyOfPropertyChange(() => CanClose);
-                NotifyOfPropertyChange(() => CanContinue);
+                    value.CollectionChanged += CheckAnyInstalls;
+                CheckAnyInstalls(null, null);
+
+                NotifyOfPropertyChange(() => Installs);
             }
+        }
+
+        void CheckAnyInstalls(object s, NotifyCollectionChangedEventArgs e)
+        {
+            NotifyOfPropertyChange(() => CanContinue);
+            if (Installs == null || !Installs.Any())
+            {
+                MinecraftExists = false;
+                MinecraftUnknown = true;
+                return;
+            }
+
+            MinecraftExists = true;
+            MinecraftUnknown = false;
         }
 
         public bool? MinecraftExists
@@ -179,10 +233,10 @@ namespace MCFire.Modules.Startup.ViewModels
                 _refreshTimer.Tick += (s, e) =>
                 {
                     // ghost delegate after disposing of the timer
-                    if(_refreshTimer==null)return;
+                    if (_refreshTimer == null) return;
 
                     // check for installation
-                    var install = GetMainInstallation();
+                    var install = GetAnyInstallation();
                     if (install == null) return;
 
                     // install exists
@@ -191,9 +245,7 @@ namespace MCFire.Modules.Startup.ViewModels
                     _refreshTimer = null;
 
                     // add install to explorer service if it wasn't there already
-                    if (!_explorerService.Installations.Contains(install))
-                        _explorerService.Installations.Add(install);
-                    Install = install;
+                    _explorerService.TryAddInstallation(install);
                 };
                 _refreshTimer.Interval = 5000;
                 _refreshTimer.Start();
@@ -202,12 +254,7 @@ namespace MCFire.Modules.Startup.ViewModels
 
         public bool CanContinue
         {
-            get { return Install != null; }
-        }
-
-        public bool CanClose
-        {
-            get { return Install != null; }
+            get { return Installs != null && Installs.Any(); }
         }
 
         public bool Loading
@@ -221,36 +268,25 @@ namespace MCFire.Modules.Startup.ViewModels
             }
         }
 
-        [CanBeNull]
-        public IEnumerable<WorldState> Worlds
+        public string SampleMapMessage
         {
-            get { return _worlds; }
+            get { return _sampleMapMessage; }
             private set
             {
-                if (Equals(value, _worlds)) return;
-                _worlds = value;
-
-                WorldCount = value != null ? value.Count() : 0;
-                NotifyOfPropertyChange(() => Worlds);
-            }
-        }
-
-        public int WorldCount
-        {
-            get { return _worldCount; }
-            private set
-            {
-                if (value == _worldCount) return;
-                _worldCount = value;
-                NotifyOfPropertyChange(() => WorldCount);
+                if (value == _sampleMapMessage) return;
+                _sampleMapMessage = value;
+                NotifyOfPropertyChange(() => SampleMapMessage);
             }
         }
 
         public event EventHandler CloseOverlay;
     }
 
+
     public class WorldState
     {
+        int _worldCount;
+
         public WorldState(GameType gameType, string title)
         {
             GameType = gameType;

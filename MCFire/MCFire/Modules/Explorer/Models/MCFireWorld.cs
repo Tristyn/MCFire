@@ -45,6 +45,21 @@ namespace MCFire.Modules.Explorer.Models
             return cm.GetChunkRef(cx, cy);
         }
 
+        public GameType GameType
+        {
+            get
+            {
+                try
+                {
+                    return NbtWorld.Level.GameType;
+                }
+                catch (Exception)
+                {
+                    return Substrate.GameType.SURVIVAL;
+                }
+            }
+        }
+
         public void NotifyChunkModified(int dimension, int cx, int cy)
         {
             // TODO:

@@ -6,7 +6,6 @@ using Gemini.Framework.Services;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Infrastructure.Extensions;
-using MCFire.Modules.Metro.Commands;
 
 namespace MCFire.Modules.Explorer.ViewModels
 {

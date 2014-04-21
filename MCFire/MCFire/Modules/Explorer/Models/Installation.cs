@@ -31,7 +31,8 @@ namespace MCFire.Modules.Explorer.Models
             if (!directory.Exists)
                 return null;
 
-            if (directory.EnumerateFiles().Any(file => file.Name.ToLower() == "launcher.jar"))
+            if (directory.EnumerateFiles().Any(
+                file => file.Name.ToLower() == "options.txt" || file.Name.ToLower()=="launcher.jar"))
             {
                 return new GameInstallation(path);
             }
