@@ -66,6 +66,11 @@ namespace MCFire.Modules.Startup.ViewModels
             Process.Start("http://minecraft.net");
         }
 
+        public void FindMainInstall()
+        {
+            AddGame();
+        }
+
         /// <summary>
         /// Opens a FolderBrowserDialog for the user to select an installation.
         /// Message boxes and returns null if no installation was found.
