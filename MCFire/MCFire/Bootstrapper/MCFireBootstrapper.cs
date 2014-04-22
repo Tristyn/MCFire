@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -111,7 +112,7 @@ namespace MCFire.Bootstrapper
 
             // only output errors if in release
 #if !DEBUG
-            Dispatcher.CurrentDispatcher.UnhandledException += UnhandleException;
+            AppDomain.CurrentDomain.UnhandledException += UnhandleException;
 #endif
 
             var ignoredAssembies = new[]
@@ -164,29 +165,28 @@ namespace MCFire.Bootstrapper
             Container.Compose(batch);
         }
 
-        static void UnhandleException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        static void UnhandleException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.Exception == null)
-            {
-                Application.Current.Shutdown();
-                return;
-            }
-            var exceptionType = ExceptionHelper.WriteExceptionDetails(e.Exception);
+            UnhandleException(e.ExceptionObject as Exception);
+        }
+
+        static void UnhandleException(Exception e)
+        {
             var errorMessage = string.Format("An application error occurred. We recommend that you save your work and restart the application. \n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close)");
-            try
-            {
-                var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
-                var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
-                    String.Format(@"Exception: {0} {1}.txt", date, e.Exception.GetType()));
-                File.WriteAllText(logPath, exceptionType);
-            }
-            catch { }
-            //insert code to log exception here
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
             {
                 Application.Current.Shutdown();
             }
-            e.Handled = true;
+
+            // log it
+            var exceptionType = ExceptionHelper.WriteExceptionDetails(e);
+            var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
+            var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
+                String.Format(@"Exception {0} {1}.txt", date, e.GetType()));
+            logPath = Path.GetInvalidPathChars().Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
+            File.WriteAllText(new Uri(logPath).LocalPath, exceptionType);
+
+            Process.Start(logPath);
         }
 
         protected virtual void BindServices(CompositionBatch batch)

@@ -1,8 +1,9 @@
-﻿using MCFire.Modules.Editor.ViewModels;
+﻿using System;
+using MCFire.Modules.Editor.ViewModels;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
-    public interface IEditorTool
+    public interface IEditorTool : IDisposable
     {
         void Initialize(EditorViewModel viewModel);
         void Selected();

@@ -47,9 +47,12 @@ namespace MCFire.Modules.Infrastructure.ViewModels
             if (!e.WasClosed)
                 return;
 
-            _game.Exit();
-            _game.Dispose();
-            _game = null;
+            if (_game != null)
+            {
+                _game.Exit();
+                _game.Dispose();
+                _game = null;
+            }
             
             _sharpDxElement.Dispose();
             _sharpDxElement = null;

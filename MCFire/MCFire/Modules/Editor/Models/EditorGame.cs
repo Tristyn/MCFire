@@ -29,7 +29,6 @@ namespace MCFire.Modules.Editor.Models
         // rendering
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
-        readonly SharpDXElement _sharpDxElement;
 #if DEBUG
         DebugCube _debugCube;
 #endif
@@ -38,15 +37,6 @@ namespace MCFire.Modules.Editor.Models
         public SpriteFont Font { get; private set; }
         Texture ErrorTexture { get; set; }
 
-        // input
-        Mouse _mouse;
-        Keyboard _keyboard;
-
-        // model
-        Camera _camera;
-        GameUser _gameUser;
-
-        // new fields
         /// <summary>
         /// A list of all whole number points in a square of (√Length) wide with the center of the square being the (0,0) point.
         /// This represents all of the visible chunks
@@ -64,7 +54,7 @@ namespace MCFire.Modules.Editor.Models
         public EditorGame(SharpDXElement sharpDxElement)
         {
             ToDispose(new GraphicsDeviceManager(this));
-            _sharpDxElement = sharpDxElement;
+            SharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
             ViewDistance = 10;
             Disposing += DisposeAllChunks;
@@ -82,11 +72,11 @@ namespace MCFire.Modules.Editor.Models
             });
 
             // input
-            _keyboard = ToDispose(new Keyboard(this));
-            _mouse = ToDispose(new Mouse(new MouseManager(this)));
-            _camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
+            Keyboard = ToDispose(new Keyboard(this));
+            Mouse = ToDispose(new Mouse(new MouseManager(this)));
+            Camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
             Camera.LookAt(new Vector3(0, 0, 0));
-            _gameUser = new GameUser(this);
+            GameUser = new GameUser(this);
 
             // content
             Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
@@ -184,7 +174,7 @@ namespace MCFire.Modules.Editor.Models
             if (_chunkVisuals.Count <= ViewDistance * ViewDistance * 4 * 1.1f)
                 return;
 
-            var cameraPos = _camera.ChunkPosition;
+            var cameraPos = Camera.ChunkPosition;
 
             for (var i = 0; i < _chunkVisuals.Count; i++)
             {
@@ -228,7 +218,7 @@ namespace MCFire.Modules.Editor.Models
             {
                 foreach (var chunkPoint in _chunkPoints)
                 {
-                    var worldSpaceChunkPoint = chunkPoint.Add(_camera.ChunkPosition);
+                    var worldSpaceChunkPoint = chunkPoint.Add(Camera.ChunkPosition);
                     // TODO: replace _chunks with Dictionary of Point, CurrentChunk for fast lookup.
                     // if a chunk with the position already exists, continue
                     if (_chunkVisuals.Any(testChunk => testChunk.ChunkPosition == worldSpaceChunkPoint))
@@ -285,9 +275,9 @@ namespace MCFire.Modules.Editor.Models
             return blocks.GetBlock(Mod(x, 16), y, Mod(z, 16));
         }
 
-        int Mod(int x, int m)
+        static int Mod(int x, int m)
         {
-            int r = x % m;
+            var r = x % m;
             return r < 0 ? r + m : r;
         }
 
@@ -295,10 +285,10 @@ namespace MCFire.Modules.Editor.Models
 
         protected override void Update(GameTime gameTime)
         {
-            _keyboard.Update();
-            _mouse.Update();
-            _camera.Update(gameTime);
-            _gameUser.Update(gameTime);
+            Keyboard.Update();
+            Mouse.Update();
+            Camera.Update(gameTime);
+            GameUser.Update(gameTime);
 
             IntegrateNewChunks();
 
@@ -353,24 +343,21 @@ namespace MCFire.Modules.Editor.Models
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException("ViewDistance");
+                    value = 1;
 
                 _viewDistance = value;
                 GenerateChunkPoints();
             }
         }
 
-        public Camera Camera
-        {
-            get { return _camera; }
-        }
+        public Camera Camera { get; private set; }
 
-        public Mouse Mouse { get { return _mouse; } }
+        public Mouse Mouse { get; private set; }
 
-        public Keyboard Keyboard { get { return _keyboard; } }
+        public Keyboard Keyboard { get; private set; }
 
-        public GameUser GameUser { get { return _gameUser; } }
+        public GameUser GameUser { get; private set; }
 
-        public SharpDXElement SharpDxElement { get { return _sharpDxElement; } }
+        public SharpDXElement SharpDxElement { get; private set; }
     }
 }

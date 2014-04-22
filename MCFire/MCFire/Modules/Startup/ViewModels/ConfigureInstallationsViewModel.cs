@@ -155,10 +155,10 @@ namespace MCFire.Modules.Startup.ViewModels
 
             // if minecraft exists on disk, add it to explorer service and display it
             var newInstall = GetAnyInstallation();
-            if (newInstall == null) return;
 
             // add install to explorer service if it wasn't there already
-            _explorerService.TryAddInstallation(newInstall);
+            if (newInstall != null)
+                _explorerService.TryAddInstallation(newInstall);
 
             Installs = _explorerService.Installations.Link<Installation, Installation, BindableCollection<Installation>>();
         }

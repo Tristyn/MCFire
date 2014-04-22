@@ -61,7 +61,6 @@ namespace MCFire.Modules.Editor.ViewModels
             if (Game != null) RunGame(Game, _view.SharpDx);
             World = world;
             _meshalyzer = new Meshalyzer.Meshalyzer(Game, world, dimension);
-            Game.Disposing += (s, e) => { if (_meshingThread != null)_meshingThread.Abort(); };
             SetChunkCreationPolicy(ChunkCreationPolicy.Run);
 
             // _bridge = new EditorBridge(world, dimension, Game);
@@ -88,15 +87,13 @@ namespace MCFire.Modules.Editor.ViewModels
         {
             if (!close)
                 return;
-            _aggregator.Publish(new EditorClosingMessage(this));
 
             // stop the meshing thread gracefully
             SetChunkCreationPolicy(ChunkCreationPolicy.Idle);
             _meshingThread.Join();
+            _meshalyzer = null;
 
-            // dispose game
-            if (Game != null) Game.Dispose();
-            Game = null;
+            _aggregator.Publish(new EditorClosingMessage(this));
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Explorer.Models;
 using SharpDX;
@@ -46,7 +47,8 @@ namespace MCFire.Modules.Editor.Meshalyzer
             return true;
         }
 
-        private Buffer<VertexPositionColor> GenerateMainMesh(ChunkRef chunk)
+        [CanBeNull]
+        Buffer<VertexPositionColor> GenerateMainMesh(ChunkRef chunk)
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
@@ -119,7 +121,7 @@ namespace MCFire.Modules.Editor.Meshalyzer
                         }
                     }
 
-            return Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray());
+            return chunkVerticesList.Count == 0 ? null : Buffer.Vertex.New(_game.GraphicsDevice, chunkVerticesList.ToArray());
         }
 
         static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, byte luminance)
