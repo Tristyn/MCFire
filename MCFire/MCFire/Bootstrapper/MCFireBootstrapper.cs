@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,9 +17,9 @@ namespace MCFire.Bootstrapper
     /// <summary>
     /// Copied from gemini libraries because TGJONES WONT MERGE PULL REQUEST #34 COME ON WHAT GIVES ITS ONE WORD
     /// </summary>
-    class MCFireBootstrapper : Bootstrapper<IMainWindow>
+    sealed class MCFireBootstrapper : Bootstrapper<IMainWindow>
     {
-        protected CompositionContainer Container;
+        CompositionContainer _container;
 
         protected override IEnumerable<Assembly> SelectAssemblies()
         {
@@ -112,7 +111,8 @@ namespace MCFire.Bootstrapper
 
             // only output errors if in release
 #if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += UnhandleException;
+            Dispatcher.CurrentDispatcher.UnhandledException += ExceptionHelper.UnhandledUIException;
+            AppDomain.CurrentDomain.UnhandledException += ExceptionHelper.UnhandledException;
 #endif
 
             var ignoredAssembies = new[]
@@ -153,68 +153,44 @@ namespace MCFire.Bootstrapper
                     .Select(x => new AssemblyCatalog(x)));
 
             var mainProvider = new CatalogExportProvider(mainCatalog);
-            Container = new CompositionContainer(priorityProvider, mainProvider);
-            priorityProvider.SourceProvider = Container;
-            mainProvider.SourceProvider = Container;
+            _container = new CompositionContainer(priorityProvider, mainProvider);
+            priorityProvider.SourceProvider = _container;
+            mainProvider.SourceProvider = _container;
 
             var batch = new CompositionBatch();
 
             BindServices(batch);
             batch.AddExportedValue(mainCatalog);
 
-            Container.Compose(batch);
+            _container.Compose(batch);
         }
 
-        static void UnhandleException(object sender, UnhandledExceptionEventArgs e)
-        {
-            UnhandleException(e.ExceptionObject as Exception);
-        }
-
-        static void UnhandleException(Exception e)
-        {
-            var errorMessage = string.Format("An application error occurred. We recommend that you save your work and restart the application. \n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close)");
-            if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
-            {
-                Application.Current.Shutdown();
-            }
-
-            // log it
-            var exceptionType = ExceptionHelper.WriteExceptionDetails(e);
-            var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
-            var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
-                String.Format(@"Exception {0} {1}.txt", date, e.GetType()));
-            logPath = Path.GetInvalidPathChars().Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
-            File.WriteAllText(new Uri(logPath).LocalPath, exceptionType);
-
-            Process.Start(logPath);
-        }
-
-        protected virtual void BindServices(CompositionBatch batch)
+        private void BindServices(CompositionBatch batch)
         {
             batch.AddExportedValue<IWindowManager>(new WindowManager());
             batch.AddExportedValue<IEventAggregator>(new EventAggregator());
-            batch.AddExportedValue(Container);
+            batch.AddExportedValue(_container);
         }
 
         protected override object GetInstance(Type serviceType, string key)
         {
             string contract = string.IsNullOrEmpty(key) ? AttributedModelServices.GetContractName(serviceType) : key;
-            var exports = Container.GetExportedValues<object>(contract);
+            var exports = _container.GetExportedValues<object>(contract);
 
-            if (exports.Any())
-                return exports.First();
+            var export = exports.FirstOrDefault();
+            if (export != null) return export;
 
             throw new Exception(string.Format("Could not locate any instances of contract {0}.", contract));
         }
 
         protected override IEnumerable<object> GetAllInstances(Type serviceType)
         {
-            return Container.GetExportedValues<object>(AttributedModelServices.GetContractName(serviceType));
+            return _container.GetExportedValues<object>(AttributedModelServices.GetContractName(serviceType));
         }
 
         protected override void BuildUp(object instance)
         {
-            Container.SatisfyImportsOnce(instance);
+            _container.SatisfyImportsOnce(instance);
         }
 
         #endregion

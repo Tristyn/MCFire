@@ -1,11 +1,52 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace MCFire.Bootstrapper
 {
     public static class ExceptionHelper
     {
+        public static void UnhandledUIException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            var errorMessage = string.Format("An application error occurred. We recommend that you save your work and restart the application. \n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close)");
+            if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
+            {
+                Application.Current.Shutdown();
+            }
+
+            // log it
+            var exceptionType = ExceptionHelper.WriteExceptionDetails(e.Exception);
+            var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
+            var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
+                String.Format(@"Exception {0} {1}.txt", date, e.Exception.GetType()));
+            logPath = Path.GetInvalidPathChars().Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
+            File.WriteAllText(new Uri(logPath).LocalPath, exceptionType);
+
+            Process.Start(logPath);
+        }
+
+        public static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var errorMessage = string.Format("An unrecoverable error has occurred. We are sorry.");
+            MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            // log it
+            var exceptionType = ExceptionHelper.WriteExceptionDetails(e.ExceptionObject as Exception);
+            var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
+            var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
+                String.Format(@"Exception {0} {1}.txt", date, e.GetType()));
+            logPath = Path.GetInvalidPathChars().Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
+            File.WriteAllText(new Uri(logPath).LocalPath, exceptionType);
+
+            Process.Start(logPath);
+        }
+
         public static string WriteExceptionDetails(Exception exception)
         {
             var builder = new StringBuilder(200);
