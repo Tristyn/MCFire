@@ -12,13 +12,13 @@ namespace MCFire.Modules.Editor
     [Export(typeof(IModule))]
     public class Module : ModuleBase
     {
-        [Import] 
+        [Import]
         WorldExplorerService _explorer;
 
         public override void Initialize()
         {
-            MainMenu.All.First(menu => menu.Name=="View")
-                .Add(new MenuItem("3D Test",Open3DTest));
+            MainMenu.All.First(menu => menu.Name == "View")
+                .Add(new MenuItem("3D Test", Open3DTest));
         }
 
         IEnumerable<IResult> Open3DTest()

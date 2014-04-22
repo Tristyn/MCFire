@@ -25,9 +25,9 @@ namespace MCFire.Modules.Editor.Actions
 
         public void Execute(ActionExecutionContext context)
         {
-            _editor.InitializeTo(_world, _dimension);
+            _editor.TryInitializeTo(_world, _dimension);
             _shell.OpenDocument(_editor);
-            if(Completed!=null)Completed(this,new ResultCompletionEventArgs());
+            if (Completed != null) Completed(this, new ResultCompletionEventArgs());
         }
 
         public event EventHandler<ResultCompletionEventArgs> Completed;

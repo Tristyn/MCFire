@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
-using System.Windows;
 using JetBrains.Annotations;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Infrastructure.Extensions;
