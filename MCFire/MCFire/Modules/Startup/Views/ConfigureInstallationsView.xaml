@@ -69,7 +69,7 @@
                                     <ListBox Grid.Row="1" VerticalAlignment="Top"
                                                  ItemsSource="{Binding Worlds}" IsHitTestVisible="False" Background="{x:Null}" DockPanel.Dock="Top">
                                         <ListBox.ItemTemplate>
-                                            <DataTemplate DataType="viewModels:WorldState">
+                                            <DataTemplate >
                                                 <StackPanel Orientation="Horizontal" Margin="2">
                                                     <Image Source="{Binding GameType, Converter={StaticResource GameTypeToImageConverter}}" Width="30" Stretch="Uniform" VerticalAlignment="Center" ToolTip="{Binding GameType, Converter={StaticResource GameTypeToNameConverter}}" ToolTipService.ShowOnDisabled="True"/>
                                                     <TextBlock Text="{Binding Title, StringFormat=- {0}}" FontSize="16" FontFamily="Segoe UI Semibold" Margin="2,0,0,0" VerticalAlignment="Center"/>

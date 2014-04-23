@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -18,7 +17,6 @@ using MCFire.Modules.Infrastructure.Models;
 using MCFire.Properties;
 using NUnrar.Archive;
 using NUnrar.Common;
-using Substrate;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -32,14 +30,11 @@ namespace MCFire.Modules.Startup.ViewModels
         WorldExplorerService _explorerService;
 
         BindableCollection<Installation> _installs;
-        Installation _install;
-        IEnumerable<WorldState> _worlds;
         Timer _refreshTimer;
 
         bool? _minecraftExists;
         bool? _minecraftUnknown;
         bool _loading = true;
-        int _worldCount;
         private string _sampleMapMessage;
 
         public ConfigureInstallationsViewModel()
@@ -47,6 +42,7 @@ namespace MCFire.Modules.Startup.ViewModels
             SampleMapMessage = "Use Sample Map";
         }
 
+        [UsedImplicitly]
         public void ContinueNoInstall()
         {
             var result = MessageBox.Show(Application.Current.MainWindow,
@@ -61,11 +57,13 @@ namespace MCFire.Modules.Startup.ViewModels
             if (CloseOverlay != null) CloseOverlay(this, EventArgs.Empty);
         }
 
+        [UsedImplicitly]
         public void DownloadMinecraft()
         {
             Process.Start("http://minecraft.net");
         }
 
+        [UsedImplicitly]
         public void FindMainInstall()
         {
             AddGame();
@@ -94,6 +92,7 @@ namespace MCFire.Modules.Startup.ViewModels
             return install;
         }
 
+        [UsedImplicitly]
         public void UseSampleMap()
         {
             try
@@ -106,7 +105,7 @@ namespace MCFire.Modules.Startup.ViewModels
                 RarArchive.WriteToDirectory(rarDir, MCFireDirectories.MCFireAppdata, ExtractOptions.ExtractFullPath);
                 _explorerService.TryAddInstallation(Installation.New(extractDir));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SampleMapMessage = "Failed extracting sample map";
             }
@@ -123,6 +122,7 @@ namespace MCFire.Modules.Startup.ViewModels
             _explorerService.TryAddInstallation(install);
         }
 
+        [UsedImplicitly]
         public void AddServer()
         {
             var install = BrowseForInstallation();
@@ -134,6 +134,7 @@ namespace MCFire.Modules.Startup.ViewModels
             _explorerService.TryAddInstallation(install);
         }
 
+        [UsedImplicitly]
         public void RemoveInstall(object dataContext)
         {
             var install = dataContext as Installation;
@@ -149,6 +150,7 @@ namespace MCFire.Modules.Startup.ViewModels
             _explorerService.Installations.Remove(install);
         }
 
+        [UsedImplicitly]
         public async void Loaded()
         {
             await Task.Delay(1500);
@@ -285,20 +287,5 @@ namespace MCFire.Modules.Startup.ViewModels
         }
 
         public event EventHandler CloseOverlay;
-    }
-
-
-    public class WorldState
-    {
-        int _worldCount;
-
-        public WorldState(GameType gameType, string title)
-        {
-            GameType = gameType;
-            Title = title;
-        }
-
-        public string Title { get; private set; }
-        public GameType GameType { get; private set; }
     }
 }
