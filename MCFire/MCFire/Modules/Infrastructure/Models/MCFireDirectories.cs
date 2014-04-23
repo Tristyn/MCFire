@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using MCFire.Modules.Infrastructure.Extensions;
 
 namespace MCFire.Modules.Infrastructure.Models
 {

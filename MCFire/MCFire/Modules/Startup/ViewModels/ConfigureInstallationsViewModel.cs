@@ -144,7 +144,7 @@ namespace MCFire.Modules.Startup.ViewModels
                 if (result == MessageBoxResult.No) return;
             }
 
-            if (install.Path.NormalizePath() == MCFireDirectories.MinecraftAppdata)
+            if (install.Path.NormalizePath() == MCFireDirectories.MinecraftAppdata.NormalizePath())
                 Settings.Default.DontAddDefaultInstall = true;
             _explorerService.Installations.Remove(install);
         }

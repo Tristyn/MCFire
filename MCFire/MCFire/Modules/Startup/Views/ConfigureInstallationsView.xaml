@@ -174,7 +174,7 @@
                             <Button Content="Find Minecraft" x:Name="FindMainInstall"
                                     ToolTip="Browse for the folder where minecraft has been installed."/>
                             <Button Content="{Binding SampleMapMessage}" x:Name="UseSampleMap"
-                                    ToolTip="Use the sample map the is built into MC Fire. This features has not been implemented."/>
+                                    ToolTip="Use the sample map that is built into MC Fire. This features has not been implemented."/>
                             <Button Content="Continue Anyway" x:Name="ContinueNoInstall" 
                                     ToolTip="Use MC Fire without setting any installations, the program will be useless!"/>
 
