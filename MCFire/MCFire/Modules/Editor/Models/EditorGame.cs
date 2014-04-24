@@ -75,7 +75,7 @@ namespace MCFire.Modules.Editor.Models
             Keyboard = ToDispose(new Keyboard(this));
             Mouse = ToDispose(new Mouse(new MouseManager(this)));
             Camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
-            Camera.LookAt(new Vector3(0, 0, 0));
+            Camera.IdleRotate(new Vector3(0, 82, 4), 43, MathUtil.Pi/16, .44f);
             GameUser = new GameUser(this);
 
             // content

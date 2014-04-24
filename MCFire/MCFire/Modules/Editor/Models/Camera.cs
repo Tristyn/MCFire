@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Input;
-using Caliburn.Micro;
 using MCFire.Modules.Editor.Extensions;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
+using Matrix = SharpDX.Matrix;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -13,21 +13,34 @@ namespace MCFire.Modules.Editor.Models
     {
         #region Fields
 
+        // refs
         EditorGame _game;
         GraphicsDevice _graphicsDevice;
         SharpDXElement _sharpDx;
         Mouse _mouse;
 
+        // transform
         Vector3 _position = new Vector3(0, 0, -5);
         Vector3 _direction = Vector3.ForwardRH;
         Vector3 _velocity;
         float _fov = MathUtil.Pi / 3;
         float _acceleration = 4f;
         float _slowDown = .9f;
-        bool _disposed;
 
+        // idle rotate args
+        Vector3 _idleRotateCenter;
+        float _idleRotateHorizontalRadius;
+        float _idleRotateSpeed;
+        float _idleRotateTime;
+
+        // state
+        bool _disposed;
+        bool _idleRotate;
+
+        //
         float _nearZClip = .1f;
         float _farZClip = 1000f;
+        float _idleRotatePitch;
 
         #endregion
 
@@ -59,8 +72,14 @@ namespace MCFire.Modules.Editor.Models
             PositionKeyboard(deltaTime);
             PerspectiveKeyboard(deltaTime);
 
+            if(_velocity!=Vector3.Zero)
+                _idleRotate = false;
+
             _velocity *= _slowDown;
             _position += _velocity;
+
+            if (_idleRotate)
+                IdleRotate(time);
         }
 
         #region Position
@@ -71,12 +90,14 @@ namespace MCFire.Modules.Editor.Models
 
             // move forward, back
             if (keystate.IsKeyDown(Keys.W))
-                //Position += Direction * .5f;
-                _velocity += Direction * _acceleration * deltaTime;
+            {
+                _velocity += Direction*_acceleration*deltaTime;
+            }
 
             if (keystate.IsKeyDown(Keys.S))
-                //Position -= Direction * .5f;
+            {
                 _velocity -= Direction * _acceleration * deltaTime;
+            }
 
             // move left, right
             if (keystate.IsKeyDown(Keys.D))
@@ -84,7 +105,6 @@ namespace MCFire.Modules.Editor.Models
                 var strafeDir = Vector3.Cross(Direction, Vector3.Up);
                 strafeDir.Normalize();
                 _velocity += strafeDir * _acceleration * deltaTime;
-                //Position = dir * .5f + Position;
             }
 
             if (keystate.IsKeyDown(Keys.A))
@@ -92,8 +112,26 @@ namespace MCFire.Modules.Editor.Models
                 var strafeDir = Vector3.Cross(Direction, Vector3.Down);
                 strafeDir.Normalize();
                 _velocity += strafeDir * _acceleration * deltaTime;
-                //Position = dir * .5f + Position;
             }
+        }
+
+        void IdleRotate(GameTime time)
+        {
+            // update time
+            _idleRotateTime += (float)time.ElapsedGameTime.TotalSeconds * _idleRotateSpeed;
+
+            // calculate the negative direction based on time
+            var dir = new Vector3(0,-_idleRotatePitch, 1);
+            dir.Normalize();
+            var rot = Quaternion.RotationYawPitchRoll(_idleRotateTime, 0, 0);
+            var direction = Vector3.Transform(dir, rot);
+
+            // position
+            var radiusOffset = direction * _idleRotateHorizontalRadius;
+            Position = _idleRotateCenter + radiusOffset;
+
+            // rotation
+            Direction = -direction;
         }
 
         #endregion
@@ -202,6 +240,8 @@ namespace MCFire.Modules.Editor.Models
             var rotation = pitchHack >= 1 || pitchHack <= -1 ? yaw : yaw * pitch;
 
             Direction = Vector3.TransformCoordinate(Direction, Matrix.RotationQuaternion(rotation)).ToNormal();
+
+            _idleRotate = false;
         }
 
         /// <summary>
@@ -218,7 +258,7 @@ namespace MCFire.Modules.Editor.Models
             screenCoords *= new Vector2(_graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height);
 
             // translate vectors into world space by unprojecting them.
-            var customViewport = new ViewportF(0, 0, _graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height,_nearZClip,_farZClip);
+            var customViewport = new ViewportF(0, 0, _graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height, _nearZClip, _farZClip);
             var near = customViewport.Unproject(new Vector3(screenCoords, _nearZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
             var far = customViewport.Unproject(new Vector3(screenCoords, _farZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
 
@@ -226,6 +266,16 @@ namespace MCFire.Modules.Editor.Models
             traceDirection.Normalize();
 
             return new VoxelTracer(Position, traceDirection);
+        }
+
+        public void IdleRotate(Vector3 center, float horizontalRadius, float rotSpeed, float pitch)
+        {
+            _idleRotateCenter = center;
+            _idleRotateHorizontalRadius = horizontalRadius;
+            _idleRotateSpeed = rotSpeed;
+            _idleRotatePitch = pitch;
+            _idleRotateTime = 0;
+            _idleRotate = true;
         }
 
         #endregion
