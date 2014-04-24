@@ -26,6 +26,7 @@ namespace MCFire.Modules.Editor.Models
     /// </summary>
     public sealed class EditorGame : Game
     {
+        IEnumerable<IGameComponent> _components;
         // rendering
         SpriteBatch _spriteBatch;
         BasicEffect _basicEffect;
@@ -51,8 +52,10 @@ namespace MCFire.Modules.Editor.Models
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
         /// </summary>
         /// <param name="sharpDxElement">The control used to listen to mouse drag events.</param>
-        public EditorGame(SharpDXElement sharpDxElement)
+        /// <param name="components"></param>
+        public EditorGame(SharpDXElement sharpDxElement, IEnumerable<IGameComponent> components)
         {
+            _components = components;
             ToDispose(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
@@ -78,6 +81,12 @@ namespace MCFire.Modules.Editor.Models
             Camera.IdleRotate(new Vector3(0, 82, 4), 43, MathUtil.Pi/16, .44f);
             GameUser = new GameUser(this);
 
+            foreach (var component in _components)
+            {
+                component.Game = this;
+                component.LoadContent();
+            }
+
             // content
             Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
 #if DEBUG
@@ -85,6 +94,15 @@ namespace MCFire.Modules.Editor.Models
 #endif
 
             base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            foreach (var component in _components)
+            {
+                component.Dispose();
+            }
+            _components = null;
         }
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
@@ -206,7 +224,6 @@ namespace MCFire.Modules.Editor.Models
             }
         }
 
-        // TODO: remove chunks that are out of range of ViewDistance
         /// <summary>
         /// Returns the position of the chunk that the game should generate next.
         /// </summary>
@@ -290,6 +307,11 @@ namespace MCFire.Modules.Editor.Models
             Camera.Update(gameTime);
             GameUser.Update(gameTime);
 
+            foreach (var component in _components)
+            {
+                component.Update(gameTime);
+            }
+
             IntegrateNewChunks();
 
             base.Update(gameTime);
@@ -304,6 +326,11 @@ namespace MCFire.Modules.Editor.Models
             _basicEffect.World = Matrix.Identity;
             _basicEffect.View = Camera.ViewMatrix;
             _basicEffect.Projection = Camera.ProjectionMatrix;
+
+            foreach (var component in _components)
+            {
+                component.Draw(gameTime);
+            }
 
             // Draw chunk
             // TODO: 

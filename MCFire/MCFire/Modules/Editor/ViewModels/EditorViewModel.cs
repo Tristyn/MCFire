@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using Caliburn.Micro;
@@ -56,7 +57,7 @@ namespace MCFire.Modules.Editor.ViewModels
 
             DisplayName = "Starting Up - Editor";
 
-            Game = new EditorGame(_view.SharpDx);
+            Game = new EditorGame(_view.SharpDx, IoC.GetAll<IGameComponent>());
             Game.Disposing += (s, e) => Game = null;
             if (Game != null) RunGame(Game, _view.SharpDx);
             World = world;

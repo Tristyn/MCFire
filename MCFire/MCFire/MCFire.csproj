@@ -174,8 +174,10 @@
     <Compile Include="Modules\Editor\Meshalyzer\SolidMeshalyzer.cs" />
     <Compile Include="Modules\Editor\Messages\EditorClosingMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorOpenedMessage.cs" />
+    <Compile Include="Modules\Editor\Models\GameComponentBase.cs" />
     <Compile Include="Modules\Editor\Models\GameUser.cs" />
     <Compile Include="Modules\Editor\Models\DebugCube.cs" />
+    <Compile Include="Modules\Editor\Models\IGameComponent.cs" />
     <Compile Include="Modules\Editor\Models\Keyboard.cs" />
     <Compile Include="Modules\Editor\Models\MeshCollection.cs" />
     <Compile Include="Modules\Editor\Models\VoxelTracer.cs" />
