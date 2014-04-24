@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using Caliburn.Micro;
@@ -17,8 +16,7 @@ namespace MCFire.Modules.Editor.ViewModels
     [Export]
     public class EditorViewModel : SharpDxViewModelBase
     {
-        [CanBeNull]
-        public EditorGame Game;
+        [CanBeNull] EditorGame _game;
         [CanBeNull]
         EditorView _view;
         [CanBeNull]
@@ -37,7 +35,7 @@ namespace MCFire.Modules.Editor.ViewModels
 
         public bool TryInitializeTo([NotNull] MCFireWorld world, int dimension)
         {
-            if (Game != null)
+            if (_game != null)
                 return false;
 
             if (_view != null)
@@ -50,21 +48,28 @@ namespace MCFire.Modules.Editor.ViewModels
             return true;
         }
 
-        bool TryInitializeToInternal(MCFireWorld world, int dimension)
+        bool TryInitializeToInternal([NotNull] MCFireWorld world, int dimension)
         {
-            if (Game != null)
+            if (world == null) throw new ArgumentNullException("world");
+
+            if (_game != null)
+                return false;
+            var view = _view;
+            if (view == null) 
+                return false;
+            var substrateWorld = world.NbtWorld;
+            if (substrateWorld == null)
                 return false;
 
             DisplayName = "Starting Up - Editor";
 
-            Game = new EditorGame(_view.SharpDx, IoC.GetAll<IGameComponent>());
-            Game.Disposing += (s, e) => Game = null;
-            if (Game != null) RunGame(Game, _view.SharpDx);
-            World = world;
-            _meshalyzer = new Meshalyzer.Meshalyzer(Game, world, dimension);
+            _game = new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, substrateWorld,dimension);
+            _game.Disposing += (s, e) => _game = null;
+            if (_game != null) RunGame(_game, view.SharpDx);
+            _meshalyzer = new Meshalyzer.Meshalyzer(_game, world, dimension);
             SetChunkCreationPolicy(ChunkCreationPolicy.Run);
 
-            // _bridge = new EditorBridge(world, dimension, Game);
+            // _bridge = new EditorBridge(world, dimension, _game);
             _aggregator.Publish(new EditorOpenedMessage(this));
             _aggregator.Publish(new EditorGainedFocusMessage(this));
 
@@ -136,7 +141,5 @@ namespace MCFire.Modules.Editor.ViewModels
             Thread.CurrentThread.IsBackground = true;
             _meshingThread.Start();
         }
-
-        public MCFireWorld World { get; private set; }
     }
 }

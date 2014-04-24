@@ -16,7 +16,7 @@ namespace MCFire.Modules.Editor.Models
         public Matrix TransformMatrix { set { _transformMatrix.SetValue(value);} }
     }
 
-    public abstract class EffectWrapper
+    public abstract class EffectWrapper : IDisposable
     {
         public readonly Effect Effect;
 
@@ -25,6 +25,12 @@ namespace MCFire.Modules.Editor.Models
             if (effect == null) throw new ArgumentNullException("effect");
 
             Effect = effect;
+        }
+
+        public void Dispose()
+        {
+            if(Effect!=null)
+                Effect.Dispose();
         }
     }
 }

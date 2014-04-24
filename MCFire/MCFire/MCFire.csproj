@@ -27,6 +27,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <ProductName>MC Fire</ProductName>
+    <PublisherName>Tristyn Stimpson</PublisherName>
     <MinimumRequiredVersion>0.0.3.0</MinimumRequiredVersion>
     <ApplicationRevision>11</ApplicationRevision>
     <ApplicationVersion>0.0.4.%2a</ApplicationVersion>
@@ -251,6 +253,9 @@
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Meshalyzer\Models\MeshalyzerComponent.cs" />
+    <Compile Include="Modules\Meshalyzer\Models\Shiftable2DArray.cs" />
+    <Compile Include="Modules\Meshalyzer\Models\ShiftableArray.cs" />
     <Compile Include="Modules\Metro\Commands\IWindowCommand.cs" />
     <Compile Include="Modules\Metro\Module.cs" />
     <Compile Include="Modules\Metro\ViewModels\MainWindowViewModel.cs" />

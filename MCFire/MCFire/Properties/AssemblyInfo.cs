@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("MCFire")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MCFire")]
+[assembly: AssemblyCompany("Tristyn Stimpson")]
 [assembly: AssemblyProduct("MCFire")]
 [assembly: AssemblyCopyright("Copyright © Tristyn Stimpson 2014")]
 [assembly: AssemblyTrademark("")]

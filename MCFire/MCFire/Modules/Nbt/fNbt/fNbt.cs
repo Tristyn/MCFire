@@ -206,7 +206,7 @@ namespace MCFire.Modules.Nbt.fNbt
             int length = readStream.ReadInt32();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative length given in TAG_Byte_Array");
+                throw new NbtFormatException("Negative Length given in TAG_Byte_Array");
             }
 
             if (readStream.Selector != null && !readStream.Selector(this))
@@ -223,7 +223,7 @@ namespace MCFire.Modules.Nbt.fNbt
             int length = readStream.ReadInt32();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative length given in TAG_Byte_Array");
+                throw new NbtFormatException("Negative Length given in TAG_Byte_Array");
             }
             readStream.Skip(length);
         }
@@ -754,7 +754,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <param name="arrayIndex"> The zero-based index in array at which copying begins. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="array"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> arrayIndex is less than 0. </exception>
-        /// <exception cref="ArgumentException"> Given array is multidimensional; arrayIndex is equal to or greater than the length of array;
+        /// <exception cref="ArgumentException"> Given array is multidimensional; arrayIndex is equal to or greater than the Length of array;
         /// the number of tags in this NbtCompound is greater than the available space from arrayIndex to the end of the destination array;
         /// or type NbtTag cannot be cast automatically to the type of the destination array. </exception>
         public void CopyTo(NbtTag[] array, int arrayIndex)
@@ -1193,7 +1193,7 @@ namespace MCFire.Modules.Nbt.fNbt
             int length = readStream.ReadInt32();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative length given in TAG_Int_Array");
+                throw new NbtFormatException("Negative Length given in TAG_Int_Array");
             }
 
             if (readStream.Selector != null && !readStream.Selector(this))
@@ -1215,7 +1215,7 @@ namespace MCFire.Modules.Nbt.fNbt
             int length = readStream.ReadInt32();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative length given in TAG_Int_Array");
+                throw new NbtFormatException("Negative Length given in TAG_Int_Array");
             }
             readStream.Skip(length * sizeof(int));
         }
@@ -1766,7 +1766,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <param name="arrayIndex"> The zero-based index in array at which copying begins. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="array"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> arrayIndex is less than 0. </exception>
-        /// <exception cref="ArgumentException"> Given array is multidimensional; arrayIndex is equal to or greater than the length of array;
+        /// <exception cref="ArgumentException"> Given array is multidimensional; arrayIndex is equal to or greater than the Length of array;
         /// the number of tags in this NbtList is greater than the available space from arrayIndex to the end of the destination array;
         /// or type NbtTag cannot be cast automatically to the type of the destination array. </exception>
         public void CopyTo(NbtTag[] array, int arrayIndex)
@@ -2733,7 +2733,7 @@ namespace MCFire.Modules.Nbt.fNbt
             short length = ReadInt16();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative string length given!");
+                throw new NbtFormatException("Negative string Length given!");
             }
             if (length < stringConversionBuffer.Length)
             {
@@ -2779,7 +2779,7 @@ namespace MCFire.Modules.Nbt.fNbt
             short length = ReadInt16();
             if (length < 0)
             {
-                throw new NbtFormatException("Negative string length given!");
+                throw new NbtFormatException("Negative string Length given!");
             }
             Skip(length);
         }
@@ -3107,7 +3107,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <param name="buffer"> Stream from which data will be loaded. If <paramref name="compression"/> is set to AutoDetect, this stream must support seeking. </param>
         /// <param name="index"> The index into <paramref name="buffer"/> at which the stream begins. Must not be negative. </param>
         /// <param name="length"> Maximum number of bytes to read from the given buffer. Must not be negative.
-        /// An <see cref="EndOfStreamException"/> is thrown if NBT stream is longer than the given length. </param>
+        /// An <see cref="EndOfStreamException"/> is thrown if NBT stream is longer than the given Length. </param>
         /// <param name="compression"> Compression method to use for loading/saving this file. </param>
         /// <param name="selector"> Optional callback to select which tags to load into memory. Root may not be skipped.
         /// No reference is stored to this callback after loading (don't worry about implicitly captured closures). May be <c>null</c>. </param>
@@ -3115,7 +3115,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <exception cref="ArgumentNullException"> <paramref name="buffer"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>;
         /// if <paramref name="index"/> or <paramref name="length"/> is less than zero;
-        /// if the sum of <paramref name="index"/> and <paramref name="length"/> is greater than the length of <paramref name="buffer"/>. </exception>
+        /// if the sum of <paramref name="index"/> and <paramref name="length"/> is greater than the Length of <paramref name="buffer"/>. </exception>
         /// <exception cref="EndOfStreamException"> If NBT stream extends beyond the given <paramref name="length"/>. </exception>
         /// <exception cref="InvalidDataException"> If file compression could not be detected or decompressing failed. </exception>
         /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
@@ -3137,13 +3137,13 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <param name="buffer"> Stream from which data will be loaded. If <paramref name="compression"/> is set to AutoDetect, this stream must support seeking. </param>
         /// <param name="index"> The index into <paramref name="buffer"/> at which the stream begins. Must not be negative. </param>
         /// <param name="length"> Maximum number of bytes to read from the given buffer. Must not be negative.
-        /// An <see cref="EndOfStreamException"/> is thrown if NBT stream is longer than the given length. </param>
+        /// An <see cref="EndOfStreamException"/> is thrown if NBT stream is longer than the given Length. </param>
         /// <param name="compression"> Compression method to use for loading/saving this file. </param>
         /// <returns> Number of bytes read from the buffer. </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="buffer"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>;
         /// if <paramref name="index"/> or <paramref name="length"/> is less than zero;
-        /// if the sum of <paramref name="index"/> and <paramref name="length"/> is greater than the length of <paramref name="buffer"/>. </exception>
+        /// if the sum of <paramref name="index"/> and <paramref name="length"/> is greater than the Length of <paramref name="buffer"/>. </exception>
         /// <exception cref="EndOfStreamException"> If NBT stream extends beyond the given <paramref name="length"/>. </exception>
         /// <exception cref="InvalidDataException"> If file compression could not be detected or decompressing failed. </exception>
         /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
@@ -3344,7 +3344,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <exception cref="ArgumentNullException"> <paramref name="buffer"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException"> If AutoDetect was given as the <paramref name="compression"/> mode. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>;
-        /// if <paramref name="index"/> is less than zero; or if <paramref name="index"/> is greater than the length of <paramref name="buffer"/>. </exception>
+        /// if <paramref name="index"/> is less than zero; or if <paramref name="index"/> is greater than the Length of <paramref name="buffer"/>. </exception>
         /// <exception cref="InvalidDataException"> If given stream does not support writing. </exception>
         /// <exception cref="UnauthorizedAccessException"> Specified file is read-only, or a permission issue occurred. </exception>
         /// <exception cref="NbtFormatException"> If one of the NbtCompound tags contained unnamed tags;
@@ -3748,8 +3748,8 @@ namespace MCFire.Modules.Nbt.fNbt
             }
         }
 
-        /// <summary> Whether the current tag has length (Lists, ByteArrays, and IntArrays have length).
-        /// Compound tags also have length, technically, but it is not known until all child tags are read. </summary>
+        /// <summary> Whether the current tag has Length (Lists, ByteArrays, and IntArrays have Length).
+        /// Compound tags also have Length, technically, but it is not known until all child tags are read. </summary>
         public bool HasLength
         {
             get
@@ -4677,10 +4677,10 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <summary> TAG_Double: A single IEEE-754 double-precision floating point number. </summary>
         Double = 0x06,
 
-        /// <summary> TAG_Byte_Array: A length-prefixed array of bytes. </summary>
+        /// <summary> TAG_Byte_Array: A Length-prefixed array of bytes. </summary>
         ByteArray = 0x07,
 
-        /// <summary> TAG_String: A length-prefixed UTF-8 string. </summary>
+        /// <summary> TAG_String: A Length-prefixed UTF-8 string. </summary>
         String = 0x08,
 
         /// <summary> TAG_List: A list of nameless tags, all of the same type. </summary>
@@ -4689,7 +4689,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <summary> TAG_Compound: A set of named tags. </summary>
         Compound = 0x0a,
 
-        /// <summary> TAG_Byte_Array: A length-prefixed array of signed 32-bit integers. </summary>
+        /// <summary> TAG_Byte_Array: A Length-prefixed array of signed 32-bit integers. </summary>
         IntArray = 0x0b
     }
 
@@ -5061,7 +5061,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <paramref name="count"/> is negative. </exception>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null </exception>
         /// <exception cref="ArgumentException"> <paramref name="count"/> is greater than
-        /// <paramref name="offset"/> subtracted from the array length. </exception>
+        /// <paramref name="offset"/> subtracted from the array Length. </exception>
         public void WriteByteArray([NotNull] byte[] data, int offset, int count)
         {
             CheckArray(data, offset, count);
@@ -5096,7 +5096,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <exception cref="ArgumentNullException"> <paramref name="tagName"/> or
         /// <paramref name="data"/> is null </exception>
         /// <exception cref="ArgumentException"> <paramref name="count"/> is greater than
-        /// <paramref name="offset"/> subtracted from the array length. </exception>
+        /// <paramref name="offset"/> subtracted from the array Length. </exception>
         public void WriteByteArray([NotNull] String tagName, [NotNull] byte[] data, int offset, int count)
         {
             CheckArray(data, offset, count);
@@ -5252,7 +5252,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <paramref name="count"/> is negative. </exception>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null </exception>
         /// <exception cref="ArgumentException"> <paramref name="count"/> is greater than
-        /// <paramref name="offset"/> subtracted from the array length. </exception>
+        /// <paramref name="offset"/> subtracted from the array Length. </exception>
         public void WriteIntArray([NotNull] int[] data, int offset, int count)
         {
             CheckArray(data, offset, count);
@@ -5290,7 +5290,7 @@ namespace MCFire.Modules.Nbt.fNbt
         /// <exception cref="ArgumentNullException"> <paramref name="tagName"/> or
         /// <paramref name="data"/> is null </exception>
         /// <exception cref="ArgumentException"> <paramref name="count"/> is greater than
-        /// <paramref name="offset"/> subtracted from the array length. </exception>
+        /// <paramref name="offset"/> subtracted from the array Length. </exception>
         public void WriteIntArray([NotNull] String tagName, [NotNull] int[] data, int offset, int count)
         {
             CheckArray(data, offset, count);
@@ -5421,7 +5421,7 @@ namespace MCFire.Modules.Nbt.fNbt
             }
             else if ((data.Length - offset) < count)
             {
-                throw new ArgumentException("count may not be greater than offset subtracted from the array length.");
+                throw new ArgumentException("count may not be greater than offset subtracted from the array Length.");
             }
         }
 

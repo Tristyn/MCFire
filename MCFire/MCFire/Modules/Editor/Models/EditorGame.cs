@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
-using System.Windows.Media.Media3D;
-using MCFire.Modules.Editor.Extensions;
+using JetBrains.Annotations;
+using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
@@ -51,11 +49,19 @@ namespace MCFire.Modules.Editor.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
         /// </summary>
-        /// <param name="sharpDxElement">The control used to listen to mouse drag events.</param>
-        /// <param name="components"></param>
-        public EditorGame(SharpDXElement sharpDxElement, IEnumerable<IGameComponent> components)
+        /// <param name="sharpDxElement">The control used to listen to input events.</param>
+        /// <param name="components">The game component services.</param>
+        /// <param name="world">The Minecraft world to use as a data source.</param>
+        /// <param name="substrateWorld"></param>
+        /// <param name="dimension">The dimension of the world.</param>
+        public EditorGame([NotNull] SharpDXElement sharpDxElement, [CanBeNull] IEnumerable<IGameComponent> components, [NotNull] MCFireWorld world,
+            [NotNull] NbtWorld substrateWorld, int dimension)
         {
             _components = components;
+            World = world;
+            SubstrateWorld = substrateWorld;
+            Dimension = dimension;
+
             ToDispose(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
@@ -103,6 +109,8 @@ namespace MCFire.Modules.Editor.Models
                 component.Dispose();
             }
             _components = null;
+            SharpDxElement = null;
+            World = null;
         }
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
@@ -159,7 +167,6 @@ namespace MCFire.Modules.Editor.Models
 
                     while (_chunkVisualsToBeAdded.Any())
                     {
-                        // this would be faster if the last element is removed, but im lazy.
                         var chunkVisual = _chunkVisualsToBeAdded.Pop();
 
                         var chunkPoint = chunkVisual.ChunkPosition;
@@ -377,14 +384,26 @@ namespace MCFire.Modules.Editor.Models
             }
         }
 
+        [NotNull]
         public Camera Camera { get; private set; }
 
+        [NotNull]
         public Mouse Mouse { get; private set; }
 
+        [NotNull]
         public Keyboard Keyboard { get; private set; }
 
+        [NotNull]
         public GameUser GameUser { get; private set; }
 
+        [NotNull]
         public SharpDXElement SharpDxElement { get; private set; }
+
+        [NotNull]
+        public MCFireWorld World { get; private set; }
+
+        [NotNull]
+        public NbtWorld SubstrateWorld { get; private set; }
+        public int Dimension { get; private set; }
     }
 }
