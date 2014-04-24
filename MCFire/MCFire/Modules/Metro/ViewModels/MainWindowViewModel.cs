@@ -16,6 +16,12 @@ namespace MCFire.Modules.Metro.ViewModels
         BindableCollection<IWindowCommand> _commands;
         IModalOverlay _dialogue;
 
+        public MainWindowViewModel()
+        {
+            Width = 1280;
+            Height = 720;
+        }
+
         public bool TrySetOverlay<TOverlay>() where TOverlay : IModalOverlay
         {
             //if (Dialogue != null) return false;

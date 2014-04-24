@@ -101,11 +101,15 @@ namespace MCFire.Modules.Startup.ViewModels
                 var rarDir = new Uri(rarUri).LocalPath;
                 var extractDir = Path.Combine(MCFireDirectories.MCFireAppdata, "SampleWorld");
 
-                Directory.Delete(extractDir, true);
+                try
+                {
+                    Directory.Delete(extractDir, true);
+                }
+                catch (DirectoryNotFoundException) { }
                 RarArchive.WriteToDirectory(rarDir, MCFireDirectories.MCFireAppdata, ExtractOptions.ExtractFullPath);
                 _explorerService.TryAddInstallation(Installation.New(extractDir));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 SampleMapMessage = "Failed extracting sample map";
             }

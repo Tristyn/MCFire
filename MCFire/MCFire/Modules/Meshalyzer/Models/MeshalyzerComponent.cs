@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
@@ -50,9 +51,16 @@ namespace MCFire.Modules.Meshalyzer.Models
             new Vector3(0,1,0)
         };
 
+        private Shiftable2DArray<Point> _chunkPoints;
+
         #endregion
 
         // TODO: use new meshalying system (BlockMeshalyzer)
+
+        public MeshalyzerComponent()
+        {
+            ViewDistance = 10;
+        }
 
         public override void LoadContent()
         {
@@ -233,6 +241,26 @@ namespace MCFire.Modules.Meshalyzer.Models
             }
         }
 
+        void GenerateChunkPoints()
+        {
+            var points = new List<Point>(ViewDistance * ViewDistance * 4);
+            //create points
+            for (var i = -ViewDistance; i < ViewDistance; i++)
+            {
+                for (var j = -ViewDistance; j < ViewDistance; j++)
+                {
+                    points.Add(new Point(i, j));
+                }
+            }
+
+            var chunkPoints = (from point in points
+                           // order by hypotenuse distance to (0,0)
+                           orderby point.X * point.X + point.Y * point.Y
+                           select point).ToArray();
+            // TODO:
+            //_chunkPoints = new Shiftable2DArray<Point>(chunkPoints);
+        }
+
         public override void Dispose()
         {
             _policy= ChunkCreationPolicy.Idle;
@@ -263,5 +291,7 @@ namespace MCFire.Modules.Meshalyzer.Models
 
             _disposed = true;
         }
+
+        public int ViewDistance { get; set; }
     }
 }

@@ -23,6 +23,12 @@ namespace MCFire.Modules.Meshalyzer.Models
             _width = width;
         }
 
+        public Shiftable2DArray(T[,] array)
+            : this(array.GetLength(0), array.GetLength(1))
+        {
+            array.CopyTo(_array,0);
+        }
+
         public T this[int i, int j]
         {
             // note: dont shift j, it gets shifted internally during the index.
@@ -57,7 +63,7 @@ namespace MCFire.Modules.Meshalyzer.Models
 
         public IEnumerator<T> GetEnumerator()
         {
-            return (IEnumerator<T>) _array.GetEnumerator();
+            return (IEnumerator<T>)_array.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

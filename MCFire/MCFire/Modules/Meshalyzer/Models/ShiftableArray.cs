@@ -17,6 +17,12 @@ namespace MCFire.Modules.Meshalyzer.Models
             _array = new T[length];
             _length = length;
         }
+
+        public ShiftableArray(T[] array)
+            :this(array.Length)
+        {
+            array.CopyTo(array,0);
+        } 
         
         public T this[int index]
         {
