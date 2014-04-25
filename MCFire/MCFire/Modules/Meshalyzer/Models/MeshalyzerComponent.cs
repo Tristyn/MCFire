@@ -12,6 +12,7 @@ using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Meshalyzer.Models
@@ -23,6 +24,7 @@ namespace MCFire.Modules.Meshalyzer.Models
         ChunkCreationPolicy _policy;
         bool _disposed;
 
+        ChunkPrioritizer _prioritizer = new ChunkPrioritizer();
         ConcurrentQueue<VisualChunk> _chunksToIntegrate = new ConcurrentQueue<VisualChunk>();
         Dictionary<Point, VisualChunk> _chunks = new Dictionary<Point, VisualChunk>();
 
@@ -110,16 +112,17 @@ namespace MCFire.Modules.Meshalyzer.Models
              * can claim that point and it wont be picked again. 
              * mabey have a more sophisticated chunk selection system.
              */
-            _meshingThread = new Thread(() =>
-            {
-                while (_policy == ChunkCreationPolicy.Run)
-                {
-                    if (!MeshalyzeNext())
-                        Thread.Sleep(5000);
-                }
-            });
-            Thread.CurrentThread.IsBackground = true;
+            _meshingThread = new Thread(MeshLoop);
             _meshingThread.Start();
+        }
+        void MeshLoop()
+        {
+            Thread.CurrentThread.IsBackground = true;
+            while (_policy == ChunkCreationPolicy.Run)
+            {
+                if (!MeshalyzeNext())
+                    Thread.Sleep(5000);
+            }
         }
 
         /// <summary>
@@ -131,7 +134,7 @@ namespace MCFire.Modules.Meshalyzer.Models
             Point chunkPoint;
 
             // TODO: replace game call with new algorithm thats faster because dictionaries!!!!!!
-            if (!Game.GetNextDesiredChunk(out chunkPoint))
+            if (!_prioritizer.GetNextDesiredChunk(Game.Camera.ChunkPosition, out chunkPoint))
                 return false;
             var chunk = _world.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
             Buffer<VertexPositionColor> buffer = null;

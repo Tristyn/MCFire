@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Explorer.Models;
+using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Meshalyzer
@@ -52,6 +54,7 @@ namespace MCFire.Modules.Editor.Meshalyzer
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);
+            
             // TODO: speed up meshing by reading chunks sections that exist. some 16x16x16 chunks arent saved.
             for (var y = 0; y < chunkBlocks.YDim; y++)
                 for (var x = 0; x < chunkBlocks.XDim; x++)

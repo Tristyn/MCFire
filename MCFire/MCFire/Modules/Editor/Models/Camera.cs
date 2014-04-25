@@ -6,6 +6,7 @@ using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 using Matrix = SharpDX.Matrix;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 
 namespace MCFire.Modules.Editor.Models
 {

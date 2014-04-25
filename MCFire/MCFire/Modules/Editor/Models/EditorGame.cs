@@ -11,6 +11,7 @@ using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 using Substrate;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -84,7 +85,7 @@ namespace MCFire.Modules.Editor.Models
             Keyboard = ToDispose(new Keyboard(this));
             Mouse = ToDispose(new Mouse(new MouseManager(this)));
             Camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
-            Camera.IdleRotate(new Vector3(0, 82, 4), 43, MathUtil.Pi/16, .44f);
+            Camera.IdleRotate(new Vector3(0, 82, 4), 43, MathUtil.Pi / 16, .44f);
             GameUser = new GameUser(this);
 
             foreach (var component in _components)
@@ -242,7 +243,7 @@ namespace MCFire.Modules.Editor.Models
             {
                 foreach (var chunkPoint in _chunkPoints)
                 {
-                    var worldSpaceChunkPoint = chunkPoint.Add(Camera.ChunkPosition);
+                    var worldSpaceChunkPoint = chunkPoint + Camera.ChunkPosition;
                     // TODO: replace _chunks with Dictionary of Point, CurrentChunk for fast lookup.
                     // if a chunk with the position already exists, continue
                     if (_chunkVisuals.Any(testChunk => testChunk.ChunkPosition == worldSpaceChunkPoint))

@@ -248,11 +248,13 @@
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\IModalOverlay.cs" />
     <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
+    <Compile Include="Modules\Infrastructure\Models\Point.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point3.cs" />
     <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Meshalyzer\Models\ChunkPrioritizer.cs" />
     <Compile Include="Modules\Meshalyzer\Models\MeshalyzerComponent.cs" />
     <Compile Include="Modules\Meshalyzer\Models\Shiftable2DArray.cs" />
     <Compile Include="Modules\Meshalyzer\Models\ShiftableArray.cs" />

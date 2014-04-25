@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 
 namespace MCFire.Modules.Editor.Models
 {
