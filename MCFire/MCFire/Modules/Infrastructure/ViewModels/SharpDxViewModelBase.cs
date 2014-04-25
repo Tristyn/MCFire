@@ -12,20 +12,25 @@ namespace MCFire.Modules.Infrastructure.ViewModels
 {
     public class SharpDxViewModelBase : Document
     {
+        [CanBeNull]
         Game _game;
         SharpDXElement _sharpDxElement;
 
         /// <summary>
         /// Manages the lifetime of a Game and a SharpDxElement. 
-        /// This calls game.Run(SharpDxElement), and it will call dispose on both objects when the document closes.
+        /// This calls gameFunc.Run(SharpDxElement), and it will call dispose on both objects when the document closes.
         /// </summary>
-        /// <param name="game">The game</param>
-        /// <param name="sharpDxElement">The SharpDxElement for the game to run on</param>
-        protected virtual void RunGame([NotNull] Game game, SharpDXElement sharpDxElement)
+        /// <param name="gameFunc">The function to return a new game</param>
+        /// <param name="sharpDxElement">The SharpDxElement for the gameFunc to run on</param>
+        protected virtual bool RunGame([NotNull] Func<Game> gameFunc, SharpDXElement sharpDxElement)
         {
-            if (game == null) throw new ArgumentNullException("game");
+            if (gameFunc == null) throw new ArgumentNullException("gameFunc");
             if (sharpDxElement == null) throw new ArgumentNullException("sharpDxElement");
 
+            if (_game != null)
+                return false;
+
+            var game = gameFunc();
             _game = game;
             _sharpDxElement = sharpDxElement;
 
@@ -40,6 +45,7 @@ namespace MCFire.Modules.Infrastructure.ViewModels
             var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
             var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
             sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
+            return true;
         }
 
         protected virtual void ExitGame(object sender, DeactivationEventArgs e)
@@ -51,11 +57,9 @@ namespace MCFire.Modules.Infrastructure.ViewModels
             {
                 _game.Exit();
                 _game.Dispose();
-                _game = null;
             }
             
             _sharpDxElement.Dispose();
-            _sharpDxElement = null;
         }
 
         /// <summary>

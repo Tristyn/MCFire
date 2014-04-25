@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Modules.Explorer.Models;
-using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Explorer.Models;
-using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
