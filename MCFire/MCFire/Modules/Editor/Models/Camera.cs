@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using MCFire.Modules.Editor.Extensions;
+using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
@@ -67,7 +68,6 @@ namespace MCFire.Modules.Editor.Models
         {
             if (_disposed)
                 throw new ObjectDisposedException("Camera");
-
             var deltaTime = (float)time.ElapsedGameTime.TotalSeconds;
 
             PositionKeyboard(deltaTime);

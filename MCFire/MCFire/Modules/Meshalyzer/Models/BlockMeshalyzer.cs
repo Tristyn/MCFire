@@ -6,7 +6,7 @@ using SharpDX.Toolkit.Graphics;
 using Substrate;
 using Vector3 = SharpDX.Vector3;
 
-namespace MCFire.Modules.Editor.Meshalyzer
+namespace MCFire.Modules.Meshalyzer.Models
 {
     public abstract class BlockMeshalyzer
     {

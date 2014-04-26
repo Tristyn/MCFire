@@ -171,9 +171,7 @@
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
-    <Compile Include="Modules\Editor\Meshalyzer\BlockMeshalyzer.cs" />
-    <Compile Include="Modules\Editor\Meshalyzer\Meshalyzer.cs" />
-    <Compile Include="Modules\Editor\Meshalyzer\SolidMeshalyzer.cs" />
+    <Compile Include="Modules\Editor\Extensions\PointExtensions.cs" />
     <Compile Include="Modules\Editor\Messages\EditorClosingMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorOpenedMessage.cs" />
     <Compile Include="Modules\Editor\Models\GameComponentBase.cs" />
@@ -240,9 +238,9 @@
     <Compile Include="Modules\Infrastructure\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Modules\Infrastructure\Enums\DimensionType.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ChunkRefExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\NbtWorldExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\PointExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
@@ -254,10 +252,12 @@
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Meshalyzer\Models\BlockMeshalyzer.cs" />
     <Compile Include="Modules\Meshalyzer\Models\ChunkPrioritizer.cs" />
     <Compile Include="Modules\Meshalyzer\Models\MeshalyzerComponent.cs" />
     <Compile Include="Modules\Meshalyzer\Models\Shiftable2DArray.cs" />
     <Compile Include="Modules\Meshalyzer\Models\ShiftableArray.cs" />
+    <Compile Include="Modules\Meshalyzer\Models\SolidMeshalyzer.cs" />
     <Compile Include="Modules\Metro\Commands\IWindowCommand.cs" />
     <Compile Include="Modules\Metro\Module.cs" />
     <Compile Include="Modules\Metro\ViewModels\MainWindowViewModel.cs" />
@@ -288,8 +288,7 @@
       <DependentUpon>ConfigureInstallationsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Editor\Extensions\GraphicsDeviceExtensions.cs" />
-    <Compile Include="Modules\Editor\Extensions\PointExtensions.cs" />
-    <Compile Include="Modules\Editor\Extensions\Vector3Extensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\Vector3Extensions.cs" />
     <Compile Include="Modules\Editor\Models\Camera.cs" />
     <Compile Include="Modules\Editor\Models\ChunkCreationPolicy.cs" />
     <Compile Include="Modules\Editor\Models\VisualChunk.cs" />

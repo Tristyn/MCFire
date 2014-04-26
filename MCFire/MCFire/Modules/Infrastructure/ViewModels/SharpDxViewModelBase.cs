@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using Caliburn.Micro;
 using Gemini.Framework;
@@ -30,22 +31,51 @@ namespace MCFire.Modules.Infrastructure.ViewModels
             if (_game != null)
                 return false;
 
-            var game = gameFunc();
-            _game = game;
-            _sharpDxElement = sharpDxElement;
+            RunGameInternal(gameFunc, sharpDxElement);
+            //var gameThread = new Thread(() => RunGameInternal(gameFunc, sharpDxElement));
+            //gameThread.Start();
+            //var game = gameFunc();
+            //_game = game;
+            //_sharpDxElement = sharpDxElement;
 
-            game.Run(sharpDxElement);
-            Deactivated += ExitGame;
+            //game.Run(sharpDxElement);
+            //Deactivated += ExitGame;
 
-            // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
-            // but that can be triggered by avalondock, while the control should still be kept alive.
-            // We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
-            // The only option then is to remove the event handler via reflection.
-            // We select the method with the matching name and remove it.
-            var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
-            var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
-            sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
+            //// this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
+            //// but that can be triggered by avalondock, while the control should still be kept alive.
+            //// We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
+            //// The only option then is to remove the event handler via reflection.
+            //// We select the method with the matching name and remove it.
+            //var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
+            //var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
+            //sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
             return true;
+        }
+
+        void RunGameInternal([NotNull] Func<Game> gameFunc, SharpDXElement sharpDxElement)
+        {
+            try
+            {
+                var game = gameFunc();
+                _game = game;
+                _sharpDxElement = sharpDxElement;
+
+                game.Run(sharpDxElement);
+                Deactivated += ExitGame;
+
+                // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
+                // but that can be triggered by avalondock, while the control should still be kept alive.
+                // We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
+                // The only option then is to remove the event handler via reflection.
+                // We select the method with the matching name and remove it.
+                var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
+                var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
+                sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine();
+            }
         }
 
         protected virtual void ExitGame(object sender, DeactivationEventArgs e)

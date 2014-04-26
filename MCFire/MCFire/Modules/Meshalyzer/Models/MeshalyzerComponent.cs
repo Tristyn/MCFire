@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
-using MCFire.Modules.Explorer.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
@@ -24,15 +23,11 @@ namespace MCFire.Modules.Meshalyzer.Models
         ChunkCreationPolicy _policy;
         bool _disposed;
 
-        ChunkPrioritizer _prioritizer = new ChunkPrioritizer();
+        readonly ChunkPrioritizer _prioritizer = new ChunkPrioritizer();
         ConcurrentQueue<VisualChunk> _chunksToIntegrate = new ConcurrentQueue<VisualChunk>();
         Dictionary<Point, VisualChunk> _chunks = new Dictionary<Point, VisualChunk>();
 
-        MCFireWorld _world;
-        NbtWorld _substrateWorld;
-        int _dimension;
         VertexLitEffect _vertexLit;
-        GraphicsDevice _graphicsDevice;
 
         #region Statics
 
@@ -53,23 +48,12 @@ namespace MCFire.Modules.Meshalyzer.Models
             new Vector3(0,1,0)
         };
 
-        private Shiftable2DArray<Point> _chunkPoints;
-
         #endregion
 
         // TODO: use new meshalying system (BlockMeshalyzer)
 
-        public MeshalyzerComponent()
-        {
-            ViewDistance = 10;
-        }
-
         public override void LoadContent()
         {
-            _world = Game.World;
-            _substrateWorld = Game.SubstrateWorld;
-            _dimension = Game.Dimension;
-            _graphicsDevice = Game.GraphicsDevice;
             _vertexLit = new VertexLitEffect(Game.LoadContent<Effect>(@"VertexLit"));
             BeginBuildChunks();
         }
@@ -115,6 +99,7 @@ namespace MCFire.Modules.Meshalyzer.Models
             _meshingThread = new Thread(MeshLoop);
             _meshingThread.Start();
         }
+
         void MeshLoop()
         {
             Thread.CurrentThread.IsBackground = true;
@@ -133,10 +118,9 @@ namespace MCFire.Modules.Meshalyzer.Models
         {
             Point chunkPoint;
 
-            // TODO: replace game call with new algorithm thats faster because dictionaries!!!!!!
             if (!_prioritizer.GetNextDesiredChunk(Game.Camera.ChunkPosition, out chunkPoint))
                 return false;
-            var chunk = _world.GetChunk(_dimension, chunkPoint.X, chunkPoint.Y);
+            var chunk = World.GetChunk(Dimension, chunkPoint.X, chunkPoint.Y);
             Buffer<VertexPositionColor> buffer = null;
 
             if (chunk != null)
@@ -244,26 +228,6 @@ namespace MCFire.Modules.Meshalyzer.Models
             }
         }
 
-        void GenerateChunkPoints()
-        {
-            var points = new List<Point>(ViewDistance * ViewDistance * 4);
-            //create points
-            for (var i = -ViewDistance; i < ViewDistance; i++)
-            {
-                for (var j = -ViewDistance; j < ViewDistance; j++)
-                {
-                    points.Add(new Point(i, j));
-                }
-            }
-
-            var chunkPoints = (from point in points
-                           // order by hypotenuse distance to (0,0)
-                           orderby point.X * point.X + point.Y * point.Y
-                           select point).ToArray();
-            // TODO:
-            //_chunkPoints = new Shiftable2DArray<Point>(chunkPoints);
-        }
-
         public override void Dispose()
         {
             _policy= ChunkCreationPolicy.Idle;
@@ -286,15 +250,10 @@ namespace MCFire.Modules.Meshalyzer.Models
             }
             _chunks = null;
 
-            _world = null;
-            _substrateWorld = null;
             _vertexLit.Dispose();
             if(_vertexLit==null)
-            _graphicsDevice = null;
 
             _disposed = true;
         }
-
-        public int ViewDistance { get; set; }
     }
 }

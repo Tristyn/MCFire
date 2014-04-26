@@ -1,5 +1,5 @@
 ﻿using SharpDX;
-using Point = System.Windows.Point;
+using Point = MCFire.Modules.Infrastructure.Models.Point;
 
 namespace MCFire.Modules.Editor.Extensions
 {
@@ -7,7 +7,7 @@ namespace MCFire.Modules.Editor.Extensions
     {
         public static Vector2 ToVector2(this Point point)
         {
-            return new Vector2((float)point.X, (float)point.Y);
+            return new Vector2(point.X, point.Y);
         }
     }
 }

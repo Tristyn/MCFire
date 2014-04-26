@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Modules.Editor.Meshalyzer
+namespace MCFire.Modules.Meshalyzer.Models
 {
     public class SolidMeshalyzer : BlockMeshalyzer
     {
