@@ -25,10 +25,12 @@ namespace MCFire.Modules.Explorer.Models
                 if (_worlds != null) return _worlds;
 
                 _worlds = new ObservableCollection<MCFireWorld>();
-                _worlds.AddForeach(
-                    Directory.EnumerateDirectories()
+                foreach (var world in Directory.EnumerateDirectories()
                     .Select(folder => new MCFireWorld(folder.FullName))
-                    .Where(world => world != null));
+                    .Where(world => world != null))
+                {
+                    _worlds.Add(world);
+                }
 
                 return _worlds;
             }

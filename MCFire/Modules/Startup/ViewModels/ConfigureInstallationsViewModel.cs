@@ -17,6 +17,7 @@ using MCFire.Modules.Infrastructure.Models;
 using MCFire.Properties;
 using NUnrar.Archive;
 using NUnrar.Common;
+using Tether;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -166,7 +167,7 @@ namespace MCFire.Modules.Startup.ViewModels
             if (newInstall != null)
                 _explorerService.TryAddInstallation(newInstall);
 
-            Installs = _explorerService.Installations.Link<Installation, Installation, BindableCollection<Installation>>();
+            Installs = _explorerService.Installations.Tether<Installation, Installation, BindableCollection<Installation>>();
         }
 
         [CanBeNull]

@@ -27,10 +27,12 @@ namespace MCFire.Modules.Explorer.Models
                 var savesFolder = Directory.EnumerateDirectories().FirstOrDefault(folder => folder.Name.ToLower() == "saves");
                 if (savesFolder == null)
                     return _worlds;
-                _worlds.AddForeach(
-                    savesFolder.EnumerateDirectories()
+                foreach (var world in savesFolder.EnumerateDirectories()
                     .Select(folder => new MCFireWorld(folder.FullName))
-                    .Where(world => world != null));
+                    .Where(world => world != null))
+                {
+                    _worlds.Add(world);
+                }
 
                 return _worlds;
             }

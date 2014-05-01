@@ -60,32 +60,29 @@ namespace MCFire.Modules.Editor.Models
     {
         Vector2 _previousPosition;
         KeyState _previousState;
-        bool _ignoreNextMove;
 
         public void Update(ButtonState state, Vector2 position)
         {
             State = state;
-
-            var previousPosition = GetPreviousPosition(position);
             switch (state)
             {
                 case ButtonState.Pressed:
                     if (_previousState == KeyState.Chillin)
                     {
-                        if (Click != null) Click(this, new KeyEventArgs(KeyState.Pressed, position, previousPosition));
+                        if (Click != null) Click(this, new KeyEventArgs(KeyState.Pressed, position, _previousPosition));
                         _previousState = KeyState.Pressed;
-                        if (position != previousPosition)
+                        if (position != _previousPosition)
                         {
-                            if (DragStart != null) DragStart(this, new KeyEventArgs(KeyState.Dragging, position, previousPosition));
+                            if (DragStart != null) DragStart(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
                             _previousState = KeyState.Dragging;
                         }
                     }
                     if (_previousState == KeyState.Pressed)
                     {
-                        if (position != previousPosition)
+                        if (position != _previousPosition)
                         {
                             if (DragStart != null)
-                                DragStart(this, new KeyEventArgs(KeyState.Dragging, position, previousPosition));
+                                DragStart(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
                             _previousState = KeyState.Dragging;
                         }
                         else
@@ -93,9 +90,9 @@ namespace MCFire.Modules.Editor.Models
                             _previousState = KeyState.Pressed;
                         }
                     }
-                    if (_previousState == KeyState.Dragging && position != previousPosition)
+                    if (_previousState == KeyState.Dragging && position != _previousPosition)
                     {
-                        if (DragMove != null) DragMove(this, new KeyEventArgs(KeyState.Dragging, position, previousPosition));
+                        if (DragMove != null) DragMove(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
                         _previousState = KeyState.Dragging;
                     }
                     break;
@@ -103,12 +100,12 @@ namespace MCFire.Modules.Editor.Models
                 case ButtonState.Released:
                     if (_previousState == KeyState.Pressed)
                     {
-                        if (ClickEnd != null) ClickEnd(this, new KeyEventArgs(KeyState.Released, position, previousPosition));
+                        if (ClickEnd != null) ClickEnd(this, new KeyEventArgs(KeyState.Released, position, _previousPosition));
                         _previousState = KeyState.Released;
                     }
                     if (_previousState == KeyState.Dragging)
                     {
-                        if (DragEnd != null) DragEnd(this, new KeyEventArgs(KeyState.EndDragging, position, previousPosition));
+                        if (DragEnd != null) DragEnd(this, new KeyEventArgs(KeyState.EndDragging, position, _previousPosition));
                         // NOTE THE CHILLIN, not EndDragging!
                         _previousState = KeyState.Chillin;
                     }
@@ -128,18 +125,6 @@ namespace MCFire.Modules.Editor.Models
         public void SetPosition(Vector2 position)
         {
             _previousPosition = position;
-        }
-
-        /// <summary>
-        /// Returns currentPosition if _ignoreNextMove is set to true. else returns _previousPosition
-        /// </summary>
-        Vector2 GetPreviousPosition(Vector2 currentPosition)
-        {
-            if (!_ignoreNextMove)
-                return _previousPosition;
-            
-            _ignoreNextMove = false;
-            return currentPosition;
         }
 
         public ButtonState State { get; private set; }

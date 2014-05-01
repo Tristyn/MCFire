@@ -9,7 +9,7 @@ using Gemini.Framework.Services;
 using MCFire.Modules.Files.Commands;
 using MCFire.Modules.Files.Models;
 using MCFire.Modules.Files.Services;
-using MCFire.Modules.Infrastructure.Extensions;
+using Tether;
 
 namespace MCFire.Modules.Files.ViewModels
 {
@@ -30,7 +30,7 @@ namespace MCFire.Modules.Files.ViewModels
         {
             DisplayName = "File Explorer";
             _folderService = folderService;
-            _rootFolders = folderService.RootFolders.Link
+            _rootFolders = folderService.RootFolders.Tether
                 <FolderItemViewModel, IFolder, BindableCollection<FolderItemViewModel>>(
                 model => new FolderItemViewModel { Model = model },
                 (model, viewModel) => viewModel.Model == model);

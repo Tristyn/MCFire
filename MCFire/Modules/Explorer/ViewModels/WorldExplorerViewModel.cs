@@ -6,6 +6,7 @@ using Gemini.Framework.Services;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Explorer.Services;
 using MCFire.Modules.Infrastructure.Extensions;
+using Tether;
 
 namespace MCFire.Modules.Explorer.ViewModels
 {
@@ -27,7 +28,7 @@ namespace MCFire.Modules.Explorer.ViewModels
         {
             set
             {
-                Installs = value.Installations.Link<InstallationViewModel, Installation, BindableCollection<InstallationViewModel>>(
+                Installs = value.Installations.Tether<InstallationViewModel, Installation, BindableCollection<InstallationViewModel>>(
                     model => new InstallationViewModel { Model = model },
                     (model, viewModel) => viewModel.Model == model);
             }

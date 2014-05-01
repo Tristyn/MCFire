@@ -260,8 +260,6 @@
     <Compile Include="Modules\Infrastructure\Extensions\ChunkRefExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\IntegerExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\NbtWorldExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\NotifyCollectionChangedExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\Vector2Extensions.cs" />

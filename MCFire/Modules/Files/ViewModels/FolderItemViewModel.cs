@@ -2,7 +2,7 @@
 using Caliburn.Micro;
 using MCFire.Modules.Files.Events;
 using MCFire.Modules.Files.Models;
-using MCFire.Modules.Infrastructure.Extensions;
+using Tether;
 
 namespace MCFire.Modules.Files.ViewModels
 {
@@ -90,7 +90,7 @@ namespace MCFire.Modules.Files.ViewModels
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (_children == null)
                     _children =
-                        folder.Children.Link<FolderItemViewModel, IFolderItem, BindableCollection<FolderItemViewModel>>(
+                        folder.Children.Tether<FolderItemViewModel, IFolderItem, BindableCollection<FolderItemViewModel>>(
                             model => new FolderItemViewModel { Model = model },
                             (model, viewModel) => viewModel.Model == model);
 
