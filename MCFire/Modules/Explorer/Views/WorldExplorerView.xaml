@@ -19,14 +19,13 @@
         <views:CommandsView DockPanel.Dock="Top" 
                             Commands="{Binding Commands}"/>
 
-        <controls:ExtendedTreeView x:Name="Children" ClipToBounds="True" 
-                                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}">
-            <controls:ExtendedTreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="viewModels1:WorldItemViewModel">
-                    <ContentControl cal:View.Model="{Binding}"/>
-                </HierarchicalDataTemplate>
-            </controls:ExtendedTreeView.ItemTemplate>
-        </controls:ExtendedTreeView>
+        <ItemsControl ItemsSource="{Binding Installs}" DockPanel.Dock="Top">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl cal:View.Model="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
     </DockPanel>
 </UserControl>

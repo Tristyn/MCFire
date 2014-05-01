@@ -138,6 +138,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tether">
+      <HintPath>..\packages\Tether.1.0.0.0\lib\net40\Tether.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock, Version=2.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -186,11 +189,25 @@
     <Compile Include="Modules\Editor\Models\VertexLitEffect.cs" />
     <Compile Include="Modules\Editor\Messages\EditorGainedFocusMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorMessage.cs" />
+    <Compile Include="Modules\Infrastructure\Converters\DimensionTypeToStringConverter.cs" />
+    <Compile Include="Modules\Infrastructure\Converters\DimensionTypeToImageUriConverter.cs" />
     <Compile Include="Modules\Explorer\Models\MCFireWorld.cs" />
+    <Compile Include="Modules\Explorer\ViewModels\DimensionViewModel.cs" />
     <Compile Include="Modules\Explorer\ViewModels\EditInstallationsViewModel.cs" />
+    <Compile Include="Modules\Explorer\ViewModels\InstallationViewModel.cs" />
     <Compile Include="Modules\Explorer\ViewModels\IWorldExplorerCommand.cs" />
+    <Compile Include="Modules\Explorer\ViewModels\WorldViewModel.cs" />
+    <Compile Include="Modules\Explorer\Views\DimensionView.xaml.cs">
+      <DependentUpon>DimensionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\Explorer\Views\EditInstallationsView.xaml.cs">
       <DependentUpon>EditInstallationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Explorer\Views\InstallationView.xaml.cs">
+      <DependentUpon>InstallationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Explorer\Views\WorldView.xaml.cs">
+      <DependentUpon>WorldView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
     <Compile Include="Modules\Files\Content\FileContent.cs" />
@@ -355,6 +372,8 @@
     </None>
     <ToolkitFxc Include="Modules\Editor\Content\BoxSelect.fx" />
     <ToolkitTexture Include="Modules\Editor\Content\Grid.png" />
+    <Resource Include="Resources\NetherQuartzOre.png" />
+    <Resource Include="Resources\DragonEgg.png" />
     <Content Include="Resources\SampleWorld.rar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -372,7 +391,19 @@
     <EmbeddedResource Include="Properties\Resources.resx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Modules\Explorer\Views\DimensionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Modules\Explorer\Views\EditInstallationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Explorer\Views\InstallationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Explorer\Views\WorldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -505,6 +536,9 @@
       <Project>{7264a1c4-ab4a-4437-b252-7379b98b5509}</Project>
       <Name>Substrate %28NET4%29</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\Explorer\Converters\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SharpDXSdkDir)\SharpDX.targets" />

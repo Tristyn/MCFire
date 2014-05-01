@@ -12,23 +12,28 @@ namespace MCFire.Modules.Explorer.ViewModels
     [Export]
     public class WorldExplorerViewModel : Tool
     {
-        #region Properties
-
-        [ImportingConstructor]
-        public WorldExplorerViewModel(WorldExplorerService service)
+        public override double PreferredWidth
         {
-            DisplayName = "World Explorer";
-
-            Children = service.Installations.Link<WorldItemViewModel, Installation, BindableCollection<WorldItemViewModel>>(
-                model => new WorldItemViewModel { Model = model },
-                (model, viewModel) => viewModel.Model == model);
+            get { return 250; }
         }
 
-        #endregion
+        public WorldExplorerViewModel()
+        {
+            DisplayName = "World Explorer";
+        }
 
-        #region Properties
+        [Import]
+        WorldExplorerService Service
+        {
+            set
+            {
+                Installs = value.Installations.Link<InstallationViewModel, Installation, BindableCollection<InstallationViewModel>>(
+                    model => new InstallationViewModel { Model = model },
+                    (model, viewModel) => viewModel.Model == model);
+            }
+        }
 
-        public BindableCollection<WorldItemViewModel> Children { get; private set; }
+        public BindableCollection<InstallationViewModel> Installs { get; set; }
 
         public WorldItemViewModel SelectedItem { get; set; }
 
@@ -39,7 +44,5 @@ namespace MCFire.Modules.Explorer.ViewModels
         {
             get { return PaneLocation.Right; }
         }
-
-        #endregion
     }
 }
