@@ -12,6 +12,7 @@ namespace MCFire.Modules.Editor.Models
         {
             _mouse = mouse;
             mouse.Initialize();
+            MouseManager = mouse;
 
             Left = new Key();
             Right = new Key();
@@ -33,13 +34,13 @@ namespace MCFire.Modules.Editor.Models
         /// Moves the mouse to a new position. This will not fire any events or changed their arguments.
         /// </summary>
         /// <param name="position">The new mouse position in desktop space.</param>
-        public void MoveSilently(Vector2 position)
+        public void SetPosition(Vector2 position)
         {
             _mouse.SetPosition(position);
 
-            Left.IgnoreNextMoveEvent();
-            Right.IgnoreNextMoveEvent();
-            Middle.IgnoreNextMoveEvent();
+            Left.SetPosition(position);
+            Right.SetPosition(position);
+            Middle.SetPosition(position);
         }
 
         public void Dispose()
@@ -52,6 +53,7 @@ namespace MCFire.Modules.Editor.Models
         public Key Right { get; private set; }
         public Key Middle { get; private set; }
         public Vector2 Position { get; private set; }
+        public MouseManager MouseManager { get; private set; }
     }
 
     public class Key
@@ -123,9 +125,9 @@ namespace MCFire.Modules.Editor.Models
             _previousPosition = position;
         }
 
-        public void IgnoreNextMoveEvent()
+        public void SetPosition(Vector2 position)
         {
-            _ignoreNextMove = true;
+            _previousPosition = position;
         }
 
         /// <summary>

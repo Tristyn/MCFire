@@ -141,42 +141,25 @@ namespace MCFire.Modules.Editor.Models
 
         #region Perspective Mouse Drag
 
-        void PerspectiveDragEnd(object s, KeyEventArgs e)
+        void PerspectiveDragStart(object s, KeyEventArgs e)
         {
-            _sharpDx.ReleaseMouseCapture();
-            System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
+            _sharpDx.CaptureMouse();
+            System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
+            _mouse.SetPosition(new Vector2(.5f));
         }
 
         void PerspectiveDragMove(object s, KeyEventArgs e)
         {
             // perspective drag
-            var change = (e.PrevPosition - e.Position) * new Vector2(_game.GraphicsDevice.AspectRatio(), 1);
+            var change = (new Vector2(.5f) - e.Position) * new Vector2(_game.GraphicsDevice.AspectRatio(), 1);
             Pan(change * 2);
-
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (e.Position.X == 1)
-            {
-                _mouse.MoveSilently(new Vector2(0.01f, e.Position.Y));
-            }
-            else if (e.Position.X == 0)
-            {
-                _mouse.MoveSilently(new Vector2(0.99f, e.Position.Y));
-            }
-            if (e.Position.Y == 1)
-            {
-                _mouse.MoveSilently(new Vector2(e.Position.X, 0.01f));
-            }
-            else if (e.Position.Y == 0)
-            {
-                _mouse.MoveSilently(new Vector2(e.Position.X, 0.99f));
-            }
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+            _mouse.SetPosition(new Vector2(.5f));
         }
 
-        void PerspectiveDragStart(object s, KeyEventArgs e)
+        void PerspectiveDragEnd(object s, KeyEventArgs e)
         {
-            _sharpDx.CaptureMouse();
-            System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
+            _sharpDx.ReleaseMouseCapture();
+            System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         #endregion

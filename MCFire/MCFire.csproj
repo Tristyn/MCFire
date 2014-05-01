@@ -537,9 +537,7 @@
       <Name>Substrate %28NET4%29</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\Explorer\Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SharpDXSdkDir)\SharpDX.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
