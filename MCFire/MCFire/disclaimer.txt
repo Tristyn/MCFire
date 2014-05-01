@@ -1,4 +1,0 @@
-textures c Mojang
-
-c4d mob models by ZeusFury123
-https://www.youtube.com/watch?v=OD5-kfE7ppk

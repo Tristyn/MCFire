@@ -117,6 +117,7 @@ namespace Substrate
         CREATIVE = 1,
     }
 
+#pragma warning disable 1591
     public enum TimeOfDay
     {
         Daytime = 0,
@@ -126,6 +127,7 @@ namespace Substrate
         Midnight = 18000,
         Sunrise = 22200,
     }
+#pragma warning restore 1591
 
     /// <summary>
     /// Represents general data and metadata of a single world.

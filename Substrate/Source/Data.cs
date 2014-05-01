@@ -6,7 +6,7 @@ namespace Substrate
 {
 
     // Block Data
-
+#pragma warning disable 1591
     public enum WoodType
     {
         OAK = 0,
@@ -509,4 +509,5 @@ namespace Substrate
         ORANGE_DYE = 14,
         BONE_MEAL = 15
     }
+    #pragma warning restore 1591
 }

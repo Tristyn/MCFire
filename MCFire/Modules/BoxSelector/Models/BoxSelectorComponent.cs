@@ -39,7 +39,8 @@ namespace MCFire.Modules.BoxSelector.Models
 
         public override void Update(GameTime time)
         {
-            _selection.Maximum = Tasks.GetBlockUnderMouse();
+            // TODO:
+            //_selection.Maximum = Tasks.GetBlockUnderMouse();
         }
 
         public override void Draw(GameTime time)

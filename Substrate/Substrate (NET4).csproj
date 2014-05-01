@@ -60,6 +60,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\AlphaChunk.cs" />
     <Compile Include="Source\AlphaWorld.cs" />
     <Compile Include="Source\AnvilBiomeCollection.cs" />
@@ -160,7 +161,6 @@
     <Compile Include="Source\PlayerIOException.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\Core\PlayerFile.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\BlockInfo.cs" />
     <Compile Include="Source\Core\BlockInterface.cs" />
     <Compile Include="Source\Core\BlockKey.cs" />

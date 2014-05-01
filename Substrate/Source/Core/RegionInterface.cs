@@ -129,7 +129,6 @@ namespace Substrate.Core
         /// <summary>
         /// Gets an <see cref="IRegion"/> for the given region filename.
         /// </summary>
-        /// <param name="filename">The filename of the region to get.</param>
         /// <returns>A <see cref="IRegion"/> corresponding to the coordinates encoded in the filename.</returns>
         IRegion GetRegion (int rx, int rz);
 
