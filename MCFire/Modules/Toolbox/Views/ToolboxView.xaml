@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
+        <TextBlock Text="Work in Progress" />
         <ItemsControl ItemsSource="{Binding Tools}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

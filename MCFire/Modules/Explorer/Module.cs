@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
@@ -7,7 +8,7 @@ using Gemini.Framework.Results;
 using Gemini.Modules.MainMenu.Models;
 using MCFire.Modules.Explorer.ViewModels;
 
-namespace MCFire.Modules.WorldExplorer
+namespace MCFire.Modules.Explorer
 {
     [Export(typeof(IModule))]
     public class Module : ModuleBase
@@ -18,9 +19,14 @@ namespace MCFire.Modules.WorldExplorer
               .Add(new MenuItem("World Explorer", OpenWorldExplorer));
         }
 
-        private static IEnumerable<IResult> OpenWorldExplorer()
+        static IEnumerable<IResult> OpenWorldExplorer()
         {
             yield return Show.Tool<WorldExplorerViewModel>();
+        }
+
+        public override IEnumerable<Type> DefaultTools
+        {
+            get { yield return typeof (WorldExplorerViewModel); }
         }
     }
 }
