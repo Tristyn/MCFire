@@ -1,23 +1,24 @@
-﻿namespace MCFire.Modules.Infrastructure.Models
+﻿using System;
+
+namespace MCFire.Modules.Infrastructure.Models
 {
     public struct BlockPosition
     {
-        readonly int _x;
-        readonly int _y;
-        readonly int _z;
 
         public BlockPosition(int x, int y, int z)
+            : this()
         {
-            _x = x;
-            _y = y;
-            _z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public BlockPosition(ChunkPosition chunk, int localX, int localY, int localZ)
+            : this()
         {
-            _x = chunk.ChunkX * 16 + localX;
-            _y = localY;
-            _z = chunk.ChunkZ * 16 + localZ;
+            X = chunk.ChunkX * 16 + localX;
+            Y = localY;
+            Z = chunk.ChunkZ * 16 + localZ;
         }
 
         public static implicit operator ChunkPosition(BlockPosition value)
@@ -37,7 +38,7 @@
 
         public bool Equals(BlockPosition other)
         {
-            return _x == other._x && _z == other._z && _y == other._y;
+            return X == other.X && Z == other.Z && Y == other.Y;
         }
 
         public override bool Equals(object obj)
@@ -50,30 +51,26 @@
         {
             unchecked
             {
-                int hashCode = _y;
-                hashCode = (hashCode * 397) ^ _x;
-                hashCode = (hashCode * 397) ^ _z;
+                int hashCode = Y;
+                hashCode = (hashCode * 397) ^ X;
+                hashCode = (hashCode * 397) ^ Z;
                 return hashCode;
             }
         }
 
+        public override string ToString()
+        {
+            return String.Format("{0}, {1}, {2}", X, Y, Z);
+        }
+
         public int Y
         {
-            get { return _y; }
+            get;
+            private set;
         }
 
-        public int X
-        {
-            get { return _x; }
-        }
+        public int X { get; private set; }
 
-        public int Z
-        {
-            get { return _z; }
-        }
-        public ChunkPosition ChunkPosition
-        {
-            get { return new ChunkPosition(_x, _z); }
-        }
+        public int Z { get; private set; }
     }
 }

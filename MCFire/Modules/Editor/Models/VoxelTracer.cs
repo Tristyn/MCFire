@@ -7,7 +7,7 @@ using SharpDX;
 namespace MCFire.Modules.Editor.Models
 {
     /// <summary>
-    /// Enumerates through blocks that is passes through using its origin and direction.
+    /// Enumerates through voxel coordinates that it passes through using its origin and direction.
     /// </summary>
     public class VoxelTracer : IEnumerable<Point3>
     {

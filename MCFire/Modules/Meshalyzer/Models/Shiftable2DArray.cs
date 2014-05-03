@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MCFire.Modules.Meshalyzer.Models
 {
+    [Obsolete]
     public class Shiftable2DArray<T> : IEnumerable<T>
     {
         readonly T[,] _array;

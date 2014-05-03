@@ -44,12 +44,9 @@ namespace MCFire.Modules.Editor.ViewModels
             var view = _view;
             if (view == null)
                 return false;
-            var substrateWorld = world.NbtWorld;
-            if (substrateWorld == null)
-                return false;
 
             DisplayName = "Starting Up - Editor";
-            if (!RunGame(() => new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, substrateWorld, dimension), view.SharpDx))
+            if (!RunGame(() => new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension), view.SharpDx))
                 return false;
 
             _aggregator.Publish(new EditorOpenedMessage(this));

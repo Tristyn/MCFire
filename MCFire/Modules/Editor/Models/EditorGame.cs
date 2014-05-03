@@ -5,12 +5,9 @@ using JetBrains.Annotations;
 using MCFire.Modules.Explorer.Models;
 using SharpDX;
 using SharpDX.Toolkit;
-using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 using Substrate;
-using Substrate.Core;
-using Substrate.Data;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -39,21 +36,15 @@ namespace MCFire.Modules.Editor.Models
         /// <param name="sharpDxElement">The control used to listen to input events.</param>
         /// <param name="components">The game component services.</param>
         /// <param name="world">The Minecraft world to use as a data source.</param>
-        /// <param name="substrateWorld"></param>
         /// <param name="dimension">The dimension of the world.</param>
         public EditorGame([NotNull] SharpDXElement sharpDxElement, [CanBeNull] IEnumerable<IGameComponent> components, [NotNull] MCFireWorld world,
-            [NotNull] NbtWorld substrateWorld, int dimension)
+            int dimension)
         {
             _components = (from component in components
                            orderby component.DrawPriority
                            select component).ToArray();
             World = world;
             Dimension = dimension;
-            SubstrateWorld = substrateWorld;
-            ChunkManager = substrateWorld.GetChunkManager(dimension);
-            BlockManager = substrateWorld.GetBlockManager(dimension);
-            DataManager = substrateWorld.GetDataManager();
-            Level = substrateWorld.Level;
 
             ToDispose(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
@@ -118,36 +109,9 @@ namespace MCFire.Modules.Editor.Models
             SpriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
             SpriteBatch.End();
 
-            // Reset
-            GraphicsDevice.Flush();
-
             // Handle base.Draw
             base.Draw(gameTime);
         }
-
-        [NotNull]
-        public Camera Camera { get; private set; }
-
-        [NotNull]
-        public Mouse Mouse { get; private set; }
-
-        [NotNull]
-        public Keyboard Keyboard { get; private set; }
-
-        [NotNull]
-        public Tasks Tasks { get; private set; }
-
-        [NotNull]
-        public SharpDXElement SharpDxElement { get; private set; }
-
-        [NotNull]
-        public MCFireWorld World { get; private set; }
-
-        [NotNull]
-        public NbtWorld SubstrateWorld { get; private set; }
-        public IChunkManager ChunkManager { get; private set; }
-        public IBlockManager BlockManager { get; set; }
-        public DataManager DataManager { get; set; }
 
         #region Content
 
@@ -204,6 +168,24 @@ namespace MCFire.Modules.Editor.Models
         }
 
         #endregion
+
+        [NotNull]
+        public Camera Camera { get; private set; }
+
+        [NotNull]
+        public Mouse Mouse { get; private set; }
+
+        [NotNull]
+        public Keyboard Keyboard { get; private set; }
+
+        [NotNull]
+        public Tasks Tasks { get; private set; }
+
+        [NotNull]
+        public SharpDXElement SharpDxElement { get; private set; }
+
+        [NotNull]
+        public MCFireWorld World { get; private set; }
 
         public int Dimension { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }

@@ -3,13 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
+using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
+using MCFire.Modules.Explorer.Messages;
+using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
+using Substrate.Core;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 using Vector3 = SharpDX.Vector3;
 
@@ -17,7 +21,7 @@ namespace MCFire.Modules.Meshalyzer.Models
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(IGameComponent))]
-    public class MeshalyzerComponent : GameComponentBase
+    public class MeshalyzerComponent : GameComponentBase, IHandle<ChunkModifiedMessage>
     {
         Thread _meshingThread;
         ChunkCreationPolicy _policy;
@@ -28,6 +32,9 @@ namespace MCFire.Modules.Meshalyzer.Models
         Dictionary<ChunkPosition, VisualChunk> _chunks = new Dictionary<ChunkPosition, VisualChunk>();
 
         VertexLitEffect _vertexLit;
+
+        [Import]
+        IEventAggregator Aggregator { set { value.Subscribe(this); } }
 
         #region Statics
 
@@ -67,10 +74,18 @@ namespace MCFire.Modules.Meshalyzer.Models
 
             GraphicsDevice.SetBlendState(GraphicsDevice.BlendStates.Opaque);
 
-            foreach (var keyValue in _chunks)
+            foreach (var chunk in _chunks.Values)
             {
-                keyValue.Value.Draw(Game);
+                chunk.Draw(Game);
             }
+        }
+
+        public void Handle(ChunkModifiedMessage message)
+        {
+            var pos = message.Position;
+            if (pos.World != World ||
+                pos.Dimension != Dimension) return;
+            _prioritizer.ChunkNeedsRegen(message.Position);
         }
 
         public override int DrawPriority { get { return 20; } }
@@ -122,23 +137,25 @@ namespace MCFire.Modules.Meshalyzer.Models
         bool MeshalyzeNext()
         {
             ChunkPosition chunkPoint;
-
             if (!_prioritizer.GetNextDesiredChunk(Game.Camera.ChunkPosition, out chunkPoint))
                 return false;
-            var chunk = World.GetChunk(Dimension, chunkPoint.ChunkX, chunkPoint.ChunkZ);
+
             Buffer<VertexPositionColor> buffer = null;
-
-            if (chunk != null)
+            World.GetChunk(new ChunkPositionDimension(chunkPoint, Dimension), AccessMode.Read, chunk =>
+            {
+                if (chunk == null)
+                    return;
                 buffer = GenerateMainMesh(chunk);
+            });
 
+            if (buffer == null) return true;
             var chunkVisual = new VisualChunk(chunkPoint, _vertexLit, buffer);
-
             _chunksToIntegrate.Enqueue(chunkVisual);
             return true;
         }
 
         [CanBeNull]
-        Buffer<VertexPositionColor> GenerateMainMesh(ChunkRef chunk)
+        Buffer<VertexPositionColor> GenerateMainMesh([NotNull] IChunk chunk)
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(500);

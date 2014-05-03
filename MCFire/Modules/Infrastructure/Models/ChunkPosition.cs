@@ -76,6 +76,11 @@ namespace MCFire.Modules.Infrastructure.Models
             }
         }
 
+        public override string ToString()
+        {
+            return String.Format("{0}, {1}", ChunkX, ChunkZ);
+        }
+
         public int ChunkX
         {
             get { return _chunkX; }

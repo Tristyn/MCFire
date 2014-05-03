@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MCFire.Modules.Meshalyzer.Models
@@ -6,6 +7,7 @@ namespace MCFire.Modules.Meshalyzer.Models
     /// <summary>
     /// An array that can have its contents shifted.
     /// </summary>
+    [Obsolete]
     public class ShiftableArray<T> : IEnumerable<T>
     {
         readonly T[] _array;

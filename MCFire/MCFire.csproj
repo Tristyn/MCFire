@@ -188,6 +188,8 @@
     <Compile Include="Modules\Editor\Models\VertexLitEffect.cs" />
     <Compile Include="Modules\Editor\Messages\EditorGainedFocusMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorMessage.cs" />
+    <Compile Include="Modules\Explorer\Messages\ChunkMessage.cs" />
+    <Compile Include="Modules\Explorer\Messages\ChunkModifiedMessage.cs" />
     <Compile Include="Modules\Infrastructure\Converters\DimensionTypeToStringConverter.cs" />
     <Compile Include="Modules\Infrastructure\Converters\DimensionTypeToImageUriConverter.cs" />
     <Compile Include="Modules\Explorer\Models\MCFireWorld.cs" />
@@ -265,10 +267,12 @@
     <Compile Include="Modules\Infrastructure\Models\BlockPosition.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkPosition.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimension.cs" />
+    <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimensionWorld.cs" />
     <Compile Include="Modules\Infrastructure\Models\GeometricPrimitives.cs" />
     <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point3.cs" />
+    <Compile Include="Modules\Infrastructure\Models\ReaderWriterObjectLock.cs" />
     <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>

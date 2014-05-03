@@ -110,7 +110,7 @@ namespace MCFire.Modules.Startup.ViewModels
                 RarArchive.WriteToDirectory(rarDir, MCFireDirectories.MCFireAppdata, ExtractOptions.ExtractFullPath);
                 _explorerService.TryAddInstallation(Installation.New(extractDir));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SampleMapMessage = "Failed extracting sample map";
             }

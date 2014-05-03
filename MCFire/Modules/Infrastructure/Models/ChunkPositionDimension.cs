@@ -22,7 +22,7 @@ namespace MCFire.Modules.Infrastructure.Models
             _chunkZ = position.ChunkZ;
         }
 
-        public static explicit operator ChunkPosition(ChunkPositionDimension value)
+        public static implicit operator ChunkPosition(ChunkPositionDimension value)
         {
             return new ChunkPosition(value.ChunkX, value.ChunkZ);
         }
@@ -59,6 +59,11 @@ namespace MCFire.Modules.Infrastructure.Models
             }
         }
 
+        public override string ToString()
+        {
+            return String.Format("{0}, {1}, Dimension: {2}", ChunkX, ChunkZ, Dimension);
+        }
+
         public int Dimension
         {
             get { return _dimension; }
@@ -72,10 +77,6 @@ namespace MCFire.Modules.Infrastructure.Models
         public int ChunkZ
         {
             get { return _chunkZ; }
-        }
-        public ChunkPosition ChunkPosition
-        {
-            get { return new ChunkPosition(_chunkX, _chunkZ); }
         }
     }
 }

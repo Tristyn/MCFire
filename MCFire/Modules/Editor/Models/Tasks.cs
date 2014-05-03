@@ -33,7 +33,7 @@ namespace MCFire.Modules.Editor.Models
             // An exception is that if we start in a liquid, we also ignore liquids (so you can select blocks while underwater)
             var enumerator = tracer.GetEnumerator();
 
-            var blocks = _game.BlockManager;
+            var blocks = _game.World.NbtWorld.GetBlockManager(_game.Dimension);
             var state = blocks.GetBlock(enumerator.Current).Info.State;
 
             // enumerate until it isn't a solid

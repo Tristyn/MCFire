@@ -2,7 +2,6 @@
 using MCFire.Modules.Explorer.Models;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
-using Substrate;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -27,7 +26,6 @@ namespace MCFire.Modules.Editor.Models
 
                 _game = value;
                 World = value.World;
-                SubstrateWorld = value.SubstrateWorld;
                 Dimension = value.Dimension;
                 GraphicsDevice = value.GraphicsDevice;
                 Camera = value.Camera;
@@ -47,8 +45,6 @@ namespace MCFire.Modules.Editor.Models
         protected virtual Camera Camera { get; private set; }
 
         protected virtual Tasks Tasks { get; private set; }
-
-        protected virtual NbtWorld SubstrateWorld { get; private set; }
 
         protected virtual MCFireWorld World { get; private set; }
         protected virtual int Dimension { get; private set; }
