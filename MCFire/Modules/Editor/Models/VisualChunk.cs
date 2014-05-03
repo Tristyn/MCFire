@@ -1,8 +1,8 @@
 ﻿using System;
 using JetBrains.Annotations;
+using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
-using Point = MCFire.Modules.Infrastructure.Models.Point;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -18,14 +18,14 @@ namespace MCFire.Modules.Editor.Models
         [CanBeNull]
         VertexLitEffect _vertexLitEffect;
         bool _disposed;
-        public readonly Point ChunkPosition;
+        public readonly ChunkPosition Position;
 
-        public VisualChunk(Point position, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
+        public VisualChunk(ChunkPosition position, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
         {
             if (vertexLitEffect == null) throw new ArgumentNullException("vertexLitEffect");
 
             _vertexLitEffect = vertexLitEffect;
-            ChunkPosition = position;
+            Position = position;
             if (mainBuffer != null)
                 _mesh = new Mesh<VertexPositionColor>(mainBuffer, _vertexLitEffect.Effect);
         }
@@ -38,7 +38,7 @@ namespace MCFire.Modules.Editor.Models
             if (_vertexLitEffect == null)
                 return;
 
-            _vertexLitEffect.TransformMatrix = Matrix.Translation(ChunkPosition.X * 16, 0, ChunkPosition.Y * 16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
+            _vertexLitEffect.TransformMatrix = Matrix.Translation(Position.ChunkX * 16, 0, Position.ChunkZ * 16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
             if (_mesh != null)
                 _mesh.Draw(game.GraphicsDevice);
         }

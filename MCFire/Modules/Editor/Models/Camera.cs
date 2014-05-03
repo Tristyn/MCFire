@@ -2,12 +2,12 @@
 using System.Windows.Input;
 using MCFire.Modules.Editor.Extensions;
 using MCFire.Modules.Infrastructure.Extensions;
+using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 using Matrix = SharpDX.Matrix;
-using Point = MCFire.Modules.Infrastructure.Models.Point;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -284,9 +284,9 @@ namespace MCFire.Modules.Editor.Models
             set { _position = value; }
         }
 
-        public Point ChunkPosition
+        public ChunkPosition ChunkPosition
         {
-            get { return new Point((int)(_position.X / 16), (int)(_position.Z / 16)); }
+            get { return new BlockPosition((int)_position.X,(int)_position.Y, (int)_position.Z); }
         }
 
         public Vector3 Direction

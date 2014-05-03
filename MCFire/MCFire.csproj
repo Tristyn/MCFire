@@ -30,8 +30,8 @@
     <ProductName>MC Fire</ProductName>
     <PublisherName>Tristyn Stimpson</PublisherName>
     <MinimumRequiredVersion>0.0.3.0</MinimumRequiredVersion>
-    <ApplicationRevision>11</ApplicationRevision>
-    <ApplicationVersion>0.0.4.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>0.0.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -176,7 +176,6 @@
     <Compile Include="Modules\BoxSelector\Models\BoxSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelectorComponent.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
-    <Compile Include="Modules\Editor\Extensions\PointExtensions.cs" />
     <Compile Include="Modules\Editor\Messages\EditorClosingMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorOpenedMessage.cs" />
     <Compile Include="Modules\Editor\Models\BoxSelectEffect.cs" />
@@ -259,12 +258,13 @@
     <Compile Include="Modules\Infrastructure\Extensions\BlockManagerExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\ChunkRefExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\IntegerExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\NbtWorldExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\Vector2Extensions.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\IModalOverlay.cs" />
+    <Compile Include="Modules\Infrastructure\Models\BlockPosition.cs" />
+    <Compile Include="Modules\Infrastructure\Models\ChunkPosition.cs" />
+    <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimension.cs" />
     <Compile Include="Modules\Infrastructure\Models\GeometricPrimitives.cs" />
     <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point.cs" />

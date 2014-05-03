@@ -1,6 +1,5 @@
 ﻿using System;
 using SharpDX;
-using SharpDX.Serialization;
 
 namespace MCFire.Modules.Infrastructure.Models
 {
@@ -8,22 +7,22 @@ namespace MCFire.Modules.Infrastructure.Models
     /// 3D point.
     /// </summary>
     [Serializable]
-    public struct Point3 : IEquatable<Point3>, IDataSerializable
+    public struct Point3 : IEquatable<Point3>
     {
         /// <summary>
         /// Left coordinate.
         /// </summary>
-        public int X;
+        public readonly int X;
 
         /// <summary>
         /// Top coordinate.
         /// </summary>
-        public int Y;
+        public readonly int Y;
 
         /// <summary>
         /// Forward coordinate
         /// </summary>
-        public int Z;
+        public readonly int Z;
 
         public Point3(int x, int y, int z)
         {
@@ -34,12 +33,12 @@ namespace MCFire.Modules.Infrastructure.Models
 
         public static explicit operator Point3(Vector3 value)
         {
-            return new Point3((int) value.X, (int) value.Y, (int) value.Z);
+            return new Point3((int)value.X, (int)value.Y, (int)value.Z);
         }
 
         public static implicit operator Vector3(Point3 value)
         {
-            return new Vector3((float) value.X, (float) value.Y, (float) value.Z);
+            return new Vector3(value.X, value.Y, value.Z);
         }
 
         public static bool operator ==(Point3 left, Point3 right)
@@ -60,7 +59,7 @@ namespace MCFire.Modules.Infrastructure.Models
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is Point3 && Equals((Point3) obj);
+            return obj is Point3 && Equals((Point3)obj);
         }
 
         public override string ToString()
@@ -68,28 +67,13 @@ namespace MCFire.Modules.Infrastructure.Models
             return string.Format("({0},{1},{2})", X, Y, Z);
         }
 
-        void IDataSerializable.Serialize(BinarySerializer serializer)
-        {
-            if (serializer.Mode == SerializerMode.Write)
-            {
-                serializer.Writer.Write(X);
-                serializer.Writer.Write(Y);
-                serializer.Writer.Write(Z);
-            }
-            else
-            {
-                X = serializer.Reader.ReadInt32();
-                Y = serializer.Reader.ReadInt32();
-            }
-        }
-
         public override int GetHashCode()
         {
             unchecked
             {
                 int hashCode = X;
-                hashCode = (hashCode*397) ^ Y;
-                hashCode = (hashCode*397) ^ Z;
+                hashCode = (hashCode * 397) ^ Y;
+                hashCode = (hashCode * 397) ^ Z;
                 return hashCode;
             }
         }

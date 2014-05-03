@@ -1,6 +1,4 @@
-﻿using System;
-using SharpDX;
-using Point = MCFire.Modules.Infrastructure.Models.Point;
+﻿using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Extensions
 {
@@ -10,11 +8,6 @@ namespace MCFire.Modules.Infrastructure.Extensions
         {
             vector3.Normalize();
             return vector3;
-        }
-
-        public static Point ToChunkSpace(this Vector3 position)
-        {
-            return new Point((int)Math.Floor(position.X / 16), (int)Math.Floor(position.Z / 16));
         }
     }
 }

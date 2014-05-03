@@ -5,12 +5,12 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
+using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using Substrate;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
-using Point = MCFire.Modules.Infrastructure.Models.Point;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Meshalyzer.Models
@@ -25,7 +25,7 @@ namespace MCFire.Modules.Meshalyzer.Models
 
         readonly ChunkPrioritizer _prioritizer = new ChunkPrioritizer();
         ConcurrentQueue<VisualChunk> _chunksToIntegrate = new ConcurrentQueue<VisualChunk>();
-        Dictionary<Point, VisualChunk> _chunks = new Dictionary<Point, VisualChunk>();
+        Dictionary<ChunkPosition, VisualChunk> _chunks = new Dictionary<ChunkPosition, VisualChunk>();
 
         VertexLitEffect _vertexLit;
 
@@ -83,7 +83,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                 if (!_chunksToIntegrate.TryDequeue(out chunk)) break;
 
                 // Add it to the dictionary using its position as a key.
-                _chunks[chunk.ChunkPosition] = chunk;
+                _chunks[chunk.Position] = chunk;
             }
         }
 
@@ -121,11 +121,11 @@ namespace MCFire.Modules.Meshalyzer.Models
         /// <returns>If there are still chunks to be meshalyzed. Sleeping is a good strategy when true is returned.</returns>
         bool MeshalyzeNext()
         {
-            Point chunkPoint;
+            ChunkPosition chunkPoint;
 
             if (!_prioritizer.GetNextDesiredChunk(Game.Camera.ChunkPosition, out chunkPoint))
                 return false;
-            var chunk = World.GetChunk(Dimension, chunkPoint.X, chunkPoint.Y);
+            var chunk = World.GetChunk(Dimension, chunkPoint.ChunkX, chunkPoint.ChunkZ);
             Buffer<VertexPositionColor> buffer = null;
 
             if (chunk != null)
