@@ -7,8 +7,7 @@ namespace MCFire.Modules.Editor.Models
 {
     public abstract class GameComponentBase : IGameComponent
     {
-        private EditorGame _game;
-        public virtual void LoadContent() { }
+        protected EditorGame Game { get; private set; }
         public virtual void Update(GameTime time) { }
         public virtual void Draw(GameTime time) { }
 
@@ -16,25 +15,23 @@ namespace MCFire.Modules.Editor.Models
         public virtual int DrawPriority { get { return 100; } }
         public virtual void Dispose() { }
 
-        public virtual EditorGame Game
+        public virtual void LoadContent(EditorGame game)
         {
-            protected get { return _game; }
-            set
-            {
-                if (_game != null)
-                    throw new InvalidOperationException("GameComponent.Game can not be set twice.");
+            if (Game != null)
+                throw new InvalidOperationException("GameComponent.Game can not be set twice.");
 
-                _game = value;
-                World = value.World;
-                Dimension = value.Dimension;
-                GraphicsDevice = value.GraphicsDevice;
-                Camera = value.Camera;
-                Keyboard = value.Keyboard;
-                Mouse = value.Mouse;
-                Tasks = value.Tasks;
-                SharpDxElement = value.SharpDxElement;
-            }
+            Game = game;
+            World = game.World;
+            Dimension = game.Dimension;
+            GraphicsDevice = game.GraphicsDevice;
+            Camera = game.Camera;
+            Keyboard = game.Keyboard;
+            Mouse = game.Mouse;
+            Tasks = game.Tasks;
+            SharpDxElement = game.SharpDxElement;
         }
+
+        public virtual void UnloadContent(EditorGame game) { }
 
         protected virtual SharpDXElement SharpDxElement { get; private set; }
 

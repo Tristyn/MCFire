@@ -13,8 +13,7 @@ using Vector3 = SharpDX.Vector3;
 namespace MCFire.Modules.Editor.Models
 {
     /// <summary>
-    /// Simple MiniCube application using SharpDX.Toolkit.
-    /// The purpose of this application is to show a rotating cube using <see cref="BasicEffect"/>.
+    /// A SharpDx Game used to render a minecraft world.
     /// </summary>
     public sealed class EditorGame : Game
     {
@@ -27,6 +26,7 @@ namespace MCFire.Modules.Editor.Models
 
         // TODO: unified content system
         // content
+        // TODO: have the ability to switch IEditors, each IEditor would have its own components and basic classes(Camera, Tasks)
         public SpriteFont Font { get; private set; }
         Texture ErrorTexture { get; set; }
 
@@ -77,7 +77,6 @@ namespace MCFire.Modules.Editor.Models
             {
                 component.Update(gameTime);
             }
-
             base.Update(gameTime);
         }
 
@@ -136,8 +135,7 @@ namespace MCFire.Modules.Editor.Models
 
             foreach (var component in _components)
             {
-                component.Game = this;
-                component.LoadContent();
+                component.LoadContent(this);
             }
 
             // content

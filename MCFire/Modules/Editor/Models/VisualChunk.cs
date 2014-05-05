@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using MCFire.Modules.Infrastructure.Models;
+using MCFire.Modules.Meshalyzer.Models;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 
@@ -11,14 +12,13 @@ namespace MCFire.Modules.Editor.Models
     /// Does not contain block data or anything like that.
     /// NOTE: Effects will not be disposed when disposing.
     /// </summary>
-    public class VisualChunk : IDisposable
+    public class VisualChunk : IChunkMesh
     {
         [CanBeNull]
         Mesh<VertexPositionColor> _mesh;
         [CanBeNull]
         VertexLitEffect _vertexLitEffect;
         bool _disposed;
-        public readonly ChunkPosition Position;
 
         public VisualChunk(ChunkPosition position, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
         {
@@ -49,5 +49,7 @@ namespace MCFire.Modules.Editor.Models
             if (_mesh != null) _mesh.Dispose();
             _disposed = true;
         }
+
+        public ChunkPosition Position { get; private set; }
     }
 }

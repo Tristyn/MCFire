@@ -33,33 +33,41 @@ namespace MCFire.Modules.Editor.Models
             // An exception is that if we start in a liquid, we also ignore liquids (so you can select blocks while underwater)
             var enumerator = tracer.GetEnumerator();
 
-            var blocks = _game.World.NbtWorld.GetBlockManager(_game.Dimension);
-            var state = blocks.GetBlock(enumerator.Current).Info.State;
+            throw new NotImplementedException();
+            /* TODO: have an object that acts like the BlockManager: 
+             * - index any block in the dimension 
+             * - integrates nicely with resourced chunks.
+             * - gets only the chunks that are requested
+             * - read or write mode?
+             * Its going to be a problem when chunks are requested in batches, the system isn't flexible
+             */
+            //var blocks = _game.World.NbtWorld.GetBlockManager(_game.Dimension);
+            //var state = blocks.GetBlock(enumerator.Current).Info.State;
 
-            // enumerate until it isn't a solid
-            if (state == BlockState.SOLID)
-                while (enumerator.MoveNext())
-                {
-                    var block = blocks.GetBlock(enumerator.Current);
-                    if (block == null || block.Info.State != BlockState.SOLID) break;
-                }
+            //// enumerate until it isn't a solid
+            //if (state == BlockState.SOLID)
+            //    while (enumerator.MoveNext())
+            //    {
+            //        var block = blocks.GetBlock(enumerator.Current);
+            //        if (block == null || block.Info.State != BlockState.SOLID) break;
+            //    }
 
-            if (state == BlockState.NONSOLID)
-                while (enumerator.MoveNext())
-                {
-                    // enumerate to the first solid or liquids
-                    var block = blocks.GetBlock(enumerator.Current);
-                    if (block == null || block.Info.State != BlockState.NONSOLID) break;
-                }
+            //if (state == BlockState.NONSOLID)
+            //    while (enumerator.MoveNext())
+            //    {
+            //        // enumerate to the first solid or liquids
+            //        var block = blocks.GetBlock(enumerator.Current);
+            //        if (block == null || block.Info.State != BlockState.NONSOLID) break;
+            //    }
 
-            // enumerate to the first solid (ignore liquids)
-            else while (enumerator.MoveNext())
-                {
-                    var block = blocks.GetBlock(enumerator.Current);
-                    if (block == null || block.Info.State == BlockState.SOLID) break;
-                }
-            Console.WriteLine(enumerator.Current);
-            return enumerator.Current;
+            //// enumerate to the first solid (ignore liquids)
+            //else while (enumerator.MoveNext())
+            //    {
+            //        var block = blocks.GetBlock(enumerator.Current);
+            //        if (block == null || block.Info.State == BlockState.SOLID) break;
+            //    }
+            //Console.WriteLine(enumerator.Current);
+            //return enumerator.Current;
         }
 
         public void Update(GameTime gameTime)

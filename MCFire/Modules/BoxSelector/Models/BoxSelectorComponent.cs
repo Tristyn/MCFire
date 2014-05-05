@@ -22,18 +22,18 @@ namespace MCFire.Modules.BoxSelector.Models
         Texture2D _gridTexture;
 
         BoundingBox _selection = new BoundingBox(new Vector3(50,100,50), new Vector3(-1));
-        Vector2 _texScale = new Vector2(1);
 
-        public override void LoadContent()
+        public override void LoadContent(EditorGame game)
         {
+            base.LoadContent(game);
             var vertices = Buffer.Vertex.New(
-                Game.GraphicsDevice,
+                game.GraphicsDevice,
                 GeometricPrimitives.QuadVertexPositionTexture);
-            _effect = new BoxSelectEffect(Game.LoadContent<Effect>("BoxSelect"))
+            _effect = new BoxSelectEffect(game.LoadContent<Effect>("BoxSelect"))
             {
                 Sampler = GraphicsDevice.SamplerStates.PointWrap
             };
-            _gridTexture = Game.LoadContent<Texture2D>("Grid");
+            _gridTexture = game.LoadContent<Texture2D>("Grid");
             _boxMesh = new Mesh<VertexPositionTexture>(vertices, _effect.Effect, true);
         }
 

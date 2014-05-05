@@ -17,6 +17,7 @@ namespace MCFire.Modules.Explorer.Models
         readonly DirectoryInfo _directory;
         [CanBeNull]
         NbtWorld _nbtWorld;
+        bool _nbtWorldCreated;
         [NotNull]
         readonly object _chunkAccessLock = new object();
         [NotNull]
@@ -43,8 +44,8 @@ namespace MCFire.Modules.Explorer.Models
                 if (_chunkAccess.TryGetValue(pos, out chunkLock)) return chunkLock;
                 
                 // create a new chunkLock
-                if (_nbtWorld == null) return _chunkAccess[pos] = new ReaderWriterObjectLock<IChunk>(null);
-                var chunk = _nbtWorld.GetChunkManager(pos.Dimension).GetChunk(pos.ChunkX, pos.ChunkZ);
+                if (NbtWorld == null) return _chunkAccess[pos] = new ReaderWriterObjectLock<IChunk>(null);
+                var chunk = NbtWorld.GetChunkManager(pos.Dimension).GetChunk(pos.ChunkX, pos.ChunkZ);
                 return _chunkAccess[pos] = new ReaderWriterObjectLock<IChunk>(chunk);
             }
         }
@@ -135,13 +136,14 @@ namespace MCFire.Modules.Explorer.Models
         /// Returns the underlying world from Substrate.
         /// </summary>
         [CanBeNull]
-        public NbtWorld NbtWorld
+        NbtWorld NbtWorld
         {
             get
             {
-                if (_nbtWorld != null) return _nbtWorld;
+                if (_nbtWorldCreated) return _nbtWorld;
                 try
                 {
+                    _nbtWorldCreated = true;
                     return _nbtWorld = NbtWorld.Open(_directory.FullName);
                 }
                 catch (DirectoryNotFoundException)

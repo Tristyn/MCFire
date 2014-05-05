@@ -1,5 +1,4 @@
-﻿using MCFire.Modules.Editor.Models.MCFire.Modules.Infrastructure.Interfaces;
-using SharpDX.Toolkit;
+﻿using SharpDX.Toolkit;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -7,9 +6,8 @@ namespace MCFire.Modules.Editor.Models
     /// A non-shared MEF component that is used to interface directly with an EditorGame.
     /// It is recommended that a game component should be backed by MEF services.
     /// </summary>
-    public interface IGameComponent : ICleanup
+    public interface IGameComponent : ILoadContent
     {
-        void LoadContent();
         void Update(GameTime time);
         void Draw(GameTime time);
         /// <summary>
@@ -17,7 +15,6 @@ namespace MCFire.Modules.Editor.Models
         /// The default is 100. Opaques get drawn at 20, the transparent box selector draws at 500.
         /// </summary>
         int DrawPriority { get; }
-        EditorGame Game { set; }
     }
 
     namespace MCFire.Modules.Infrastructure.Interfaces
