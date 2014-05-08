@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using System.Windows.Navigation;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
@@ -7,6 +6,7 @@ using Substrate.Core;
 
 namespace MCFire.Modules.Meshalyzer.Models
 {
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(IMeshalyzer))]
     public class PaletteMeshalyzer : LightMeshalyzer
     {
@@ -18,7 +18,7 @@ namespace MCFire.Modules.Meshalyzer.Models
             return color * lum;
         }
 
-        // TODO: move this wow
+        // TODO: move this to BlockPalette
         static Color Palette(int id, int data)
         {
             // Auto-Generated via BlockPalette project.

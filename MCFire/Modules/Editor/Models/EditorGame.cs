@@ -20,9 +20,6 @@ namespace MCFire.Modules.Editor.Models
         readonly IEnumerable<IGameComponent> _components;
         // rendering
         BasicEffect _basicEffect;
-#if DEBUG
-        DebugCube _debugCube;
-#endif
 
         // TODO: unified content system
         // content
@@ -84,7 +81,6 @@ namespace MCFire.Modules.Editor.Models
         {
             // Clears the screen with the Color.CornflowerBlue
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
             // Calculate matrices
             _basicEffect.World = Matrix.Identity;
             _basicEffect.View = Camera.ViewMatrix;
@@ -95,11 +91,6 @@ namespace MCFire.Modules.Editor.Models
             {
                 component.Draw(gameTime);
             }
-
-#if DEBUG
-            // Draw the cube
-            _debugCube.Draw(this);
-#endif
 
             // Draw debug
             SpriteBatch.Begin();

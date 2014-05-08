@@ -8,6 +8,7 @@ namespace MCFire.Modules.Editor.Models
     public abstract class GameComponentBase : IGameComponent
     {
         protected EditorGame Game { get; private set; }
+        // TODO: add an Update that runs off of the game loop (TPL mabey?) that gets used for blocking/long running calls (eg: voxel tracing in BoxSelectorComponent and the meshalyzer)
         public virtual void Update(GameTime time) { }
         public virtual void Draw(GameTime time) { }
 

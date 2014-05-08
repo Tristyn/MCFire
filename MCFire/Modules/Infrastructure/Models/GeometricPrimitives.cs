@@ -24,12 +24,12 @@ namespace MCFire.Modules.Infrastructure.Models
 
         public static readonly VertexPositionTexture[] QuadVertexPositionTexture =
         {
-            new VertexPositionTexture(new Vector3(1.0f, 1.0f, 1.0f),new Vector2(0,0)),
-            new VertexPositionTexture(new Vector3(-1.0f, 1.0f, 1.0f), new Vector2(1,0)),
-            new VertexPositionTexture(new Vector3(-1.0f, 1.0f, -1.0f), new Vector2(1,1)),
-            new VertexPositionTexture(new Vector3(1.0f, 1.0f, -1.0f),  new Vector2(0,1)),
-            new VertexPositionTexture(new Vector3(1.0f, 1.0f, 1.0f), new Vector2(0,0)),
-            new VertexPositionTexture(new Vector3(-1.0f, 1.0f, -1.0f), new Vector2(1,1)),
+            new VertexPositionTexture(new Vector3(1f, 1f, 1f),new Vector2(1,1)),
+            new VertexPositionTexture(new Vector3(0f, 1f, 1f), new Vector2(0,1)),
+            new VertexPositionTexture(new Vector3(0f, 1f, 0f), new Vector2(0,0)),
+            new VertexPositionTexture(new Vector3(1f, 1f, 0f),  new Vector2(1,0)),
+            new VertexPositionTexture(new Vector3(1f, 1f, 1f), new Vector2(1,1)),
+            new VertexPositionTexture(new Vector3(0f, 1f, 0f), new Vector2(0,0)),
         };
     }
 }

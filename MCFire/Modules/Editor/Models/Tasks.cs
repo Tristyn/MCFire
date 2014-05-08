@@ -1,6 +1,7 @@
 ﻿using System;
-using MCFire.Modules.Infrastructure.Extensions;
+using System.Linq;
 using MCFire.Modules.Infrastructure.Models;
+using SharpDX;
 using SharpDX.Toolkit;
 using Substrate;
 
@@ -18,56 +19,69 @@ namespace MCFire.Modules.Editor.Models
             _game = game;
         }
 
+
         /// <summary>
         /// Returns the block that the users mouse is hovering over.
         /// The rules are that if we are in a solid, we will jump to the first nonsolid.
         /// At that point, we will select the first non-air block
         /// An exception is that if we start in a liquid, we also ignore liquids (so you can select blocks while underwater)
         /// </summary>
-        public Point3 GetBlockUnderMouse()
+        /// <param name="screenCoord">The coordinate in screen space (0 to 1). You can use the mouse coordinate to get the block that is under the mouse.</param>
+        /// <param name="position">The output position if the screen coordinate intersected any blocks.</param>
+        /// <returns>If the raytrace returned any blocks.</returns>
+        public bool TryGetBlockAtScreenCoord(Vector2 screenCoord, out BlockPosition position)
         {
-            var tracer = _game.Camera.RayTraceScreenPoint(_game.Mouse.Position);
-            // We are going to man-handle the enumerator for greater control over block selection.
-            // The rules are that if we are in a solid, we will jump to the first nonsolid.
-            // At that point, we will select the first non-air block
-            // An exception is that if we start in a liquid, we also ignore liquids (so you can select blocks while underwater)
-            var enumerator = tracer.GetEnumerator();
+            var tracer = _game.Camera.RayTraceScreenPoint(screenCoord);
+            bool exitedSolid = false;
+            bool exitedAir = false;
+            bool includeLiquids = false;
+            bool firstEnumeration = true;
 
-            throw new NotImplementedException();
-            /* TODO: have an object that acts like the BlockManager: 
-             * - index any block in the dimension 
-             * - integrates nicely with resourced chunks.
-             * - gets only the chunks that are requested
-             * - read or write mode?
-             * Its going to be a problem when chunks are requested in batches, the system isn't flexible
-             */
-            //var blocks = _game.World.NbtWorld.GetBlockManager(_game.Dimension);
-            //var state = blocks.GetBlock(enumerator.Current).Info.State;
+            foreach (var traceData in tracer)
+            {
+                if (firstEnumeration)
+                {
+                    // check the first block that the trace is in.
+                    // If its water, we dont include water in the search
+                    var firstBlock = traceData.Blocks.FirstOrDefault();
+                    includeLiquids = firstBlock == null || firstBlock.Info.State != BlockState.FLUID;
+                    firstEnumeration = false;
+                }
 
-            //// enumerate until it isn't a solid
-            //if (state == BlockState.SOLID)
-            //    while (enumerator.MoveNext())
-            //    {
-            //        var block = blocks.GetBlock(enumerator.Current);
-            //        if (block == null || block.Info.State != BlockState.SOLID) break;
-            //    }
+                for (int i = 0; i < traceData.Blocks.Count; i++)
+                {
+                    var block = traceData.Blocks[i];
+                    // enumerate until it isn't a solid
+                    if (!exitedSolid)
+                    {
+                        if (block.Info.State != BlockState.SOLID)
+                            exitedSolid = true;
+                        else continue;
+                    }
 
-            //if (state == BlockState.NONSOLID)
-            //    while (enumerator.MoveNext())
-            //    {
-            //        // enumerate to the first solid or liquids
-            //        var block = blocks.GetBlock(enumerator.Current);
-            //        if (block == null || block.Info.State != BlockState.NONSOLID) break;
-            //    }
+                    // enumerate until it isn't air
+                    if (!exitedAir)
+                        if (block.ID != 0)
+                            exitedAir = true;
+                        else continue;
 
-            //// enumerate to the first solid (ignore liquids)
-            //else while (enumerator.MoveNext())
-            //    {
-            //        var block = blocks.GetBlock(enumerator.Current);
-            //        if (block == null || block.Info.State == BlockState.SOLID) break;
-            //    }
-            //Console.WriteLine(enumerator.Current);
-            //return enumerator.Current;
+                    if (includeLiquids)
+                    {
+                        // enumerate to any block that isn't air
+                        if (block.ID == 0) continue;
+                        position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i]);
+                        return true;
+                    }
+
+                    // enumerate to the first solid or nonsolid
+                    if (block.Info.State == BlockState.FLUID || block.ID == 0) continue;
+
+                    position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i]);
+                    return true;
+                }
+            }
+            position = new BlockPosition();
+            return false;
         }
 
         public void Update(GameTime gameTime)

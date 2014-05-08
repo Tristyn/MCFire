@@ -4,9 +4,11 @@ using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
-#if DEBUG
 namespace MCFire.Modules.Editor.Models
 {
+    /// <summary>
+    /// An object that can draw a 2x2x2 cube at the position specified.
+    /// </summary>
     public class DebugCube : IDisposable
     {
         Mesh<VertexPositionColor> _mesh;
@@ -62,14 +64,8 @@ namespace MCFire.Modules.Editor.Models
             _effect = game.ToDisposeContent(new BasicEffect(game.GraphicsDevice)
             {
                 VertexColorEnabled = true,
-                World = Matrix.Identity
             });
-            var effect = game.ToDisposeContent(new BasicEffect(game.GraphicsDevice)
-            {
-                VertexColorEnabled = true,
-                World = Matrix.Identity
-            });
-            _mesh = new Mesh<VertexPositionColor>(vertices, effect);
+            _mesh = new Mesh<VertexPositionColor>(vertices, _effect, true);
         }
 
         public void Draw([NotNull] EditorGame game)
@@ -78,6 +74,7 @@ namespace MCFire.Modules.Editor.Models
             if (_disposed)
                 throw new ObjectDisposedException("DebugCube");
 
+            _effect.World = Matrix.Translation(Position);
             _effect.View = game.Camera.ViewMatrix;
             _effect.Projection = game.Camera.ProjectionMatrix;
             _mesh.Draw(game.GraphicsDevice);
@@ -88,12 +85,9 @@ namespace MCFire.Modules.Editor.Models
             if (_disposed) return;
             if (_mesh != null)
                 _mesh.Dispose();
-            _mesh = null;
-            if (_effect != null)
-                _effect.Dispose();
-            _effect = null;
             _disposed = true;
         }
+
+        public Vector3 Position { get; set; }
     }
 }
-#endif

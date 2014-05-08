@@ -27,7 +27,6 @@ namespace MCFire.Modules.Infrastructure.Models
                     {
                         ReaderWriterLock.EnterUpgradeableReadLock();
                         interactFunc.Invoke(Resource);
-
                     }
                     finally
                     {

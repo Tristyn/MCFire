@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Input;
 using MCFire.Modules.Editor.Extensions;
 using MCFire.Modules.Infrastructure.Extensions;
@@ -233,7 +235,7 @@ namespace MCFire.Modules.Editor.Models
         /// </summary>
         /// <param name="screenCoords">Normalized (0 to 1) screen coordinates</param>
         /// <returns>A tracer that can enumerate through blocks, entities, ect.</returns>
-        public VoxelTracer RayTraceScreenPoint(Vector2 screenCoords)
+        public IEnumerable<IChunkTraceData> RayTraceScreenPoint(Vector2 screenCoords)
         {
             if (_disposed)
                 throw new ObjectDisposedException("Camera");
@@ -249,7 +251,7 @@ namespace MCFire.Modules.Editor.Models
             var traceDirection = (far - near);
             traceDirection.Normalize();
 
-            return new VoxelTracer(Position, traceDirection);
+            return new ChunkTracer(new VoxelTracer(Position, traceDirection), _game.Dimension, _game.World);
         }
 
         public void IdleRotate(Vector3 center, float horizontalRadius, float rotSpeed, float pitch)

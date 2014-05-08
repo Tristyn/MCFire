@@ -18,6 +18,16 @@ namespace MCFire.Modules.Infrastructure.Models
             return new ChunkPosition(value.ChunkX,value.ChunkZ);
         }
 
+        public static implicit operator ChunkPosition(BlockPosition value)
+        {
+            return new ChunkPosition(value.X >> 4, value.Z >> 4);
+        }
+
+        public static implicit operator ChunkPosition(Point3 value)
+        {
+            return new ChunkPosition(value.X>>4, value.Z>>4);
+        }
+
         public static bool operator ==(ChunkPosition left, ChunkPosition right)
         {
             return left.ChunkX == right.ChunkX && left.ChunkZ == right.ChunkZ;

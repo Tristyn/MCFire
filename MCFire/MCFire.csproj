@@ -17,6 +17,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
     <PublishUrl>C:\Users\Tristyn\Desktop\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,13 +32,11 @@
     <ProductName>MC Fire</ProductName>
     <PublisherName>Tristyn Stimpson</PublisherName>
     <MinimumRequiredVersion>0.0.3.0</MinimumRequiredVersion>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>0.0.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -95,6 +95,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro">
@@ -176,11 +182,12 @@
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelection.cs" />
+    <Compile Include="Modules\BoxSelector\Models\BlockSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelectorComponent.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
     <Compile Include="Modules\Editor\Messages\EditorClosingMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorOpenedMessage.cs" />
-    <Compile Include="Modules\Editor\Models\BlockTracer.cs" />
+    <Compile Include="Modules\Editor\Models\ChunkTracer.cs" />
     <Compile Include="Modules\Editor\Models\BoxSelectEffect.cs" />
     <Compile Include="Modules\Editor\Models\GameComponentBase.cs" />
     <Compile Include="Modules\Editor\Models\DebugCube.cs" />
@@ -383,6 +390,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="MCFire_TemporaryKey.pfx" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -1467,9 +1475,7 @@
       <Name>Substrate %28NET4%29</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\Editor\Settings\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SharpDXSdkDir)\SharpDX.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

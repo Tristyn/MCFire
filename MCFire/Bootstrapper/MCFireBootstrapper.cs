@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Security;
 using System.Windows;
 using System.Windows.Threading;
@@ -36,7 +37,6 @@ namespace MCFire.Bootstrapper
                 foreach (var directoryInfo in WalkDirectoryTree(new DirectoryInfo(modsPath)))
                 {
                     var catalog = new DirectoryCatalog(directoryInfo.FullName);
-
                     /*
                     ░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
                     ░░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄░░░░

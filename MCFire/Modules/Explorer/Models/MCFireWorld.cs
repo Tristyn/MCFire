@@ -11,7 +11,7 @@ using Substrate.Core;
 
 namespace MCFire.Modules.Explorer.Models
 {
-    public class MCFireWorld : WorldBrowserItem
+    public class MCFireWorld : WorldBrowserItem, IChunkProvider
     {
         [NotNull]
         readonly DirectoryInfo _directory;
@@ -132,6 +132,8 @@ namespace MCFire.Modules.Explorer.Models
             GetChunks(positions, mode, chunks => chunkRefFunc(chunks[0], chunks[1], chunks[2], chunks[3], chunks[4]));
         }
 
+        // TODO: method to access an massive amounts of chunks while using little memory.
+
         /// <summary>
         /// Returns the underlying world from Substrate.
         /// </summary>
@@ -169,15 +171,18 @@ namespace MCFire.Modules.Explorer.Models
         }
     }
 
+    public interface IChunkProvider
+    {
+        void GetChunk(ChunkPositionDimension pos, AccessMode mode, Action<IChunk> chunkFunction);
+        void GetChunks(IEnumerable<ChunkPositionDimension> positions, AccessMode mode, ChunksFunc chunksFunc);
+
+        /// <summary>
+        /// Returns a chunk and its 4 neighbours
+        /// </summary>
+        void GetChunkRef(ChunkPositionDimension pos, AccessMode mode, ChunkRefFunc chunkRefFunc);
+    }
+
     public delegate void ChunksFunc(List<IChunk> chunks);
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="chunk"></param>
-    /// <param name="south"></param>
-    /// <param name="north"></param>
-    /// <param name="west"></param>
-    /// <param name="east"></param>
     public delegate void ChunkRefFunc(IChunk chunk, IChunk south, IChunk north, IChunk west, IChunk east);
 
     /// <summary>

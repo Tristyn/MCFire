@@ -1,4 +1,6 @@
 ﻿using System;
+using MCFire.Modules.Infrastructure.Extensions;
+using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Models
 {
@@ -21,9 +23,27 @@ namespace MCFire.Modules.Infrastructure.Models
             Z = chunk.ChunkZ * 16 + localZ;
         }
 
-        public static implicit operator ChunkPosition(BlockPosition value)
+        public BlockPosition(ChunkPosition chunk, BlockPosition localPosition)
+            : this()
         {
-            return new ChunkPosition(value.X >> 4, value.Z >> 4);
+            X = chunk.ChunkX * 16 + localPosition.X;
+            Y = localPosition.Y;
+            Z = chunk.ChunkZ * 16 + localPosition.Z;
+        }
+
+        public static implicit operator BlockPosition(Vector3 value)
+        {
+            return new BlockPosition((int)value.X, (int)value.Y, (int)value.Z);
+        }
+
+        public static implicit operator Vector3(BlockPosition value)
+        {
+            return new Vector3(value.X, value.Y, value.Z);
+        }
+
+        public static implicit operator BlockPosition(Point3 value)
+        {
+            return new BlockPosition(value.X, value.Y, value.Z);
         }
 
         public static bool operator ==(BlockPosition left, BlockPosition right)
@@ -34,6 +54,18 @@ namespace MCFire.Modules.Infrastructure.Models
         public static bool operator !=(BlockPosition left, BlockPosition right)
         {
             return left.X != right.X || left.Z != right.Z || left.Y != right.Y;
+        }
+
+        /// <summary>
+        /// Returns the chunk-local position of the block
+        /// </summary>
+        /// <param name="xDim">The X dimension of all chunks within the world.</param>
+        /// <param name="yDim">The Y dimension of all chunks within the world.</param>
+        /// <param name="zDim">The Z dimension of all chunks within the world.</param>
+        /// <returns>A block position translated into chunk-local coordinates.</returns>
+        public BlockPosition GetLocalPosition(int xDim, int yDim, int zDim)
+        {
+            return new BlockPosition(X.Mod(xDim), Y.Mod(yDim), Z.Mod(zDim));
         }
 
         public bool Equals(BlockPosition other)

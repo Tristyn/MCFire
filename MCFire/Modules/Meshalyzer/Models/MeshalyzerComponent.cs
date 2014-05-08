@@ -69,7 +69,6 @@ namespace MCFire.Modules.Meshalyzer.Models
             // start meshing
             if (_meshingThread != null && _meshingThread.IsAlive)
                 return;
-            _policy = ChunkCreationPolicy.Run;
             /* TODO: leverage multiple cores. some considerations: 
              * a chunk will be generated multiple times unless a thread 
              * can claim that point and it wont be picked again. 
@@ -120,6 +119,8 @@ namespace MCFire.Modules.Meshalyzer.Models
         void MeshLoop()
         {
             Thread.CurrentThread.IsBackground = true;
+            Thread.CurrentThread.Name = "Meshalyzer - " + Game.World.Title;
+            _policy = ChunkCreationPolicy.Run;
             while (_policy == ChunkCreationPolicy.Run)
             {
                 var drawable = _currentMeshalyzer.MeshalyzeNext(Game);
