@@ -309,20 +309,6 @@
     <Compile Include="Modules\Metro\Views\MainWindowView.xaml.cs">
       <DependentUpon>MainWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\Nbt\Attributes\AuxiliaryTagsAttribute.cs" />
-    <Compile Include="Modules\Nbt\Attributes\NbtAttribute.cs" />
-    <Compile Include="Modules\Nbt\fNbt\fNbt.cs" />
-    <Compile Include="Modules\Nbt\Models\EntityContent.cs" />
-    <Compile Include="Modules\Nbt\Models\GameRulesContent.cs" />
-    <Compile Include="Modules\Nbt\Models\LevelContent.cs" />
-    <Compile Include="Modules\Nbt\Models\NbtContent.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\AuxiliaryTagsValueSetter.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\NbtBuilder.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\NbtTagExtensions.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\NbtTaggedClass.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\NbtTagValueSetter.cs" />
-    <Compile Include="Modules\Nbt\NbtBuilder\ValueSetterBase.cs" />
-    <Compile Include="Modules\Nbt\Services\NbtFormat.cs" />
     <Compile Include="Modules\SelectorTool\ViewModels\SelectorViewModel.cs" />
     <Compile Include="Modules\SelectorTool\Views\SelectorView.xaml.cs">
       <DependentUpon>SelectorView.xaml</DependentUpon>
@@ -337,13 +323,10 @@
     <Compile Include="Modules\Editor\Models\Camera.cs" />
     <Compile Include="Modules\Editor\Models\ChunkCreationPolicy.cs" />
     <Compile Include="Modules\Editor\Models\VisualChunk.cs" />
-    <Compile Include="Modules\Editor\Models\CoolGame.cs" />
-    <Compile Include="Modules\Editor\Models\CustomEffectGame.cs" />
     <Compile Include="Modules\Editor\Models\EditorGame.cs" />
     <Compile Include="Modules\Editor\Models\KeyEventArgs.cs" />
     <Compile Include="Modules\Editor\Models\Mesh.cs" />
     <Compile Include="Modules\Editor\Models\Mouse.cs" />
-    <Compile Include="Modules\Editor\Module.cs" />
     <Compile Include="Modules\Editor\ViewModels\EditorViewModel.cs" />
     <Compile Include="Modules\Editor\Views\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
@@ -352,13 +335,6 @@
     <Compile Include="Modules\StatsForNerds\ViewModels\StatsForNerdsViewModel.cs" />
     <Compile Include="Modules\StatsForNerds\Views\StatsForNerdsView.xaml.cs">
       <DependentUpon>StatsForNerdsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\TextEditor\Models\TextContent.cs" />
-    <Compile Include="Modules\TextEditor\Module.cs" />
-    <Compile Include="Modules\TextEditor\Services\TextFormat.cs" />
-    <Compile Include="Modules\TextEditor\ViewModels\TextEditorViewModel.cs" />
-    <Compile Include="Modules\TextEditor\Views\TextEditorView.xaml.cs">
-      <DependentUpon>TextEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Explorer\Models\GameInstallation.cs" />
     <Compile Include="Modules\Explorer\Models\Installation.cs" />
@@ -1387,10 +1363,6 @@
     <Page Include="Modules\StatsForNerds\Views\StatsForNerdsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Modules\TextEditor\Views\TextEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Modules\Explorer\Views\WorldExplorerView.xaml">
       <Generator>MSBuild:Compile</Generator>

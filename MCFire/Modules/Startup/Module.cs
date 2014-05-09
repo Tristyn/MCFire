@@ -20,6 +20,18 @@ namespace MCFire.Modules.Startup
             MainWindow.Title = "MCFire - Getchyo snacks!";
         }
 
+        public override void PostInitialize()
+        {
+            // remove the toolbox.
+            var viewMenu = MainMenu.All.FirstOrDefault(item => item.Name == "View");
+            if(viewMenu==null)return;
+            foreach (var item in viewMenu.Where(item => item.Name == "Toolbox"))
+            {
+                viewMenu.Children.Remove(item);
+                return;
+            }
+        }
+
 #if FIRSTRUN
         public override async void PostInitialize()
         {
