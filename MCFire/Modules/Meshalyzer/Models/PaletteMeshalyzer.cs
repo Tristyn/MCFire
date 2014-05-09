@@ -10,7 +10,7 @@ namespace MCFire.Modules.Meshalyzer.Models
     [Export(typeof(IMeshalyzer))]
     public class PaletteMeshalyzer : LightMeshalyzer
     {
-        protected override Color GetVertexColor(IChunk chunk, BlockPosition blockPosition, BlockPosition airPosition)
+        protected override Color GetVertexColor(IChunk chunk, LocalBlockPosition blockPosition, LocalBlockPosition airPosition)
         {
             var block = chunk.Blocks.GetBlock(blockPosition);
             var color = Palette(block.ID, block.Data);

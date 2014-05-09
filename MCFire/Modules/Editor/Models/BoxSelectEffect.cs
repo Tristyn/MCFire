@@ -11,14 +11,16 @@ namespace MCFire.Modules.Editor.Models
         readonly EffectParameter _mainShift;
         readonly EffectParameter _mainScale;
         readonly EffectParameter _sampler;
+        readonly EffectParameter _mainTransform;
 
         public BoxSelectEffect([NotNull] Effect effect)
             : base(effect)
         {
             _transformMatrix = effect.Parameters["TransformMatrix"];
             _main = effect.Parameters["Main"];
-            _mainShift = effect.Parameters["MainShift"];
-            _mainScale = effect.Parameters["MainScale"];
+            _mainTransform = effect.Parameters["MainTransform"];
+            //_mainShift = effect.Parameters["MainShift"];
+            //_mainScale = effect.Parameters["MainScale"];
             _sampler = effect.Parameters["Sampler"];
         }
 
@@ -30,6 +32,11 @@ namespace MCFire.Modules.Editor.Models
         public Texture2D Main
         {
             set { _main.SetResource(value); }
+        }
+
+        public Vector4 MainTransform
+        {
+            set { _mainTransform.SetValue(value); }
         }
 
         public Vector2 MainShift

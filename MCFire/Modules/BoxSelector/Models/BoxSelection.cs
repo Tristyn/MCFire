@@ -3,7 +3,7 @@ using MCFire.Modules.Infrastructure.Models;
 
 namespace MCFire.Modules.BoxSelector.Models
 {
-    struct BoxSelection
+    public struct BoxSelection
     {
         public BoxSelection(BlockPosition cornerOne, BlockPosition cornerTwo) : this()
         {
@@ -68,12 +68,12 @@ namespace MCFire.Modules.BoxSelector.Models
         /// </summary>
         public int Bottom { get { return Math.Min(CornerOne.Y, CornerTwo.Y); } }
         /// <summary>
-        /// The Z value of the forward-most (0,0,1) face of the box.
+        /// The Z value of the forward-most (0,0,-1) face of the box.
         /// </summary>
-        public int Forward { get { return Math.Max(CornerOne.Z, CornerTwo.Z); } }
+        public int Forward { get { return Math.Min(CornerOne.Z, CornerTwo.Z); } }
         /// <summary>
-        /// The Z value of the back-most (0,0,-1) face of the box.
+        /// The Z value of the back-most (0,0,1) face of the box.
         /// </summary>
-        public int Backward { get { return Math.Min(CornerOne.Z, CornerTwo.Z); } }
+        public int Backward { get { return Math.Max(CornerOne.Z, CornerTwo.Z); } }
     }
 }

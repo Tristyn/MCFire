@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Input;
 using MCFire.Modules.Editor.Extensions;
@@ -288,7 +287,8 @@ namespace MCFire.Modules.Editor.Models
 
         public ChunkPosition ChunkPosition
         {
-            get { return new BlockPosition((int)_position.X,(int)_position.Y, (int)_position.Z); }
+            // implicit casting converts it into a chunk coord
+            get { return (BlockPosition) _position; }
         }
 
         public Vector3 Direction

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using Caliburn.Micro;
 using JetBrains.Annotations;
+using MCFire.Modules.BoxSelector.Messages;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Infrastructure.Models;
+using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
@@ -17,12 +22,25 @@ namespace MCFire.Modules.BoxSelector.Models
         BoxSelection _selection;
         DebugCube _cube;
         [NotNull]
-        Mesh<VertexPositionTexture> _quadMesh;
+        Mesh<VertexPositionTexture> _topQuad;
+        [NotNull]
+        Mesh<VertexPositionTexture> _botQuad;
+        [NotNull]
+        Mesh<VertexPositionTexture> _rightQuad;
+        [NotNull]
+        Mesh<VertexPositionTexture> _leftQuad;
+        [NotNull]
+        Mesh<VertexPositionTexture> _forwardQuad;
+        [NotNull]
+        Mesh<VertexPositionTexture> _backQuad;
         [NotNull]
         BoxSelectEffect _effect;
         [NotNull]
         Texture2D _gridTexture;
         SelectionState _selectionState;
+
+        [Import]
+        IEventAggregator _aggregator;
 
         public override void LoadContent(EditorGame game)
         {
@@ -30,15 +48,18 @@ namespace MCFire.Modules.BoxSelector.Models
             Enabled = true;
 
             base.LoadContent(game);
-            var vertices = Buffer.Vertex.New(
-                game.GraphicsDevice,
-                GeometricPrimitives.QuadVertexPositionTexture);
             _effect = new BoxSelectEffect(game.LoadContent<Effect>("BoxSelect"))
             {
                 Sampler = GraphicsDevice.SamplerStates.PointWrap
             };
             _gridTexture = game.LoadContent<Texture2D>("Grid");
-            _quadMesh = new Mesh<VertexPositionTexture>(vertices, _effect.Effect, true);
+            _topQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.UpQuad)), _effect.Effect);
+            _botQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.DownQuad)), _effect.Effect);
+            _rightQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.RightQuad)), _effect.Effect);
+            _leftQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.LeftQuad)), _effect.Effect);
+            _forwardQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.ForwardQuad)), _effect.Effect);
+            _backQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.BackwardQuad)), _effect.Effect);
+
 
             // state
             _selectionState = SelectionState.NotSet;
@@ -47,6 +68,18 @@ namespace MCFire.Modules.BoxSelector.Models
             Mouse.Left.Click += Click;
             Mouse.Left.DragStart += DragStart;
             _cube = new DebugCube(game);
+        }
+
+        static VertexPositionTexture[] GetQuadUv(IList<Vector3> quad)
+        {
+            Debug.Assert(quad.Count == GeometricPrimitives.QuadUv.Length);
+
+            var mesh = new VertexPositionTexture[quad.Count];
+            for (int i = 0; i < quad.Count; i++)
+            {
+                mesh[i] = new VertexPositionTexture(quad[i], GeometricPrimitives.QuadUv[i]);
+            }
+            return mesh;
         }
 
         private void Click(object sender, KeyEventArgs e)
@@ -73,6 +106,9 @@ namespace MCFire.Modules.BoxSelector.Models
                     // if the click missed the BoxSelection, create a new selection.
                     _selection = new BoxSelection(pos, pos);
                     _selectionState = SelectionState.HalfSet;
+                    // capture variable to avoid modified closure.
+                    var selection = _selection;
+                    _aggregator.Publish(new BoxSelectionUpdatedMessage(_selection, box => new BlockSelection(selection, Dimension, World)));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -114,47 +150,57 @@ namespace MCFire.Modules.BoxSelector.Models
             _cube.Draw(Game);
             //_cube.Position = _selection.CornerOne;
 
-            //GraphicsDevice.SetBlendState(GraphicsDevice.BlendStates.AlphaBlend);
-            //var viewProj = Camera.ViewMatrix * Camera.ProjectionMatrix;
-            //_effect.Main = _gridTexture;
+            GraphicsDevice.SetBlendState(GraphicsDevice.BlendStates.AlphaBlend);
+            var viewProj = Camera.ViewMatrix * Camera.ProjectionMatrix;
+            _effect.Main = _gridTexture;
+            // TODO: refactor 6 Quad cube into seperate class
+            // TODO: texture allignment (up is good)
+            // up
+            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, 0, _selection.ZLength) *
+                                      Matrix.Translation(_selection.Left, _selection.Top + 1, _selection.Forward) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.XLength, _selection.ZLength, _selection.Left, _selection.Forward) / 16;
+            _topQuad.Draw(GraphicsDevice);
 
-            //// TODO: _effect.MainShift
-            //// up
-            //_effect.TransformMatrix = GeometricPrimitives.UpMatrix * 
-            //                          Matrix.Scaling(_selection.XLength, _selection.YLength, _selection.ZLength) * 
-            //                          Matrix.Translation(_selection.Left, _selection.Top, _selection.Backward) * 
-            //                          viewProj;
-            //_effect.MainShift = new Vector2(-_selection.Left.Mod(16), -_selection.Backward.Mod(16));
-            //_effect.MainScale = new Vector2(((float)_selection.Right - _selection.Left + 1), ((float)_selection.Forward - _selection.Backward + 1));
-            //_quadMesh.Draw(GraphicsDevice);
+            // down
+            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, 0, _selection.ZLength) *
+                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.XLength, _selection.Left, _selection.Forward) / 16;
+            _botQuad.Draw(GraphicsDevice);
 
-            //// down
-            //_effect.TransformMatrix = GeometricPrimitives.DownMatrix * 
-            //                          Matrix.Scaling(_selection.XLength, 0, _selection.ZLength) * 
-            //                          Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Backward) * 
-            //                          viewProj;
-            //_quadMesh.Draw(GraphicsDevice);
+            // right
+            _effect.TransformMatrix = Matrix.Scaling(0, _selection.YLength, _selection.ZLength) *
+                                      Matrix.Translation(_selection.Right + 1, _selection.Bottom, _selection.Forward) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.YLength, _selection.Forward, _selection.Bottom) / 16;
+            _rightQuad.Draw(GraphicsDevice);
 
-            //// right
-            //_effect.TransformMatrix = GeometricPrimitives.RightMatrix*
-            //                          Matrix.Scaling(_selection.XLength, _selection.YLength, _selection.ZLength)*
-            //                          Matrix.Translation(_selection.Right, _selection.Bottom, _selection.Backward)*
-            //                          viewProj;
-            ////_effect.MainShift=new Vector2(_selection.Forward,);
-            //_effect.MainScale = new Vector2(_selection.Top - _selection.Bottom + 1, _selection.Forward - _selection.Backward + 1);
-            //_quadMesh.Draw(GraphicsDevice);
-            
-            //// left
-            //_effect.TransformMatrix = GeometricPrimitives.LeftMatrix *
-            //                          Matrix.Scaling(_selection.XLength, _selection.YLength, _selection.ZLength) *
-            //                          Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Backward) *
-            //                          viewProj;
-            //_quadMesh.Draw(GraphicsDevice);
+            // left
+            _effect.TransformMatrix = Matrix.Scaling(0, _selection.YLength, _selection.ZLength) *
+                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.YLength, _selection.Forward, _selection.Bottom) / 16;
+            _leftQuad.Draw(GraphicsDevice);
+
+            // back
+            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, _selection.YLength, 0) *
+                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Backward + 1) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.XLength, _selection.YLength, _selection.Left, _selection.Bottom) / 16;
+            _backQuad.Draw(GraphicsDevice);
+            // forward
+            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, _selection.YLength, 0) *
+                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
+                                      viewProj;
+            _effect.MainTransform = new Vector4(_selection.XLength, _selection.YLength, _selection.Left, _selection.Bottom) / 16;
+            _forwardQuad.Draw(GraphicsDevice);
         }
 
         public override void Dispose()
         {
-            _quadMesh.Dispose();
+            _topQuad.Dispose();
+            _effect.Dispose();
         }
 
         public override int DrawPriority { get { return 500; } }

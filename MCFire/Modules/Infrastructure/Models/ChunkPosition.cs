@@ -38,7 +38,6 @@ namespace MCFire.Modules.Infrastructure.Models
             return left.ChunkX != right.ChunkX || left.ChunkZ != right.ChunkZ;
         }
 
-
         #region ChunkPosition Operators
 
         public static ChunkPosition operator +(ChunkPosition left, ChunkPosition right)

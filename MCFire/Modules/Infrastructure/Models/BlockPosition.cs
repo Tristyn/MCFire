@@ -4,9 +4,11 @@ using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Models
 {
+    /// <summary>
+    /// The exact coordinate for a block in world-space.
+    /// </summary>
     public struct BlockPosition
     {
-
         public BlockPosition(int x, int y, int z)
             : this()
         {
@@ -15,20 +17,12 @@ namespace MCFire.Modules.Infrastructure.Models
             Z = z;
         }
 
-        public BlockPosition(ChunkPosition chunk, int localX, int localY, int localZ)
+        public BlockPosition(ChunkPosition chunkPosition, LocalBlockPosition local, ChunkSize size)
             : this()
         {
-            X = chunk.ChunkX * 16 + localX;
-            Y = localY;
-            Z = chunk.ChunkZ * 16 + localZ;
-        }
-
-        public BlockPosition(ChunkPosition chunk, BlockPosition localPosition)
-            : this()
-        {
-            X = chunk.ChunkX * 16 + localPosition.X;
-            Y = localPosition.Y;
-            Z = chunk.ChunkZ * 16 + localPosition.Z;
+            X = local.X + chunkPosition.ChunkX * size.X;
+            Y = local.Y;
+            Z = local.Z + chunkPosition.ChunkZ * size.Y;
         }
 
         public static implicit operator BlockPosition(Vector3 value)
@@ -56,18 +50,6 @@ namespace MCFire.Modules.Infrastructure.Models
             return left.X != right.X || left.Z != right.Z || left.Y != right.Y;
         }
 
-        /// <summary>
-        /// Returns the chunk-local position of the block
-        /// </summary>
-        /// <param name="xDim">The X dimension of all chunks within the world.</param>
-        /// <param name="yDim">The Y dimension of all chunks within the world.</param>
-        /// <param name="zDim">The Z dimension of all chunks within the world.</param>
-        /// <returns>A block position translated into chunk-local coordinates.</returns>
-        public BlockPosition GetLocalPosition(int xDim, int yDim, int zDim)
-        {
-            return new BlockPosition(X.Mod(xDim), Y.Mod(yDim), Z.Mod(zDim));
-        }
-
         public bool Equals(BlockPosition other)
         {
             return X == other.X && Z == other.Z && Y == other.Y;
@@ -76,7 +58,7 @@ namespace MCFire.Modules.Infrastructure.Models
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is ChunkPositionDimension && Equals((ChunkPositionDimension)obj);
+            return obj is BlockPosition && Equals((BlockPosition)obj);
         }
 
         public override int GetHashCode()
@@ -95,11 +77,7 @@ namespace MCFire.Modules.Infrastructure.Models
             return String.Format("{0}, {1}, {2}", X, Y, Z);
         }
 
-        public int Y
-        {
-            get;
-            private set;
-        }
+        public int Y { get; private set; }
 
         public int X { get; private set; }
 

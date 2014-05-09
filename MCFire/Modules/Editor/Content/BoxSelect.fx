@@ -2,8 +2,7 @@
 // Vertex Projection
 // -----------------------------------------------------
 matrix TransformMatrix;
-float2 MainShift;
-float2 MainScale;
+float4 MainTransform;
 
 struct VSOut
 {
@@ -17,7 +16,7 @@ VSOut VSProjection(float4 position : SV_Position, float2 texPos : TEXCOORD)
 	VSOut output = (VSOut)0;
 	output.pos = mul(position, TransformMatrix);
 	// shift it here so that the rasterizer can take care of wrapping
-	output.texPos = (texPos + MainShift) * MainScale;
+	output.texPos = texPos * MainTransform.xy + MainTransform.zw;
 	return output;
 }
 

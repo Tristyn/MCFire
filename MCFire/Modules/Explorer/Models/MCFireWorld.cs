@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
@@ -25,12 +26,12 @@ namespace MCFire.Modules.Explorer.Models
             = new Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>>();
         [NotNull]
         readonly IEventAggregator _aggregator = IoC.Get<IEventAggregator>();
+        ChunkSize _chunkSize;
 
         public MCFireWorld(string path)
         {
             _directory = new DirectoryInfo(path);
         }
-
 
         /// <summary>
         /// Gets or creates the chunk lock for the specified chunk position.
@@ -42,7 +43,7 @@ namespace MCFire.Modules.Explorer.Models
             {
                 ReaderWriterObjectLock<IChunk> chunkLock;
                 if (_chunkAccess.TryGetValue(pos, out chunkLock)) return chunkLock;
-                
+
                 // create a new chunkLock
                 if (NbtWorld == null) return _chunkAccess[pos] = new ReaderWriterObjectLock<IChunk>(null);
                 var chunk = NbtWorld.GetChunkManager(pos.Dimension).GetChunk(pos.ChunkX, pos.ChunkZ);
@@ -83,6 +84,8 @@ namespace MCFire.Modules.Explorer.Models
         }
 
         // TODO: comment it up so that plebs know how to dougie
+        // TODO: universal undo (Do(), Undo())
+        // TODO: access tracking; output in the UI, also for going read-only we have to block new accesses and wait on running ones.
         public void GetChunk(ChunkPositionDimension pos, AccessMode mode, Action<IChunk> chunkFunction)
         {
             // get the resource and its lock
@@ -129,10 +132,14 @@ namespace MCFire.Modules.Explorer.Models
                 new ChunkPositionDimension(pos.ChunkX,pos.ChunkZ-1,pos.Dimension)
             };
             // translate the ChunksFunc to a ChunkRefFunc and call it.
-            GetChunks(positions, mode, chunks => chunkRefFunc(chunks[0], chunks[1], chunks[2], chunks[3], chunks[4]));
+            GetChunks(positions, mode, chunks =>
+            {
+                var chunksList= chunks.ToList();
+                chunkRefFunc(chunksList[0], chunksList[1], chunksList[2], chunksList[3], chunksList[4]);
+            });
         }
 
-        // TODO: method to access an massive amounts of chunks while using little memory.
+        // TODO: method to access an massive amounts of chunks while using little memory. (GetChunks returns a list)
 
         /// <summary>
         /// Returns the underlying world from Substrate.
@@ -164,6 +171,23 @@ namespace MCFire.Modules.Explorer.Models
             }
         }
 
+        public ChunkSize ChunkSize
+        {
+            get
+            {
+                if (_chunkSize != default(ChunkSize))
+                    return _chunkSize;
+                // TODO: this is all sorts of bad, there needs to be a system to determine a chunks size using an NbtWorld only
+                if (NbtWorld != null)
+                    lock (_chunkAccessLock)
+                        foreach (var chunk in NbtWorld.GetChunkManager().Where(chunk => chunk != null))
+                            return _chunkSize = new ChunkSize(chunk);
+                // TODO: catastrophic state, also worldwide constants like ChunkSize should be available in NbtWorld
+                Debug.Fail("No chunks exist in the world, can not retrieve chunk size. " + NbtWorld.Path);
+                return _chunkSize = new ChunkSize(16, 256, 16);
+            }
+        }
+
         [NotNull]
         public override string Title
         {
@@ -176,6 +200,7 @@ namespace MCFire.Modules.Explorer.Models
         void GetChunk(ChunkPositionDimension pos, AccessMode mode, Action<IChunk> chunkFunction);
         void GetChunks(IEnumerable<ChunkPositionDimension> positions, AccessMode mode, ChunksFunc chunksFunc);
 
+        // TODO: method like GetChunkRef where multiple chunks are sent at once, but you can choose how big.
         /// <summary>
         /// Returns a chunk and its 4 neighbours
         /// </summary>
@@ -183,6 +208,7 @@ namespace MCFire.Modules.Explorer.Models
     }
 
     public delegate void ChunksFunc(List<IChunk> chunks);
+
     public delegate void ChunkRefFunc(IChunk chunk, IChunk south, IChunk north, IChunk west, IChunk east);
 
     /// <summary>

@@ -34,14 +34,15 @@ namespace MCFire.Modules.Editor.Models
 
         public IEnumerator<IChunkTraceData> GetEnumerator()
         {
-
             // fields
             var currentChunkPos = (ChunkPosition)(BlockPosition)_tracer.Origin;
             var enumerator = _tracer.GetEnumerator();
             enumerator.MoveNext();
 
-            var positions = new List<BlockPosition>(20);
+            var size = _world.ChunkSize;
+            var positions = new List<LocalBlockPosition>(20);
             var alphaBlocks = new List<AlphaBlock>(20);
+            var chunkNull = false;
 
             // this was supposed to be simple and beautiful, but the fact that you cant yield in a lambda made it pretty nasty.
             var tracerReachedLimit = false;
@@ -62,17 +63,14 @@ namespace MCFire.Modules.Editor.Models
                             // gather data
                             if (chunk != null)
                             {
+                                // get block data
                                 var blocks = chunk.Blocks;
-                                var localPos = ((BlockPosition)enumerator.Current).GetLocalPosition(blocks.XDim,
-                                    blocks.YDim, blocks.ZDim);
+                                var localPos = new LocalBlockPosition(chunk, enumerator.Current);
                                 positions.Add(localPos);
-                                alphaBlocks.Add(blocks.GetBlock(localPos));
+                                // if it is out of range, it's air
+                                alphaBlocks.Add((localPos.Y >= 256 || localPos.Y < 0) ? new AlphaBlock(0) : blocks.GetBlock(localPos));
                             }
-                            else
-                            {
-                                positions.Add(((BlockPosition)enumerator.Current).GetLocalPosition(16,256,16));
-                                alphaBlocks.Add(new AlphaBlock(0));
-                            }
+                            else chunkNull = true;
 
                             if (enumerator.MoveNext()) continue;
 
@@ -83,11 +81,12 @@ namespace MCFire.Modules.Editor.Models
                     });
 
                 // yield return our current ChunkTraceData
-                yield return new ChunkTraceData(currentChunkPos, positions, alphaBlocks);
+                yield return new ChunkTraceData(currentChunkPos, size, chunkNull ? null : positions, chunkNull ? null : alphaBlocks);
 
                 // create new collections for reading the next chunk data
-                positions = new List<BlockPosition>(20);
+                positions = new List<LocalBlockPosition>(20);
                 alphaBlocks = new List<AlphaBlock>(20);
+                chunkNull = false;
 
                 // move currentChunkPos to the next chunk
                 currentChunkPos = enumerator.Current;
@@ -108,21 +107,29 @@ namespace MCFire.Modules.Editor.Models
         ChunkPosition ChunkPosition { get; }
 
         /// <summary>
+        /// The size of the chunk.
+        /// </summary>
+        ChunkSize Size { get; set; }
+
+        /// <summary>
         /// The positions of each intersecting block in chunk-space
         /// </summary>
-        [NotNull]
-        List<BlockPosition> Positions { get; }
+        [CanBeNull]
+        List<LocalBlockPosition> Positions { get; }
         /// <summary>
         /// The positions of each intersecting block
         /// </summary>
-        List<AlphaBlock> Blocks { get; set; }
+        [CanBeNull]
+        List<AlphaBlock> Blocks { get; }
     }
 
     internal class ChunkTraceData : IChunkTraceData
     {
-        public ChunkTraceData(ChunkPosition chunkPosition, List<BlockPosition> positions, List<AlphaBlock> blocks)
+        public ChunkTraceData(ChunkPosition chunkPosition, ChunkSize size, [CanBeNull] List<LocalBlockPosition> positions = null,
+             [CanBeNull] List<AlphaBlock> blocks = null)
         {
             ChunkPosition = chunkPosition;
+            Size = size;
             Positions = positions;
             Blocks = blocks;
         }
@@ -130,10 +137,12 @@ namespace MCFire.Modules.Editor.Models
         /// <inheritDoc/>
         public ChunkPosition ChunkPosition { get; private set; }
 
-        /// <inheritDoc/>
-        public List<BlockPosition> Positions { get; private set; }
+        public ChunkSize Size { get; set; }
 
         /// <inheritDoc/>
-        public List<AlphaBlock> Blocks { get; set; }
+        public List<LocalBlockPosition> Positions { get; private set; }
+
+        /// <inheritDoc/>
+        public List<AlphaBlock> Blocks { get; private set; }
     }
 }

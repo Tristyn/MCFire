@@ -131,9 +131,6 @@ namespace MCFire.Modules.Editor.Models
 
             // content
             Font = ToDisposeContent(Content.Load<SpriteFont>("Segoe12"));
-#if DEBUG
-            _debugCube = ToDisposeContent(new DebugCube(this));
-#endif
 
             base.LoadContent();
         }

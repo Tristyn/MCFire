@@ -31,13 +31,12 @@ namespace MCFire.Modules.Editor.Models
         /// <returns>If the raytrace returned any blocks.</returns>
         public bool TryGetBlockAtScreenCoord(Vector2 screenCoord, out BlockPosition position)
         {
-            var tracer = _game.Camera.RayTraceScreenPoint(screenCoord);
             bool exitedSolid = false;
             bool exitedAir = false;
             bool includeLiquids = false;
             bool firstEnumeration = true;
 
-            foreach (var traceData in tracer)
+            foreach (var traceData in _game.Camera.RayTraceScreenPoint(screenCoord))
             {
                 if (firstEnumeration)
                 {
@@ -48,6 +47,7 @@ namespace MCFire.Modules.Editor.Models
                     firstEnumeration = false;
                 }
 
+                if (traceData.Positions == null || traceData.Blocks == null) continue;
                 for (int i = 0; i < traceData.Blocks.Count; i++)
                 {
                     var block = traceData.Blocks[i];
@@ -69,14 +69,14 @@ namespace MCFire.Modules.Editor.Models
                     {
                         // enumerate to any block that isn't air
                         if (block.ID == 0) continue;
-                        position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i]);
+                        position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i], traceData.Size);
                         return true;
                     }
 
                     // enumerate to the first solid or nonsolid
                     if (block.Info.State == BlockState.FLUID || block.ID == 0) continue;
 
-                    position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i]);
+                    position = new BlockPosition(traceData.ChunkPosition, traceData.Positions[i], traceData.Size);
                     return true;
                 }
             }

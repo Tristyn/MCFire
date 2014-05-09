@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows.Documents;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
@@ -77,7 +78,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
                             if (xPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Right, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x + 1, y, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.RightQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x + 1, y, z)));
                             }
                         }
 
@@ -86,7 +87,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var yPlusBlock = chunkBlocks.GetBlock(x, y + 1, z);
                             if (yPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Up, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x, y + 1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.UpQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y + 1, z)));
                             }
                         }
 
@@ -95,7 +96,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var zPlubBlock = chunkBlocks.GetBlock(x, y, z + 1);
                             if (zPlubBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Backward, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x, y, z + 1)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.BackwardQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y, z + 1)));
                             }
                         }
 
@@ -104,7 +105,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var xMinusBlock = chunkBlocks.GetBlock(x - 1, y, z);
                             if (xMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Left, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x - 1, y, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.LeftQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x - 1, y, z)));
                             }
                         }
 
@@ -113,7 +114,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var yMinusBlock = chunkBlocks.GetBlock(x, y - 1, z);
                             if (yMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Down, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x, y - 1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.DownQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y - 1, z)));
                             }
                         }
 
@@ -122,7 +123,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var zMinusBlock = chunkBlocks.GetBlock(x, y, z - 1);
                             if (zMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), Forward, chunkVerticesList, GetVertexColor(chunk, new BlockPosition(x, y, z), new BlockPosition(x, y, z - 1)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.ForwardQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y, z - 1)));
                             }
                         }
                     }
@@ -130,7 +131,7 @@ namespace MCFire.Modules.Meshalyzer.Models
             return chunkVerticesList.Count == 0 ? null : Buffer.Vertex.New(game.GraphicsDevice, chunkVerticesList.ToArray());
         }
 
-        protected virtual Color GetVertexColor(IChunk chunk, BlockPosition blockPosition, BlockPosition airPosition)
+        protected virtual Color GetVertexColor(IChunk chunk, LocalBlockPosition blockPosition, LocalBlockPosition airPosition)
         {
             var bl = chunk.Blocks.GetBlockLight(airPosition);
             var sl = chunk.Blocks.GetSkyLight(airPosition);
@@ -139,40 +140,18 @@ namespace MCFire.Modules.Meshalyzer.Models
             return new Color(lum, lum, lum, 255);
         }
 
-        static void AddTriangleQuad(Vector3 location, Matrix direction, ICollection<VertexPositionColor> triangleMesh, Color color)
+        static void AddTriangleQuad(Vector3 location, IEnumerable<Vector3> quad, ICollection<VertexPositionColor> triangleMesh, Color color)
         {
             // 0-15 to 0-255
-
-            foreach (var vertex in QuadVertices)
+            foreach (var vertex in quad)
             {
-                // rotate the vector to face the direction specified
-                var transformed = Vector3.TransformCoordinate(vertex, direction);
-
-                // translate the vector into substrateWorld space
-                transformed += location;
+                // translate the vector into chunk space
+                var translated = vertex + location;
 
                 // add the vector to the list as a vertex
-                triangleMesh.Add(new VertexPositionColor(transformed, color));
-                //triangleMesh.Add(new VertexPositionColor(transformed, new Color(luminance)));
+                triangleMesh.Add(new VertexPositionColor(translated, color));
             }
         }
-
-        protected static readonly Matrix Up = Matrix.Identity;
-        protected static readonly Matrix Forward = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0, 0, 1);
-        protected static readonly Matrix Down = Matrix.RotationX(MathUtil.Pi) * Matrix.Translation(0, 1, 1);
-        protected static readonly Matrix Backward = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
-        protected static readonly Matrix Right = Matrix.RotationZ(-MathUtil.PiOverTwo) * Matrix.Translation(0, 1, 0);
-        protected static readonly Matrix Left = Matrix.RotationZ(MathUtil.PiOverTwo) * Matrix.Translation(1, 0, 0);
-
-        protected static readonly Vector3[] QuadVertices =
-        {
-            new Vector3(1,1,1),
-            new Vector3(0,1,1),
-            new Vector3(0,1,0),
-            new Vector3(1,1,0),
-            new Vector3(1,1,1),
-            new Vector3(0,1,0)
-        };
     }
 
     public abstract class MeshalyzerBase : IMeshalyzer

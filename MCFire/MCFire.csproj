@@ -181,6 +181,7 @@
     </Compile>
     <Compile Include="Bootstrapper\ExceptionHelper.cs" />
     <Compile Include="Bootstrapper\MCFireBootstrapper.cs" />
+    <Compile Include="Modules\BoxSelector\Messages\BoxSelectionUpdatedMessage.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BlockSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelectorComponent.cs" />
@@ -270,7 +271,7 @@
     <Compile Include="Modules\Infrastructure\Enums\DimensionType.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\AlphaBlockCollectionExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\BlockManagerExtensions.cs" />
-    <Compile Include="Modules\Infrastructure\Extensions\ChunkRefExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\ChunkExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\IntegerExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
@@ -280,7 +281,9 @@
     <Compile Include="Modules\Infrastructure\Models\ChunkPosition.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimension.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimensionWorld.cs" />
+    <Compile Include="Modules\Infrastructure\Models\ChunkSize.cs" />
     <Compile Include="Modules\Infrastructure\Models\GeometricPrimitives.cs" />
+    <Compile Include="Modules\Infrastructure\Models\LocalBlockPosition.cs" />
     <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point3.cs" />
@@ -396,9 +399,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <ToolkitFxc Include="Modules\Editor\Content\BoxSelect.fx" />
-    <ToolkitTexture Include="Modules\Editor\Content\Grid.png" />
     <Resource Include="Resources\NetherQuartzOre.png" />
     <Resource Include="Resources\DragonEgg.png" />
+    <ToolkitTexture Include="Modules\Editor\Content\Grid.png" />
     <Content Include="Resources\Icons\1,97-0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
