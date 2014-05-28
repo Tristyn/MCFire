@@ -15,26 +15,30 @@
     <!-- Platform Dependent Properties -->
     <OutputType>WinExe</OutputType>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <PublishUrl>C:\Users\Tristyn\Desktop\publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://mcfire.blob.core.windows.net/app/</InstallUrl>
     <ProductName>MC Fire</ProductName>
     <PublisherName>Tristyn Stimpson</PublisherName>
     <MinimumRequiredVersion>0.0.3.0</MinimumRequiredVersion>
-    <ApplicationRevision>2</ApplicationRevision>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>0.0.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -72,7 +76,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\EnchantmentTable.ico</ApplicationIcon>
+    <ApplicationIcon>EnchantmentTable.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>4AA50F9DC8A0D73054E113732B9E37C893AEDB08</ManifestCertificateThumbprint>
@@ -106,8 +110,12 @@
     <Reference Include="Caliburn.Micro">
       <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net45\Caliburn.Micro.dll</HintPath>
     </Reference>
-    <Reference Include="Gemini">
-      <HintPath>..\packages\GeminiWpf.0.4.0\lib\net40\Gemini.dll</HintPath>
+    <Reference Include="Gemini, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GeminiWpf.0.5.0\lib\net40\Gemini.dll</HintPath>
+    </Reference>
+    <Reference Include="GongSolutions.Wpf.DragDrop">
+      <HintPath>..\packages\gong-wpf-dragdrop.0.1.3.11\lib\net40\GongSolutions.Wpf.DragDrop.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
@@ -185,6 +193,11 @@
     <Compile Include="Modules\BoxSelector\Models\BoxSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BlockSelection.cs" />
     <Compile Include="Modules\BoxSelector\Models\BoxSelectorComponent.cs" />
+    <Compile Include="Modules\BoxSelector\Models\BoxVisual.cs" />
+    <Compile Include="Modules\Clipboard\Services\ClipboardService.cs" />
+    <Compile Include="Modules\Clipboard\Services\IClipboardService.cs" />
+    <Compile Include="Modules\DragDrop\Models\HandleableDragInfo.cs" />
+    <Compile Include="Modules\DragDrop\Models\IHandlableDragInfo.cs" />
     <Compile Include="Modules\Editor\Actions\OpenEditorTo.cs" />
     <Compile Include="Modules\Editor\Messages\EditorClosingMessage.cs" />
     <Compile Include="Modules\Editor\Messages\EditorOpenedMessage.cs" />
@@ -274,6 +287,7 @@
     <Compile Include="Modules\Infrastructure\Extensions\ChunkExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\IntegerExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\RarArchiveExtensions.cs" />
+    <Compile Include="Modules\Infrastructure\Extensions\RayExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\ICommand.cs" />
     <Compile Include="Modules\Infrastructure\Interfaces\IModalOverlay.cs" />
@@ -282,12 +296,15 @@
     <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimension.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkPositionDimensionWorld.cs" />
     <Compile Include="Modules\Infrastructure\Models\ChunkSize.cs" />
+    <Compile Include="Modules\Infrastructure\Models\Cuboid.cs" />
+    <Compile Include="Modules\Infrastructure\Models\Faces.cs" />
     <Compile Include="Modules\Infrastructure\Models\GeometricPrimitives.cs" />
     <Compile Include="Modules\Infrastructure\Models\LocalBlockPosition.cs" />
     <Compile Include="Modules\Infrastructure\Models\MCFireDirectories.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point.cs" />
     <Compile Include="Modules\Infrastructure\Models\Point3.cs" />
     <Compile Include="Modules\Infrastructure\Models\ReaderWriterObjectLock.cs" />
+    <Compile Include="Modules\Infrastructure\Models\VertexPosition.cs" />
     <Compile Include="Modules\Infrastructure\ViewModels\SharpDxViewModelBase.cs" />
     <Compile Include="Modules\Infrastructure\Views\CommandsView.xaml.cs">
       <DependentUpon>CommandsView.xaml</DependentUpon>
@@ -313,6 +330,7 @@
     <Compile Include="Modules\SelectorTool\Views\SelectorView.xaml.cs">
       <DependentUpon>SelectorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Startup\Models\ICreateAtStartup.cs" />
     <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Modules\Startup\ViewModels\ConfigureInstallationsViewModel.cs" />
     <Compile Include="Modules\Startup\Views\ConfigureInstallationsView.xaml.cs">
@@ -331,11 +349,6 @@
     <Compile Include="Modules\Editor\Views\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\StatsForNerds\Module.cs" />
-    <Compile Include="Modules\StatsForNerds\ViewModels\StatsForNerdsViewModel.cs" />
-    <Compile Include="Modules\StatsForNerds\Views\StatsForNerdsView.xaml.cs">
-      <DependentUpon>StatsForNerdsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Modules\Explorer\Models\GameInstallation.cs" />
     <Compile Include="Modules\Explorer\Models\Installation.cs" />
     <Compile Include="Modules\Explorer\Models\ServerInstallation.cs" />
@@ -350,7 +363,11 @@
     <Compile Include="Modules\Explorer\Views\WorldItemView.xaml.cs">
       <DependentUpon>WorldItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Toolbox\Messages\EditorToolSelectedMessage.cs" />
+    <Compile Include="Modules\Toolbox\Messages\CurrentToolboxChangedMessage.cs" />
+    <Compile Include="Modules\Toolbox\Models\EditorToolbox.cs" />
     <Compile Include="Modules\Toolbox\Module.cs" />
+    <Compile Include="Modules\Toolbox\Services\ToolboxService.cs" />
     <Compile Include="Modules\Toolbox\ViewModels\EditorToolBase.cs" />
     <Compile Include="Modules\Toolbox\ViewModels\IEditorTool.cs" />
     <Compile Include="Modules\Toolbox\ViewModels\ToolboxViewModel.cs" />
@@ -378,6 +395,7 @@
     <Resource Include="Resources\NetherQuartzOre.png" />
     <Resource Include="Resources\DragonEgg.png" />
     <ToolkitTexture Include="Modules\Editor\Content\Grid.png" />
+    <Content Include="EnchantmentTable.ico" />
     <Content Include="Resources\Icons\1,97-0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1359,10 +1377,6 @@
     <Page Include="Modules\Editor\Views\EditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Modules\StatsForNerds\Views\StatsForNerdsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Modules\Explorer\Views\WorldExplorerView.xaml">
       <Generator>MSBuild:Compile</Generator>

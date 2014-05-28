@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Windows.Forms;
+using GongSolutions.Wpf.DragDrop;
+using MCFire.Modules.DragDrop.Models;
 using MCFire.Modules.Explorer.Models;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using KeyEventHandler = System.Windows.Input.KeyEventHandler;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -34,6 +38,40 @@ namespace MCFire.Modules.Editor.Models
 
         public virtual void UnloadContent(EditorGame game) { }
 
+        #region Drag Drop
+        #region DragSource
+
+        public virtual void StartDrag(IHandleableDragInfo dragInfo)
+        {
+        }
+
+        public virtual void Dropped(IDropInfo dropInfo)
+        {
+        }
+
+        public virtual void DragCancelled()
+        {
+        }
+
+        #endregion
+
+        #region DropTarget
+
+        public virtual void DragOver(IDropInfo dropInfo)
+        {
+        }
+
+        public virtual void Drop(IDropInfo dropInfo)
+        {
+        }
+
+        #endregion
+        #endregion
+
+        public virtual void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+        }
+
         protected virtual SharpDXElement SharpDxElement { get; private set; }
 
         protected virtual Mouse Mouse { get; private set; }
@@ -48,6 +86,6 @@ namespace MCFire.Modules.Editor.Models
         protected virtual int Dimension { get; private set; }
         protected virtual GraphicsDevice GraphicsDevice { get; private set; }
 
-
+        
     }
 }

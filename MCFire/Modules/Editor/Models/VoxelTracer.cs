@@ -11,27 +11,29 @@ namespace MCFire.Modules.Editor.Models
     /// </summary>
     public class VoxelTracer : IEnumerable<Point3>
     {
-        public VoxelTracer(Vector3 origin, Vector3 direction)
+        public VoxelTracer(Ray ray)
         {
             Limit = 500;
-            Origin = origin;
-            Direction = direction;
+            Ray = ray;
         }
+
         // TODO: add options for setting dimension limits
 
         public IEnumerator<Point3> GetEnumerator()
         {
             // an implementation of http://www.cse.yorku.ca/~amana/research/grid.pdf
-
+            var ray = Ray;
+            var origin = ray.Position;
+            var direction = ray.Direction;
             // Cube containing origin point.
-            var x = (float)Math.Floor(Origin.X);
-            var y = (float)Math.Floor(Origin.Y);
-            var z = (float)Math.Floor(Origin.Z);
+            var x = (float)Math.Floor(origin.X);
+            var y = (float)Math.Floor(origin.Y);
+            var z = (float)Math.Floor(origin.Z);
 
             // direction vector
-            var dx = Direction.X;
-            var dy = Direction.Y;
-            var dz = Direction.Z;
+            var dx = direction.X;
+            var dy = direction.Y;
+            var dz = direction.Z;
 
             // Avoids an infinite loop.
             // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -40,15 +42,15 @@ namespace MCFire.Modules.Editor.Models
             // ReSharper restore CompareOfFloatsByEqualityOperator
 
             // Direction to increment x,y,z when stepping.
-            var stepX = Sign(Direction.X);
-            var stepY = Sign(Direction.Y);
-            var stepZ = Sign(Direction.Z);
+            var stepX = Sign(direction.X);
+            var stepY = Sign(direction.Y);
+            var stepZ = Sign(direction.Z);
 
             // See description above. The initial values depend on the fractional
             // part of the origin.
-            var tMaxX = Intbound(Origin.X, dx);
-            var tMaxY = Intbound(Origin.Y, dy);
-            var tMaxZ = Intbound(Origin.Z, dz);
+            var tMaxX = Intbound(origin.X, dx);
+            var tMaxY = Intbound(origin.Y, dy);
+            var tMaxZ = Intbound(origin.Z, dz);
 
             // The change in t when taking a step (always positive).
             var tDeltaX = stepX / dx;
@@ -136,8 +138,7 @@ namespace MCFire.Modules.Editor.Models
             return val > 0 ? 1 : val < 0 ? -1 : 0;
         }
 
-        public Vector3 Origin { get; private set; }
-        public Vector3 Direction { get; private set; }
+        public Ray Ray { get; private set; }
 
         /// <summary>
         /// The amount of voxels to traverse before stopping.

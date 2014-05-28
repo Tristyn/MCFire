@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Windows.Input;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.BoxSelector.Messages;
+using MCFire.Modules.Clipboard.Services;
 using MCFire.Modules.Editor.Models;
+using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 using SharpDX.Toolkit;
-using SharpDX.Toolkit.Graphics;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Key = System.Windows.Input.Key;
+using KeyEventArgs = MCFire.Modules.Editor.Models.KeyEventArgs;
 using Texture2D = SharpDX.Toolkit.Graphics.Texture2D;
 
 namespace MCFire.Modules.BoxSelector.Models
@@ -19,107 +21,173 @@ namespace MCFire.Modules.BoxSelector.Models
     [Export(typeof(IGameComponent))]
     public class BoxSelectorComponent : GameComponentBase
     {
+        BoxVisual _box;
         BoxSelection _selection;
-        DebugCube _cube;
-        [NotNull]
-        Mesh<VertexPositionTexture> _topQuad;
-        [NotNull]
-        Mesh<VertexPositionTexture> _botQuad;
-        [NotNull]
-        Mesh<VertexPositionTexture> _rightQuad;
-        [NotNull]
-        Mesh<VertexPositionTexture> _leftQuad;
-        [NotNull]
-        Mesh<VertexPositionTexture> _forwardQuad;
-        [NotNull]
-        Mesh<VertexPositionTexture> _backQuad;
-        [NotNull]
-        BoxSelectEffect _effect;
         [NotNull]
         Texture2D _gridTexture;
+
         SelectionState _selectionState;
+        Ray _faceDragRay;
+
 
         [Import]
         IEventAggregator _aggregator;
 
         public override void LoadContent(EditorGame game)
         {
+            base.LoadContent(game);
+            var gridTexture = game.LoadContent<Texture2D>("Grid");
+            if (gridTexture == null)
+                throw new SharpDXException();
+            _gridTexture = gridTexture;
+            _box = new BoxVisual(gridTexture);
+            _box.LoadContent(game);
+
             // TODO: proper state management (Enabled)
             Enabled = true;
-
-            base.LoadContent(game);
-            _effect = new BoxSelectEffect(game.LoadContent<Effect>("BoxSelect"))
-            {
-                Sampler = GraphicsDevice.SamplerStates.PointWrap
-            };
-            _gridTexture = game.LoadContent<Texture2D>("Grid");
-            _topQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.UpQuad)), _effect.Effect);
-            _botQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.DownQuad)), _effect.Effect);
-            _rightQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.RightQuad)), _effect.Effect);
-            _leftQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.LeftQuad)), _effect.Effect);
-            _forwardQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.ForwardQuad)), _effect.Effect);
-            _backQuad = new Mesh<VertexPositionTexture>(Buffer.Vertex.New(game.GraphicsDevice, GetQuadUv(GeometricPrimitives.BackwardQuad)), _effect.Effect);
-
 
             // state
             _selectionState = SelectionState.NotSet;
 
             // input
-            Mouse.Left.Click += Click;
+            Mouse.Left.ClickEnd += ClickEnd;
             Mouse.Left.DragStart += DragStart;
-            _cube = new DebugCube(game);
+            Mouse.Left.DragMove += DragMove;
+            Mouse.Left.DragEnd += DragEnd;
         }
 
-        static VertexPositionTexture[] GetQuadUv(IList<Vector3> quad)
-        {
-            Debug.Assert(quad.Count == GeometricPrimitives.QuadUv.Length);
-
-            var mesh = new VertexPositionTexture[quad.Count];
-            for (int i = 0; i < quad.Count; i++)
-            {
-                mesh[i] = new VertexPositionTexture(quad[i], GeometricPrimitives.QuadUv[i]);
-            }
-            return mesh;
-        }
-
-        private void Click(object sender, KeyEventArgs e)
+        void ClickEnd(object sender, KeyEventArgs e)
         {
             if (!Enabled) return;
 
             BlockPosition pos;
             if (!Tasks.TryGetBlockAtScreenCoord(e.Position, out pos))
                 return;
-            _cube.Position = pos;
 
             switch (_selectionState)
             {
                 case SelectionState.NotSet:
-                    _selection = new BoxSelection(pos, pos);
-                    _selectionState = SelectionState.HalfSet;
+                    NewSelection(pos, pos, SelectionState.HalfSet);
                     break;
                 case SelectionState.HalfSet:
-                    _selection = new BoxSelection(_selection.CornerOne, pos);
-                    _selectionState = SelectionState.Set;
+                    NewSelection(_selection.CornerOne, pos, SelectionState.Set);
+                    Console.WriteLine(_selection.GetCuboid());
                     break;
                 case SelectionState.Set:
                     // TODO: dragging the selection faces along their normal axes
                     // if the click missed the BoxSelection, create a new selection.
-                    _selection = new BoxSelection(pos, pos);
-                    _selectionState = SelectionState.HalfSet;
-                    // capture variable to avoid modified closure.
-                    var selection = _selection;
-                    _aggregator.Publish(new BoxSelectionUpdatedMessage(_selection, box => new BlockSelection(selection, Dimension, World)));
+                    NewSelection(pos, pos, SelectionState.HalfSet);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Debug.Fail("SelectionState out of range");
+                    break;
             }
         }
 
-        private void DragStart(object sender, KeyEventArgs e)
+        // TODO: Highlight face that mouse is over when _selectionState == SelectionState.Set
+        void NewSelection(BlockPosition pos1, BlockPosition pos2, SelectionState newState)
+        {
+            var selection = new BoxSelection(pos1, pos2);
+            _selection = selection;
+            _selectionState = newState;
+
+            // notify only if selection is set.
+            if (newState != SelectionState.Set) return;
+
+            // use the selection (on the stack) to avoid modified closure.
+            _aggregator.Publish(new BoxSelectionUpdatedMessage(selection, box => new BlockSelection(selection, Dimension, World)));
+        }
+
+
+        void DragStart(object sender, KeyEventArgs e)
+        {
+            // Drag the face of the selection along its axis
+            if (_selectionState != SelectionState.Set) return;
+            var selection = _selection;
+            var lesser = selection.Lesser;
+            var greater = selection.Greater;
+            var pos = Camera.Position;
+
+            // Calculate if the mouse is over the selection
+            var selectionBox = new BoundingBox(lesser, greater);
+            var ray = Camera.ScreenPointToRay(e.Position);
+            Vector3 hit;
+            if (!selectionBox.Intersects(ref ray, out hit)) return;
+            var roundedHit = hit.Round(); // BoundingBox.Intersects can return a value + epsilon, so round it
+
+            // enumerate faces
+            // left
+            Console.WriteLine("Hit at {0}", roundedHit);
+            if (pos.X < roundedHit.X && new Plane(lesser, Vector3.Left).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.Left);
+            // right
+            else if (pos.X > roundedHit.X && new Plane(greater, Vector3.Right).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.Right);
+            // down
+            else if (pos.Y < roundedHit.Y && new Plane(lesser, Vector3.Down).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.Down);
+            // up
+            else if (pos.Y > roundedHit.Y && new Plane(greater, Vector3.Up).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.Up);
+            // forward
+            else if (pos.Z < roundedHit.Z && new Plane(lesser, Vector3.ForwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.ForwardRH);
+            // back
+            else if (pos.Z > roundedHit.Z && new Plane(greater, Vector3.BackwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+                _faceDragRay = new Ray(roundedHit, Vector3.BackwardRH);
+        }
+
+        void DragMove(object sender, KeyEventArgs e)
         {
             if (!Enabled) return;
 
+            var faceDragRay = _faceDragRay;
+            var pos = Camera.Position;
+            // update face drag
+            if (faceDragRay == default(Ray))
+                return;
 
+            // dragPlane is used to hit-test the unpropjected mouse position
+            // we need to calculate the dragPlane every DragMove, as Camera.Position can change
+            var dragPlane = faceDragRay.ToPlane(pos);
+            var mouseRay = Camera.ScreenPointToRay(e.Position);
+
+            // find where the mouse intersects the drag plane
+            Vector3 mouseHit;
+            if (!dragPlane.Intersects(ref mouseRay, out mouseHit))
+                return;
+
+            // use pythagorean (C^2-B^2=A^2) to calculate distance from faceDragRay
+            var diff = mouseHit - faceDragRay.Position;
+            var cSquared = diff.LengthSquared();
+            var b = faceDragRay.Distance(mouseHit);
+            var a = (float)Math.Sqrt(cSquared - b * b);
+
+            var dragPosWorldSpace = faceDragRay.Position + faceDragRay.Direction * a;
+            var alignedDragDir = faceDragRay.Direction.AlignToClosestAxis();
+            var selection = _selection;
+            var lesser = selection.Lesser;
+            var greater = selection.Greater;
+
+            // ReSharper disable CompareOfFloatsByEqualityOperator - AlignToClosestAxis() sets a component to +-one
+            if (alignedDragDir.X == 1)
+                _selection = new BoxSelection(lesser, new BlockPosition((int)dragPosWorldSpace.X, greater.Y, greater.Z));
+            else if (alignedDragDir.X == -1)
+                _selection = new BoxSelection(new BlockPosition((int)dragPosWorldSpace.X, lesser.Y, lesser.Z), greater);
+            else if (alignedDragDir.Y == 1)
+                _selection = new BoxSelection(lesser, new BlockPosition(greater.X, (int)dragPosWorldSpace.Y, greater.Z));
+            else if (alignedDragDir.Y == -1)
+                _selection = new BoxSelection(new BlockPosition(lesser.X, (int)dragPosWorldSpace.Y, lesser.Z), greater);
+            else if (alignedDragDir.Z == 1)
+                _selection = new BoxSelection(lesser, new BlockPosition(greater.X, greater.Y, (int)dragPosWorldSpace.Z));
+            else if (alignedDragDir.Z == -1)
+                _selection = new BoxSelection(new BlockPosition(lesser.X, lesser.Y, (int)dragPosWorldSpace.Z), greater);
+            // ReSharper restore CompareOfFloatsByEqualityOperator
+        }
+
+        private void DragEnd(object sender, KeyEventArgs e)
+        {
+            _faceDragRay = default(Ray);
         }
 
         public override void Update(GameTime time)
@@ -147,60 +215,23 @@ namespace MCFire.Modules.BoxSelector.Models
 
         public override void Draw(GameTime time)
         {
-            _cube.Draw(Game);
-            //_cube.Position = _selection.CornerOne;
-
-            GraphicsDevice.SetBlendState(GraphicsDevice.BlendStates.AlphaBlend);
-            var viewProj = Camera.ViewMatrix * Camera.ProjectionMatrix;
-            _effect.Main = _gridTexture;
-            // TODO: refactor 6 Quad cube into seperate class
-            // TODO: texture allignment (up is good)
-            // up
-            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, 0, _selection.ZLength) *
-                                      Matrix.Translation(_selection.Left, _selection.Top + 1, _selection.Forward) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.XLength, _selection.ZLength, _selection.Left, _selection.Forward) / 16;
-            _topQuad.Draw(GraphicsDevice);
-
-            // down
-            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, 0, _selection.ZLength) *
-                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.XLength, _selection.Left, _selection.Forward) / 16;
-            _botQuad.Draw(GraphicsDevice);
-
-            // right
-            _effect.TransformMatrix = Matrix.Scaling(0, _selection.YLength, _selection.ZLength) *
-                                      Matrix.Translation(_selection.Right + 1, _selection.Bottom, _selection.Forward) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.YLength, _selection.Forward, _selection.Bottom) / 16;
-            _rightQuad.Draw(GraphicsDevice);
-
-            // left
-            _effect.TransformMatrix = Matrix.Scaling(0, _selection.YLength, _selection.ZLength) *
-                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.ZLength, _selection.YLength, _selection.Forward, _selection.Bottom) / 16;
-            _leftQuad.Draw(GraphicsDevice);
-
-            // back
-            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, _selection.YLength, 0) *
-                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Backward + 1) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.XLength, _selection.YLength, _selection.Left, _selection.Bottom) / 16;
-            _backQuad.Draw(GraphicsDevice);
-            // forward
-            _effect.TransformMatrix = Matrix.Scaling(_selection.XLength, _selection.YLength, 0) *
-                                      Matrix.Translation(_selection.Left, _selection.Bottom, _selection.Forward) *
-                                      viewProj;
-            _effect.MainTransform = new Vector4(_selection.XLength, _selection.YLength, _selection.Left, _selection.Bottom) / 16;
-            _forwardQuad.Draw(GraphicsDevice);
+            _box.Cuboid = _selection.GetCuboid();
+            _box.Draw(Game);
         }
 
         public override void Dispose()
         {
-            _topQuad.Dispose();
-            _effect.Dispose();
+            _box.Dispose();
+            _gridTexture.Dispose();
+        }
+
+        public override void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != Key.C || System.Windows.Input.Keyboard.Modifiers != ModifierKeys.Control) return;
+
+            // Ctrl+C
+            if (!Enabled) return;
+            _aggregator.Publish(new ClipboardCopyEvent(new BlockSelection(_selection, Dimension, World)));
         }
 
         public override int DrawPriority { get { return 500; } }

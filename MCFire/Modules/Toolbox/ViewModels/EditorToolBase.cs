@@ -1,15 +1,15 @@
-﻿using MCFire.Modules.Editor.ViewModels;
+﻿using MCFire.Modules.Editor.Models;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
     public abstract class EditorToolBase : IEditorTool
     {
-        public EditorViewModel EditorViewModel;
+        EditorGame _editor;
 
         /// <inheritDoc/>
-        public virtual void Initialize(EditorViewModel editor)
+        public virtual void Initialize(EditorGame editor)
         {
-            EditorViewModel = editor;
+            _editor = editor;
         }
 
         /// <inheritDoc/>
@@ -23,9 +23,8 @@ namespace MCFire.Modules.Toolbox.ViewModels
         }
 
         /// <inheritDoc/>
-        public void Dispose()
+        public virtual void Dispose()
         {
-            EditorViewModel = null;
         }
     }
 }

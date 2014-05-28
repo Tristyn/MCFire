@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Explorer.Services;
-using MCFire.Modules.Infrastructure.Extensions;
 using Tether;
 
 namespace MCFire.Modules.Explorer.ViewModels
@@ -13,14 +13,24 @@ namespace MCFire.Modules.Explorer.ViewModels
     [Export]
     public class WorldExplorerViewModel : Tool
     {
-        public override double PreferredWidth
-        {
-            get { return 250; }
-        }
-
         public WorldExplorerViewModel()
         {
             DisplayName = "World Explorer";
+        }
+
+        public override bool ShouldReopenOnStart
+        {
+            get { return true; }
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            writer.Write(true);
+        }
+
+        public override void LoadState(BinaryReader reader)
+        {
+            reader.ReadBoolean();
         }
 
         [Import]
@@ -40,6 +50,11 @@ namespace MCFire.Modules.Explorer.ViewModels
 
         [ImportMany]
         public IEnumerable<IWorldExplorerCommand> Commands { get; private set; }
+
+        public override double PreferredWidth
+        {
+            get { return 250; }
+        }
 
         public override PaneLocation PreferredLocation
         {

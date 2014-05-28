@@ -38,13 +38,20 @@ namespace MCFire.Modules.Editor.Models
 
             foreach (var traceData in _game.Camera.RayTraceScreenPoint(screenCoord))
             {
+                // determine if we include liquids by checking if the block we start at is also a liquid
                 if (firstEnumeration)
                 {
-                    // check the first block that the trace is in.
-                    // If its water, we dont include water in the search
-                    var firstBlock = traceData.Blocks.FirstOrDefault();
-                    includeLiquids = firstBlock == null || firstBlock.Info.State != BlockState.FLUID;
-                    firstEnumeration = false;
+                    if (traceData.Blocks == null)
+                    {
+                        // trace started in a non-generated chunk, which visually is air. IncludeLiquids = false
+                        firstEnumeration = false;
+                    }
+                    else
+                    {
+                        var firstBlock = traceData.Blocks.FirstOrDefault();
+                        includeLiquids = firstBlock == null || firstBlock.Info.State != BlockState.FLUID;
+                        firstEnumeration = false;
+                    }
                 }
 
                 if (traceData.Positions == null || traceData.Blocks == null) continue;

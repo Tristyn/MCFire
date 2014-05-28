@@ -35,7 +35,7 @@ namespace MCFire.Modules.Editor.Models
         public IEnumerator<IChunkTraceData> GetEnumerator()
         {
             // fields
-            var currentChunkPos = (ChunkPosition)(BlockPosition)_tracer.Origin;
+            var currentChunkPos = (ChunkPosition)(BlockPosition)_tracer.Ray.Position;
             var enumerator = _tracer.GetEnumerator();
             enumerator.MoveNext();
 

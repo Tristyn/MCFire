@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Messages;
+using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Editor.ViewModels;
+using MCFire.Modules.Startup.Models;
+using MCFire.Modules.Toolbox.Messages;
 using MCFire.Modules.Toolbox.Models;
 
 namespace MCFire.Modules.Toolbox.Services
@@ -13,31 +18,77 @@ namespace MCFire.Modules.Toolbox.Services
     /// Manages the lifetime of each tool instances for each editor.
     /// </summary>
     [Export]
-    public class ToolboxService : IHandle<EditorCreatedMessage>, IHandle<EditorClosingMessage>
+    [Export(typeof(ICreateAtStartup))]
+    public class ToolboxService : IHandle<EditorOpenedMessage>, IHandle<EditorGainedFocusMessage>, IHandle<EditorClosingMessage>, ICreateAtStartup
     {
         [NotNull]
         readonly List<EditorToolbox> _toolBoxes = new List<EditorToolbox>();
+        IEventAggregator _aggregator;
+        private EditorToolbox _currentToolbox;
 
-        public void Handle(EditorCreatedMessage message)
+        void IHandle<EditorOpenedMessage>.Handle(EditorOpenedMessage message)
         {
-            var tool = IoC.Get<EditorToolbox>();
-            tool.Initialize(message.EditorViewModel);
-            _toolBoxes.Add(tool);
+            // create a new toolbox for this instance, notify with publish
+            CurrentToolbox= GetToolboxForEditor(message.EditorGame);
         }
 
-        public void Handle(EditorClosingMessage message)
+        void IHandle<EditorGainedFocusMessage>.Handle(EditorGainedFocusMessage message)
         {
-            var tool = _toolBoxes.First(toolbox => toolbox.Editor == message.EditorViewModel);
+            CurrentToolbox = GetToolboxForEditor(message.EditorGame);
+        }
+
+        void IHandle<EditorClosingMessage>.Handle(EditorClosingMessage message)
+        {
+            // dispose of the toolbox
+            var tool = _toolBoxes.FirstOrDefault(toolbox => toolbox.Editor == message.EditorGame);
+            Debug.Assert(tool != null);
             tool.Dispose();
             _toolBoxes.Remove(tool);
+
+            if (CurrentToolbox != tool) return;
+            CurrentToolbox = null;
         }
 
-        public EditorToolbox GetToolboxForEditor(EditorViewModel editor)
+        /// <summary>
+        /// Returns the <see cref="Toolbox"/> for the specified <see cref="EditorViewModel"/>.
+        /// </summary>
+        /// <param name="editor">The <see cref="EditorViewModel"/> that the <see cref="Toolbox"/> is initialized to.</param>
+        /// <returns></returns>
+        [NotNull]
+        public EditorToolbox GetToolboxForEditor([NotNull] EditorGame editor)
         {
-            return _toolBoxes.First(toolbox => toolbox.Editor == editor);
+            if (editor == null) throw new ArgumentNullException("editor");
+            var tools = _toolBoxes.FirstOrDefault(toolbox => toolbox.Editor == editor);
+            if (tools != null)
+                return tools;
+
+            // create a new toolbox
+            tools = IoC.Get<EditorToolbox>();
+            tools.Initialize(editor);
+            _toolBoxes.Add(tools);
+            return tools;
+        }
+
+        [CanBeNull]
+        public EditorToolbox CurrentToolbox
+        {
+            get { return _currentToolbox; }
+            private set
+            {
+                _currentToolbox = value;
+                Aggregator.Publish(new CurrentToolboxChangedMessage(value));
+            }
         }
 
         [Import]
-        IEventAggregator Aggregator { set { value.Subscribe(this); } }
+        IEventAggregator Aggregator
+        {
+            get { return _aggregator; }
+            set
+            {
+                _aggregator = value;
+                value.Subscribe(this);
+            }
+        }
     }
 }

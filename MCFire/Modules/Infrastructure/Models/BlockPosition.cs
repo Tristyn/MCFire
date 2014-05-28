@@ -1,5 +1,4 @@
 ﻿using System;
-using MCFire.Modules.Infrastructure.Extensions;
 using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Models
@@ -22,7 +21,7 @@ namespace MCFire.Modules.Infrastructure.Models
         {
             X = local.X + chunkPosition.ChunkX * size.X;
             Y = local.Y;
-            Z = local.Z + chunkPosition.ChunkZ * size.Y;
+            Z = local.Z + chunkPosition.ChunkZ * size.Z;
         }
 
         public static implicit operator BlockPosition(Vector3 value)
@@ -38,6 +37,11 @@ namespace MCFire.Modules.Infrastructure.Models
         public static implicit operator BlockPosition(Point3 value)
         {
             return new BlockPosition(value.X, value.Y, value.Z);
+        }
+
+        public static implicit operator Point3(BlockPosition value)
+        {
+            return new Point3(value.X,value.Y, value.Z);
         }
 
         public static bool operator ==(BlockPosition left, BlockPosition right)
@@ -77,10 +81,10 @@ namespace MCFire.Modules.Infrastructure.Models
             return String.Format("{0}, {1}, {2}", X, Y, Z);
         }
 
-        public int Y { get; private set; }
+        public int Y { get; set; }
 
-        public int X { get; private set; }
+        public int X { get; set; }
 
-        public int Z { get; private set; }
+        public int Z { get; set; }
     }
 }

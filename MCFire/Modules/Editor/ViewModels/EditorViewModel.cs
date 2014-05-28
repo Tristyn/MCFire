@@ -1,22 +1,28 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using Caliburn.Micro;
+using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
+using MCFire.Modules.DragDrop.Models;
 using MCFire.Modules.Editor.Messages;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Editor.Views;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Infrastructure.ViewModels;
 using Action = System.Action;
+using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace MCFire.Modules.Editor.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export]
-    public class EditorViewModel : SharpDxViewModelBase
+    public class EditorViewModel : SharpDxViewModelBase, IDragSource, IDropTarget
     {
         [CanBeNull]
         EditorView _view;
+        [CanBeNull]
+        EditorGame _game;
         [CanBeNull]
         Action _viewGained;
         [Import]
@@ -46,11 +52,15 @@ namespace MCFire.Modules.Editor.ViewModels
                 return false;
 
             DisplayName = "Starting Up - Editor";
-            if (!RunGame(() => new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension), view.SharpDx))
+            if (!RunGame(() =>
+            {
+                var game = new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension);
+                _game = game;
+                _aggregator.Publish(new EditorOpenedMessage(game));
+                _aggregator.Publish(new EditorGainedFocusMessage(game));
+                return game;
+            }, view.SharpDx))
                 return false;
-
-            _aggregator.Publish(new EditorOpenedMessage(this));
-            _aggregator.Publish(new EditorGainedFocusMessage(this));
 
             DisplayName = String.Format("{0} - Editor", world.Title);
             return true;
@@ -64,15 +74,72 @@ namespace MCFire.Modules.Editor.ViewModels
             if (_viewGained != null) _viewGained();
             _view.GotFocus += delegate
             {
-                _aggregator.Publish(new EditorGainedFocusMessage(this));
+                var game = _game;
+                if (game != null)
+                    _aggregator.Publish(new EditorGainedFocusMessage(game));
             };
         }
 
         protected override void ExitGame(object sender, DeactivationEventArgs e)
         {
-            if (e.WasClosed)
-                _aggregator.Publish(new EditorClosingMessage(this));
+            var game = _game;
+            if (e.WasClosed&&game!=null)
+                _aggregator.Publish(new EditorClosingMessage(game));
             base.ExitGame(sender, e);
         }
+
+        public void WpfKeyDown(KeyEventArgs e)
+        {
+            var game = _game;
+            if (game == null) return;
+            game.WpfKeyDown(e);
+        }
+
+        #region Drag Drop
+
+        #region Drag Source
+
+        public void StartDrag(IDragInfo dragInfo)
+        {
+            var game = _game;
+            if (game == null) return;
+            game.StartDrag(new HandleableDragInfo(dragInfo));
+        }
+
+        public void Dropped(IDropInfo dropInfo)
+        {
+            var game = _game;
+            if (game == null) return;
+            game.Dropped(dropInfo);
+        }
+
+        public void DragCancelled()
+        {
+            var game = _game;
+            if (game == null) return;
+            game.DragCancelled();
+        }
+
+        #endregion
+
+        #region Drop Target
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            var game = _game;
+            if (game == null) return;
+            game.DragOver(dropInfo);
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            var game = _game;
+            if (game == null) return;
+            game.Drop(dropInfo);
+        }
+
+        #endregion
+
+        #endregion
     }
 }

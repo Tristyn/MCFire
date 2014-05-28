@@ -4,16 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:viewModels="clr-namespace:MCFire.Modules.Toolbox.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModels:ToolboxViewModel}">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
-        <TextBlock Text="Work in Progress" />
-        <ItemsControl ItemsSource="{Binding Tools}">
+        <TextBlock Text="Work in progress" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </TextBlock.LayoutTransform>
+        </TextBlock>
+        <!--<ItemsControl ItemsSource="{Binding Tools}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button>
-                        <ContentControl cal:View.Model="{Binding}" />
-                    </Button>
+                    <ContentControl cal:View.Model="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
@@ -21,6 +27,12 @@
                     <WrapPanel IsItemsHost="True" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        </ItemsControl>-->
+
+        <!--<TextBlock Text="Open a world to access the toolbox." Visibility="{Binding NoTools,Converter={StaticResource BooleanToVisibilityConverter}}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </TextBlock.LayoutTransform>
+        </TextBlock>-->
     </Grid>
 </UserControl>

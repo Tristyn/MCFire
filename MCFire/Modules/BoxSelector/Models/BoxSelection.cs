@@ -3,9 +3,9 @@ using MCFire.Modules.Infrastructure.Models;
 
 namespace MCFire.Modules.BoxSelector.Models
 {
-    public struct BoxSelection
+    public class BoxSelection
     {
-        public BoxSelection(BlockPosition cornerOne, BlockPosition cornerTwo) : this()
+        public BoxSelection(BlockPosition cornerOne, BlockPosition cornerTwo)
         {
             CornerOne = cornerOne;
             CornerTwo = cornerTwo;
@@ -27,7 +27,7 @@ namespace MCFire.Modules.BoxSelector.Models
         /// </summary>
         public BlockPosition Lesser
         {
-            get { return new BlockPosition(Left, Bottom, Backward); }
+            get { return new BlockPosition(Left, Bottom, Forward); }
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace MCFire.Modules.BoxSelector.Models
         /// </summary>
         public BlockPosition Greater
         {
-            get { return new BlockPosition(Right, Top, Forward); }
+            get { return new BlockPosition(Right, Top, Backward); }
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace MCFire.Modules.BoxSelector.Models
         /// <summary>
         /// Width of the selection on the Z axis (zero based like a list length)
         /// </summary>
-        public int ZLength { get { return  Math.Abs(Forward - Backward) + 1; } }
+        public int ZLength { get { return Math.Abs(Forward - Backward) + 1; } }
 
         /// <summary>
         /// The X value of the right-most (1,0,0) face of the box.
@@ -75,5 +75,25 @@ namespace MCFire.Modules.BoxSelector.Models
         /// The Z value of the back-most (0,0,1) face of the box.
         /// </summary>
         public int Backward { get { return Math.Max(CornerOne.Z, CornerTwo.Z); } }
+
+        public Cuboid GetCuboid()
+        {
+            return new Cuboid(CornerOne, CornerTwo);
+        }
+
+        /// <summary>
+        /// Returns if the position is inside of this selection
+        /// </summary>
+        public bool BlockWithin(BlockPosition position)
+        {
+            return position.X >= Left && position.X <= Right
+                && position.Y >= Bottom && position.Y <= Top
+                && position.Z >= Forward && position.Z <= Backward;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Lesser: {0}, Greater: {1}", Lesser, Greater);
+        }
     }
 }

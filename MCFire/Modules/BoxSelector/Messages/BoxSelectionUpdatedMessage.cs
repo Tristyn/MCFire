@@ -5,17 +5,17 @@ namespace MCFire.Modules.BoxSelector.Messages
 {
     public class BoxSelectionUpdatedMessage
     {
-        readonly Func<BoxSelection, BlockSelection> BlockSelectionCallback;
+        readonly Func<BoxSelection, IBlockSelection> _blockSelectionCallback;
 
-        public BoxSelectionUpdatedMessage(BoxSelection selection, Func<BoxSelection, BlockSelection> blockSelectionCallback)
+        public BoxSelectionUpdatedMessage(BoxSelection selection, Func<BoxSelection, IBlockSelection> blockSelectionCallback)
         {
             Selection = selection;
-            BlockSelectionCallback = blockSelectionCallback;
+            _blockSelectionCallback = blockSelectionCallback;
         }
 
-        public BlockSelection GetBlocks()
+        public IBlockSelection GetBlocks()
         {
-            return BlockSelectionCallback(Selection);
+            return _blockSelectionCallback(Selection);
         }
 
         public BoxSelection Selection { get; private set; }

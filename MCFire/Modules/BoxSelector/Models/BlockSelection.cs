@@ -4,43 +4,27 @@ using System.Linq;
 using MCFire.Modules.Explorer.Models;
 using MCFire.Modules.Infrastructure.Extensions;
 using MCFire.Modules.Infrastructure.Models;
-using Substrate;
 using Substrate.Core;
 
 namespace MCFire.Modules.BoxSelector.Models
 {
     /// <summary>
+    /// A generic view of a selection of partitioned chunks.
+    /// </summary>
+    public interface IBlockSelection
+    {
+        void GetChunks(AccessMode mode, PartionedChunksFunc chunksAction);
+        BoxSelection Selection { get; }
+        int Dimension { get; }
+        MCFireWorld World { get; }
+    }
+
+    /// <summary>
     /// Specifies a box-shaped selection in a minecraft world.
     /// A selection is immutable and can be used to enumerate through the collective data of multiple chunks.
     /// </summary>
-    public class BlockSelection
+    public class BlockSelection : IBlockSelection
     {
-        //readonly int _dimension;
-        //readonly MCFireWorld _world;
-
-        ///// <summary>
-        ///// Creates a new BoxSelection with the specified dimensions and world.
-        ///// </summary>
-        ///// <param name="cornerOne">One corner of the box</param>
-        ///// <param name="cornerTwo">The other corner of the box</param>
-        ///// <param name="dimension">The dimension of the selection</param>
-        ///// <param name="world">The world containing the selection</param>
-        //public BoxSelection(BlockPosition cornerOne, BlockPosition cornerTwo, int dimension, [NotNull] MCFireWorld world)
-        //{
-        //    if (world == null) throw new ArgumentNullException("world");
-
-        //    _lesser = new BlockPosition(
-        //        Math.Min(cornerOne.X, cornerTwo.X),
-        //        Math.Min(cornerOne.Y, cornerTwo.Y),
-        //        Math.Min(cornerOne.Z, cornerTwo.Z));
-        //    _greater = new BlockPosition(
-        //        Math.Max(cornerOne.X, cornerTwo.X),
-        //        Math.Max(cornerOne.Y, cornerTwo.Y),
-        //        Math.Max(cornerOne.Z, cornerTwo.Z));
-        //    _dimension = dimension;
-        //    _world = world;
-        //}
-
         /// <summary>
         /// Creates a new BoxSelection with the specified selection, dimensions and world.
         /// </summary>
@@ -73,7 +57,8 @@ namespace MCFire.Modules.BoxSelector.Models
 
         static IEnumerable<IChunkPartition> PartitionChunks(IEnumerable<IChunk> chunks, BoxSelection boundaries)
         {
-            return chunks.Select(chunk => new ChunkPartition(chunk, boundaries));
+            var cuboid = boundaries.GetCuboid();
+            return chunks.Select(chunk => new ChunkPartition(chunk, cuboid));
         }
 
         // TODO: edit chunks inside selection
@@ -100,29 +85,19 @@ namespace MCFire.Modules.BoxSelector.Models
 
     internal class ChunkPartition : IChunkPartition
     {
-        public ChunkPartition(IChunk chunk, BoxSelection boundaries)
-            : this(chunk, new LocalBlockPosition(chunk, boundaries.Lesser), new LocalBlockPosition(chunk, boundaries.Greater))
-        {
-        }
-
-        public ChunkPartition(IChunk chunk, BlockPosition minimum, BlockPosition maximum)
-            : this(chunk, new LocalBlockPosition(chunk, minimum), new LocalBlockPosition(chunk, maximum))
-        {
-        }
-
-        public ChunkPartition(IChunk chunk, LocalBlockPosition minimum, LocalBlockPosition maximum)
+        public ChunkPartition(IChunk chunk, Cuboid boundaries)
         {
             Chunk = chunk;
 
             var size = chunk.Size();
             // if minimum or maximum are out of bounds, cap them
-            XMin = Math.Min(minimum.X, 0);
-            YMin = Math.Min(minimum.Y, 0);
-            ZMin = Math.Min(minimum.Z, 0);
+            XMin = Math.Min(boundaries.Left, 0);
+            YMin = Math.Min(boundaries.Bottom, 0);
+            ZMin = Math.Min(boundaries.Width, 0);
 
-            XMax = Math.Max(maximum.X, size.X - 1);
-            YMax = Math.Max(maximum.Y, size.Y - 1);
-            ZMax = Math.Max(maximum.Z, size.Z - 1);
+            XMax = Math.Max(boundaries.Left + boundaries.Length, size.X - 1);
+            YMax = Math.Max(boundaries.Bottom + boundaries.Height, size.Y - 1);
+            ZMax = Math.Max(boundaries.Forward + boundaries.Width, size.Z - 1);
         }
 
         /// <summary>

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
+using MCFire.Modules.DragDrop.Models;
 using MCFire.Modules.Explorer.Models;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 using Substrate;
+using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using Vector3 = SharpDX.Vector3;
 
 namespace MCFire.Modules.Editor.Models
@@ -15,7 +19,7 @@ namespace MCFire.Modules.Editor.Models
     /// <summary>
     /// A SharpDx Game used to render a minecraft world.
     /// </summary>
-    public sealed class EditorGame : Game
+    public sealed class EditorGame : Game, IDragSource, IDropTarget
     {
         readonly IEnumerable<IGameComponent> _components;
         // rendering
@@ -27,6 +31,8 @@ namespace MCFire.Modules.Editor.Models
         public SpriteFont Font { get; private set; }
         Texture ErrorTexture { get; set; }
 
+        public Level Level { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
         /// </summary>
@@ -34,21 +40,19 @@ namespace MCFire.Modules.Editor.Models
         /// <param name="components">The game component services.</param>
         /// <param name="world">The Minecraft world to use as a data source.</param>
         /// <param name="dimension">The dimension of the world.</param>
-        public EditorGame([NotNull] SharpDXElement sharpDxElement, [CanBeNull] IEnumerable<IGameComponent> components, [NotNull] MCFireWorld world,
+        public EditorGame([NotNull] SharpDXElement sharpDxElement, [NotNull] IEnumerable<IGameComponent> components, [NotNull] MCFireWorld world,
             int dimension)
         {
             _components = (from component in components
-                           orderby component.DrawPriority
-                           select component).ToArray();
+                orderby component.DrawPriority
+                select component).ToArray();
             World = world;
             Dimension = dimension;
 
-            ToDispose(new GraphicsDeviceManager(this));
+            ToDisposeContent(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
         }
-
-        public Level Level { get; set; }
 
         #region Components
 
@@ -107,6 +111,7 @@ namespace MCFire.Modules.Editor.Models
 
         protected override void LoadContent()
         {
+            GraphicsDevice = base.GraphicsDevice;
             ErrorTexture = ToDisposeContent(Content.Load<Texture2D>("Error"));
 
             // rendering
@@ -138,9 +143,7 @@ namespace MCFire.Modules.Editor.Models
         protected override void UnloadContent()
         {
             foreach (var component in _components)
-            {
                 component.Dispose();
-            }
         }
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
@@ -152,6 +155,63 @@ namespace MCFire.Modules.Editor.Models
         {
             return base.ToDisposeContent(asset);
         }
+
+        #endregion
+
+        #region Drag Drop
+
+        #region Drag Source
+
+        public void StartDrag(IDragInfo dragInfo)
+        {
+            var info = new HandleableDragInfo(dragInfo);
+            foreach (var component in _components)
+            {
+                component.StartDrag(info);
+                if (info.Handled) return;
+            }
+        }
+
+        public void Dropped(IDropInfo dropInfo)
+        {
+            foreach (var component in _components)
+            {
+                component.Dropped(dropInfo);
+                if (!dropInfo.NotHandled) return;
+            }
+        }
+
+        public void DragCancelled()
+        {
+            foreach (var component in _components)
+            {
+                component.DragCancelled();
+            }
+        }
+
+        #endregion
+
+        #region Drop Target
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            foreach (var component in _components)
+            {
+                component.DragOver(dropInfo);
+                if (!dropInfo.NotHandled) return;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            foreach (var component in _components)
+            {
+                component.Drop(dropInfo);
+                if (!dropInfo.NotHandled) return;
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -167,6 +227,8 @@ namespace MCFire.Modules.Editor.Models
         [NotNull]
         public Tasks Tasks { get; private set; }
 
+        public new GraphicsDevice GraphicsDevice { get; private set; }
+
         [NotNull]
         public SharpDXElement SharpDxElement { get; private set; }
 
@@ -175,5 +237,14 @@ namespace MCFire.Modules.Editor.Models
 
         public int Dimension { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
+
+        public void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+            foreach (var component in _components)
+            {
+                component.WpfKeyDown(e);
+                if (e.Handled) return;
+            }
+        }
     }
 }

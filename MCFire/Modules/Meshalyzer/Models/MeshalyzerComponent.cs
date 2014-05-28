@@ -86,7 +86,8 @@ namespace MCFire.Modules.Meshalyzer.Models
             IntegrateNewChunks();
 
             GraphicsDevice.SetBlendState(GraphicsDevice.BlendStates.Opaque);
-
+            // TODO: scissor rectangles http://msdn.microsoft.com/en-us/library/windows/desktop/bb205126(v=vs.85).aspx
+            // the chunk will hold a bounding box, the square will be calculated based on that box.
             foreach (var chunk in _chunks.Values)
             {
                 chunk.Draw(Game);

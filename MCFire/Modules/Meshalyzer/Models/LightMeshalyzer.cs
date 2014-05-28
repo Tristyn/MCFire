@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Windows.Documents;
 using JetBrains.Annotations;
 using MCFire.Modules.Editor.Models;
 using MCFire.Modules.Explorer.Models;
@@ -58,8 +56,8 @@ namespace MCFire.Modules.Meshalyzer.Models
         Buffer<VertexPositionColor> GenerateMainMesh([NotNull] IChunk chunk, EditorGame game)
         {
             var chunkBlocks = chunk.Blocks;
-            var chunkVerticesList = new List<VertexPositionColor>(500);
-            // TODO: speed up meshing by reading chunks sections that exist. some 16x16x16 chunks arent saved.
+            var chunkVerticesList = new List<VertexPositionColor>(13000);
+            // TODO: speed up meshing by reading chunks sections that exist. some 16x16x16 chunks arent saved. (this feature isn't in all map formats)
             for (var y = 0; y < chunkBlocks.YDim; y++)
                 for (var x = 0; x < chunkBlocks.XDim; x++)
                     for (var z = 0; z < chunkBlocks.ZDim; z++)
@@ -87,7 +85,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var yPlusBlock = chunkBlocks.GetBlock(x, y + 1, z);
                             if (yPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.UpQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y + 1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.TopQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y + 1, z)));
                             }
                         }
 
@@ -114,7 +112,7 @@ namespace MCFire.Modules.Meshalyzer.Models
                             var yMinusBlock = chunkBlocks.GetBlock(x, y - 1, z);
                             if (yMinusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.DownQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y - 1, z)));
+                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.BottomQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x, y - 1, z)));
                             }
                         }
 

@@ -69,11 +69,11 @@ namespace MCFire.Modules.Editor.Models
                 case ButtonState.Pressed:
                     if (_previousState == KeyState.Chillin)
                     {
-                        if (Click != null) Click(this, new KeyEventArgs(KeyState.Pressed, position, _previousPosition));
+                        if (Click != null) Click(this, new KeyEventArgs(position, _previousPosition));
                         _previousState = KeyState.Pressed;
                         if (position != _previousPosition)
                         {
-                            if (DragStart != null) DragStart(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
+                            if (DragStart != null) DragStart(this, new KeyEventArgs(position, _previousPosition));
                             _previousState = KeyState.Dragging;
                         }
                     }
@@ -82,17 +82,18 @@ namespace MCFire.Modules.Editor.Models
                         if (position != _previousPosition)
                         {
                             if (DragStart != null)
-                                DragStart(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
+                                DragStart(this, new KeyEventArgs(position, _previousPosition));
                             _previousState = KeyState.Dragging;
                         }
                         else
                         {
                             _previousState = KeyState.Pressed;
+                            if(ClickHeld!=null)ClickHeld(this, new KeyEventArgs(position,_previousPosition));
                         }
                     }
                     if (_previousState == KeyState.Dragging && position != _previousPosition)
                     {
-                        if (DragMove != null) DragMove(this, new KeyEventArgs(KeyState.Dragging, position, _previousPosition));
+                        if (DragMove != null) DragMove(this, new KeyEventArgs(position, _previousPosition));
                         _previousState = KeyState.Dragging;
                     }
                     break;
@@ -100,12 +101,12 @@ namespace MCFire.Modules.Editor.Models
                 case ButtonState.Released:
                     if (_previousState == KeyState.Pressed)
                     {
-                        if (ClickEnd != null) ClickEnd(this, new KeyEventArgs(KeyState.Released, position, _previousPosition));
+                        if (ClickEnd != null) ClickEnd(this, new KeyEventArgs(position, _previousPosition));
                         _previousState = KeyState.Released;
                     }
                     if (_previousState == KeyState.Dragging)
                     {
-                        if (DragEnd != null) DragEnd(this, new KeyEventArgs(KeyState.EndDragging, position, _previousPosition));
+                        if (DragEnd != null) DragEnd(this, new KeyEventArgs(position, _previousPosition));
                         // NOTE THE CHILLIN, not EndDragging!
                         _previousState = KeyState.Chillin;
                     }
@@ -130,6 +131,7 @@ namespace MCFire.Modules.Editor.Models
         public ButtonState State { get; private set; }
 
         public event EventHandler<KeyEventArgs> Click;
+        public event EventHandler<KeyEventArgs> ClickHeld;
         public event EventHandler<KeyEventArgs> DragStart;
         public event EventHandler<KeyEventArgs> DragMove;
         public event EventHandler<KeyEventArgs> DragEnd;

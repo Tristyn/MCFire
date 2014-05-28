@@ -1,17 +1,17 @@
 ﻿using System;
 using JetBrains.Annotations;
-using MCFire.Modules.Editor.ViewModels;
+using MCFire.Modules.Editor.Models;
 
 namespace MCFire.Modules.Editor.Messages
 {
     public abstract class EditorMessage
     {
-        public readonly EditorViewModel EditorViewModel;
+        public readonly EditorGame EditorGame;
 
-        protected EditorMessage([NotNull] EditorViewModel editorViewModel)
+        protected EditorMessage([NotNull] EditorGame editorGame)
         {
-            if (editorViewModel == null) throw new ArgumentNullException("editorViewModel");
-            EditorViewModel = editorViewModel;
+            if (editorGame == null) throw new ArgumentNullException("editorGame");
+            EditorGame = editorGame;
         }
     }
 }

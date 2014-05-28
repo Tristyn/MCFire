@@ -1,11 +1,11 @@
 ﻿using System;
-using MCFire.Modules.Editor.ViewModels;
+using MCFire.Modules.Editor.Models;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
     public interface IEditorTool : IDisposable
     {
-        void Initialize(EditorViewModel editor);
+        void Initialize(EditorGame editor);
         void Selected();
         void Unselected();
     }

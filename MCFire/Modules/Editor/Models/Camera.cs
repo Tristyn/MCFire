@@ -239,18 +239,36 @@ namespace MCFire.Modules.Editor.Models
             if (_disposed)
                 throw new ObjectDisposedException("Camera");
 
+            // translate screen coord into world space
+            var ray = ScreenPointToRay(screenCoords);
+
+            return new ChunkTracer(new VoxelTracer(ray), _game.Dimension, _game.World);
+        }
+
+        public Vector3 UnprojectScreenCoord(Vector3 screenCoords)
+        {
             // expand coord to fit the view
-            screenCoords *= new Vector2(_graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height);
+            screenCoords.X *= _graphicsDevice.BackBuffer.Width;
+            screenCoords.Y *= _graphicsDevice.BackBuffer.Height;
 
             // translate vectors into world space by unprojecting them.
             var customViewport = new ViewportF(0, 0, _graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height, _nearZClip, _farZClip);
-            var near = customViewport.Unproject(new Vector3(screenCoords, _nearZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
-            var far = customViewport.Unproject(new Vector3(screenCoords, _farZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            var worldCoord = customViewport.Unproject(screenCoords, ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            return worldCoord;
+        }
 
-            var traceDirection = (far - near);
-            traceDirection.Normalize();
+        public Ray ScreenPointToRay(Vector2 screenCoords)
+        {
+            // expand coord to fit the view
+            screenCoords.X *= _graphicsDevice.BackBuffer.Width;
+            screenCoords.Y *= _graphicsDevice.BackBuffer.Height;
 
-            return new ChunkTracer(new VoxelTracer(Position, traceDirection), _game.Dimension, _game.World);
+            // translate vectors into world space by unprojecting them.
+            var customViewport = new ViewportF(0, 0, _graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height, _nearZClip, _farZClip);
+            var nearWorldCoord = customViewport.Unproject(new Vector3(screenCoords,_nearZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            var farWorldCoord = customViewport.Unproject(new Vector3(screenCoords,_farZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            var dir = (farWorldCoord - nearWorldCoord).ToNormal();
+            return new Ray(nearWorldCoord, dir);
         }
 
         public void IdleRotate(Vector3 center, float horizontalRadius, float rotSpeed, float pitch)

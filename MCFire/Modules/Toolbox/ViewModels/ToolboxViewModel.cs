@@ -1,55 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
 using JetBrains.Annotations;
-using MCFire.Modules.Editor.Messages;
-using MCFire.Modules.Editor.ViewModels;
+using MCFire.Modules.Toolbox.Messages;
+using MCFire.Modules.Toolbox.Models;
+using MCFire.Modules.Toolbox.Services;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
     [Export]
-    public class ToolboxViewModel : Tool, IHandle<EditorGainedFocusMessage>, IHandle<EditorClosingMessage>
+    public class ToolboxViewModel : Tool, IHandle<CurrentToolboxChangedMessage>
     {
-        [NotNull]
-        List<Toolbox> _tools = new List<Toolbox>();
+        IEnumerable<IEditorTool> _tools;
 
         public ToolboxViewModel()
         {
             DisplayName = "Tools";
         }
 
-        public void Handle(EditorGainedFocusMessage message)
+        void IHandle<CurrentToolboxChangedMessage>.Handle(CurrentToolboxChangedMessage message)
         {
-            Console.WriteLine("Hah!");
+            SetTools(message.Toolbox);
         }
 
-        public void Handle(EditorClosingMessage message)
+        void SetTools([CanBeNull] EditorToolbox toolbox)
         {
-            var tool = _tools.FirstOrDefault(toolbox => toolbox.Editor == message.EditorViewModel);
-            if (tool == null) return;
-
-            _tools.RemoveAll(toolbox => toolbox.Editor == message.EditorViewModel);
+            Tools = toolbox != null ? toolbox.Tools : Enumerable.Empty<IEditorTool>();
         }
 
-        Toolbox GetToolboxForEditor(EditorViewModel editor)
+        [Import]
+        ToolboxService Toolbox
         {
-            var tool = _tools.FirstOrDefault(toolbox => toolbox.Editor == editor);
-            if (tool != null)
-                return tool;
-
-            // create a new toolbox
-            tool = IoC.Get<Toolbox>();
-            tool.Initialize(editor);
-            return tool;
-        }
-
-        public override PaneLocation PreferredLocation
-        {
-            get { return PaneLocation.Left; }
+            // set it to whatever value is present, listen for CurrentToolboxChangedMessages to update
+            set { SetTools(value.CurrentToolbox); }
         }
 
         [Import]
@@ -57,33 +43,29 @@ namespace MCFire.Modules.Toolbox.ViewModels
         {
             set { value.Subscribe(this); }
         }
-    }
 
-    [Export]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
-    public class Toolbox : IDisposable
-    {
-        [ImportMany(typeof(IEditorTool))]
-        IEnumerable<IEditorTool> _tools;
-        public EditorViewModel Editor;
-
-        public void Initialize(EditorViewModel editor)
+        public IEnumerable<IEditorTool> Tools
         {
-            Editor = editor;
-            foreach (var tool in _tools)
+            get { return _tools; }
+            private set
             {
-                tool.Initialize(editor);
+                if (Equals(value, _tools)) return;
+                _tools = value;
+                NotifyOfPropertyChange(() => Tools);
+                NotifyOfPropertyChange(() => NoTools);
             }
         }
 
-        public void Dispose()
+        public bool NoTools { get { return Tools == null || !Tools.Any(); } }
+
+        public override double PreferredWidth
         {
-            foreach (var tool in _tools)
-            {
-                tool.Dispose();
-            }
-            _tools = null;
-            Editor = null;
+            get { return 50; }
+        }
+
+        public override PaneLocation PreferredLocation
+        {
+            get { return PaneLocation.Left; }
         }
     }
 }
