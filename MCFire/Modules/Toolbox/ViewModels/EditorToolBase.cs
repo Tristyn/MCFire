@@ -1,30 +1,12 @@
-﻿using MCFire.Modules.Editor.Models;
-
-namespace MCFire.Modules.Toolbox.ViewModels
+﻿namespace MCFire.Modules.Toolbox.ViewModels
 {
     public abstract class EditorToolBase : IEditorTool
     {
-        EditorGame _editor;
-
         /// <inheritDoc/>
-        public virtual void Initialize(EditorGame editor)
-        {
-            _editor = editor;
-        }
-
+        public abstract string ToolName { get; }
         /// <inheritDoc/>
-        public virtual void Selected()
-        {
-        }
+        public abstract string ToolCategory { get; }
 
-        /// <inheritDoc/>
-        public virtual void Unselected()
-        {
-        }
-
-        /// <inheritDoc/>
-        public virtual void Dispose()
-        {
-        }
+        public virtual bool Selected { get; set; }
     }
 }

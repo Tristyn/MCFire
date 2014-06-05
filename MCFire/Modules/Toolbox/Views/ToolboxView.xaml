@@ -3,36 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:cal="http://www.caliburnproject.org"
              xmlns:viewModels="clr-namespace:MCFire.Modules.Toolbox.ViewModels"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModels:ToolboxViewModel}">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.treeview.xaml" />
     </UserControl.Resources>
     <Grid>
-        <TextBlock Text="Work in progress" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock.LayoutTransform>
-                <RotateTransform Angle="90" />
-            </TextBlock.LayoutTransform>
-        </TextBlock>
-        <!--<ItemsControl ItemsSource="{Binding Tools}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl cal:View.Model="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
+        <ItemsControl ItemsSource="{Binding Categories}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" />
+                    <StackPanel IsItemsHost="True" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-        </ItemsControl>-->
 
-        <!--<TextBlock Text="Open a world to access the toolbox." Visibility="{Binding NoTools,Converter={StaticResource BooleanToVisibilityConverter}}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock.LayoutTransform>
-                <RotateTransform Angle="90" />
-            </TextBlock.LayoutTransform>
-        </TextBlock>-->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" Padding="0,7" />
+                        <ListBox ItemsSource="{Binding Children}" SelectionMode="Single" cal:Message.Attach="[Event SelectionChanged] = [Action ToolSelected($this)]; [Event LostFocus] = [Action DeselectItem($source)]">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Tool.ToolName}" Padding="15,0,0,0"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>

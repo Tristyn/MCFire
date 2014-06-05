@@ -16,7 +16,7 @@ namespace MCFire.Modules.Editor.Models
 
         public Matrix TransformMatrix { set { _transformMatrix.SetValue(value); } }
     }
-
+    // TODO: shouldnt effects load themselves, and those who inherit EffectWrapper have a parameterless constructor
     public abstract class EffectWrapper : IDisposable
     {
         public readonly Effect Effect;

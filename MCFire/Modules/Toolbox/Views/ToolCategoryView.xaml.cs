@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MCFire.Modules.SelectorTool.Views
+namespace MCFire.Modules.Toolbox.Views
 {
     /// <summary>
-    /// Interaction logic for SelectorView.xaml
+    /// Interaction logic for ToolCategoryView.xaml
     /// </summary>
-    public partial class SelectorView : UserControl
+    public partial class ToolCategoryView : UserControl
     {
-        public SelectorView()
+        public ToolCategoryView()
         {
             InitializeComponent();
         }

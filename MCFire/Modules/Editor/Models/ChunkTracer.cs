@@ -81,7 +81,8 @@ namespace MCFire.Modules.Editor.Models
                     });
 
                 // yield return our current ChunkTraceData
-                yield return new ChunkTraceData(currentChunkPos, size, chunkNull ? null : positions, chunkNull ? null : alphaBlocks);
+
+                yield return new ChunkTraceData(currentChunkPos, size??new ChunkSize(16,256,16), chunkNull ? null : positions, chunkNull ? null : alphaBlocks);
 
                 // create new collections for reading the next chunk data
                 positions = new List<LocalBlockPosition>(20);

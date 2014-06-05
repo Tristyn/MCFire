@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{302926
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockPalette", "BlockPalette\BlockPalette.csproj", "{8E6AD770-AE0B-4615-9CA2-E123D7C3E67C}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "MCFire.Architecture", "MCFire.Architecture\MCFire.Architecture.modelproj", "{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,14 @@ Global
 		{8E6AD770-AE0B-4615-9CA2-E123D7C3E67C}.FirstRun|Any CPU.Build.0 = Release|Any CPU
 		{8E6AD770-AE0B-4615-9CA2-E123D7C3E67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E6AD770-AE0B-4615-9CA2-E123D7C3E67C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Editor|Any CPU.ActiveCfg = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Editor|Any CPU.Build.0 = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.FirstRun|Any CPU.ActiveCfg = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.FirstRun|Any CPU.Build.0 = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E73EA63-8BAF-4046-B041-0AB3A7F2067C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

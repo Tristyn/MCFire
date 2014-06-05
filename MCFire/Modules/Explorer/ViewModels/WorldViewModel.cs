@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using Caliburn.Micro;
 using MCFire.Modules.Editor.Actions;
 using MCFire.Modules.Explorer.Models;
-using MCFire.Modules.Explorer.Views;
 using MCFire.Modules.Infrastructure.Enums;
 using Substrate;
 
@@ -20,11 +17,12 @@ namespace MCFire.Modules.Explorer.ViewModels
         {
             Dimensions = new BindableCollection<DimensionViewModel>();
         }
+
         public void OpenEditorTo(DimensionViewModel source)
         {
             // hacky, but i love it.
-            var enumerator = new[] {new OpenEditorTo(source.World, (int) source.Dimension)}.Cast<IResult>().GetEnumerator();
-            Coroutine.BeginExecute(enumerator);
+            var enumerator = new IResult[] {new OpenEditorTo(source.World, (int) source.Dimension)}.AsEnumerable();
+            Coroutine.BeginExecute(enumerator.GetEnumerator());
         }
 
         /// <summary>

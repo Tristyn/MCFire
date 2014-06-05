@@ -2,6 +2,7 @@
 
 namespace MCFire.Modules.Editor.Models
 {
+    // TODO: with entity in place, could ILoadContent be phased out?
     public interface ILoadContent : ICleanup
     {
         void LoadContent(EditorGame game);

@@ -26,7 +26,8 @@ namespace MCFire.Modules.Explorer.Models
             = new Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>>();
         [NotNull]
         readonly IEventAggregator _aggregator = IoC.Get<IEventAggregator>();
-        ChunkSize _chunkSize;
+        [CanBeNull]
+        ChunkSize? _chunkSize;
 
         public MCFireWorld(string path)
         {
@@ -134,7 +135,7 @@ namespace MCFire.Modules.Explorer.Models
             // translate the ChunksFunc to a ChunkRefFunc and call it.
             GetChunks(positions, mode, chunks =>
             {
-                var chunksList= chunks.ToList();
+                var chunksList = chunks.ToList();
                 chunkRefFunc(chunksList[0], chunksList[1], chunksList[2], chunksList[3], chunksList[4]);
             });
         }
@@ -150,9 +151,9 @@ namespace MCFire.Modules.Explorer.Models
             get
             {
                 if (_nbtWorldCreated) return _nbtWorld;
+                _nbtWorldCreated = true;
                 try
                 {
-                    _nbtWorldCreated = true;
                     return _nbtWorld = NbtWorld.Open(_directory.FullName);
                 }
                 catch (DirectoryNotFoundException)
@@ -171,20 +172,25 @@ namespace MCFire.Modules.Explorer.Models
             }
         }
 
-        public ChunkSize ChunkSize
+        [CanBeNull]
+        public ChunkSize? ChunkSize
         {
             get
             {
-                if (_chunkSize != default(ChunkSize))
-                    return _chunkSize;
+                if (_chunkSize != null)
+                    return _chunkSize.Value;
                 // TODO: this is all sorts of bad, there needs to be a system to determine a chunks size using an NbtWorld only
-                if (NbtWorld != null)
-                    lock (_chunkAccessLock)
-                        foreach (var chunk in NbtWorld.GetChunkManager().Where(chunk => chunk != null))
-                            return _chunkSize = new ChunkSize(chunk);
+                var world = NbtWorld;
+                if (world == null)
+                    return null;
+
+                lock (_chunkAccessLock)
+                    foreach (var chunk in world.GetChunkManager().Where(chunk => chunk != null))
+                        return _chunkSize = new ChunkSize(chunk);
+
+                // no chunks exist
                 // TODO: catastrophic state, also worldwide constants like ChunkSize should be available in NbtWorld
-                Debug.Fail("No chunks exist in the world, can not retrieve chunk size. " + NbtWorld.Path);
-                return _chunkSize = new ChunkSize(16, 256, 16);
+                return null;
             }
         }
 

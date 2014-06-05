@@ -29,12 +29,12 @@ namespace MCFire.Modules.Startup
         {
             // remove the toolbox.
             var viewMenu = MainMenu.All.FirstOrDefault(item => item.Name == "View");
-            if (viewMenu == null) return;
-            foreach (var item in viewMenu.Where(item => item.Name == "Toolbox"))
-            {
-                viewMenu.Children.Remove(item);
-                return;
-            }
+            if (viewMenu != null)
+                foreach (var item in viewMenu.Where(item => item.Name == "Toolbox"))
+                {
+                    viewMenu.Children.Remove(item);
+                    break;
+                }
 
 #if EDITOR
             var install = IoC.Get<WorldExplorerService>().Installations.FirstOrDefault();

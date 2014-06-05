@@ -12,7 +12,7 @@ using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
 namespace MCFire.Modules.BoxSelector.Models
 {
-    class BoxVisual : IDrawable, ILoadContent
+    class TiledBoxVisual : IDrawable, ILoadContent
     {
         Texture2D _texture;
         [NotNull]
@@ -30,9 +30,14 @@ namespace MCFire.Modules.BoxSelector.Models
         [NotNull]
         BoxSelectEffect _effect;
 
-        public BoxVisual([NotNull] Texture2D texture)
+        readonly float _textureScaling;
+        readonly float _zBias;
+
+        public TiledBoxVisual([NotNull] Texture2D texture, float textureScaling = 1, float zBias = 0)
         {
             _texture = texture;
+            _textureScaling=textureScaling;
+            _zBias = zBias;
         }
         public void LoadContent(EditorGame game)
         {
@@ -52,8 +57,6 @@ namespace MCFire.Modules.BoxSelector.Models
             }
         }
 
-
-
         public void Draw(EditorGame game)
         {
             game.GraphicsDevice.SetBlendState(game.GraphicsDevice.BlendStates.AlphaBlend);
@@ -63,48 +66,6 @@ namespace MCFire.Modules.BoxSelector.Models
             var cullNone = Cuboid.Within((Point3)game.Camera.Position);
             if (cullNone)
                 game.GraphicsDevice.SetRasterizerState(game.GraphicsDevice.RasterizerStates.CullNone);
-
-            // TODO: texture allignment (up is good)
-            //// up
-            //_effect.TransformMatrix = Matrix.Scaling(Cuboid.XLength, 0, Cuboid.ZLength) *
-            //                          Matrix.Translation(Cuboid.Left, Cuboid.Top + 1, Cuboid.Forward) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.XLength, Cuboid.ZLength, Cuboid.Left, Cuboid.Forward) / 16;
-            //_topQuad.Draw(game.GraphicsDevice);
-
-            //// down
-            //_effect.TransformMatrix = Matrix.Scaling(Cuboid.XLength, 0, Cuboid.ZLength) *
-            //                          Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.ZLength, Cuboid.XLength, Cuboid.Left, Cuboid.Forward) / 16;
-            //_bottomQuad.Draw(game.GraphicsDevice);
-
-            //// right
-            //_effect.TransformMatrix = Matrix.Scaling(0, Cuboid.YLength, Cuboid.ZLength) *
-            //                          Matrix.Translation(Cuboid.Right + 1, Cuboid.Bottom, Cuboid.Forward) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.ZLength, Cuboid.YLength, Cuboid.Forward, Cuboid.Bottom) / 16;
-            //_rightQuad.Draw(game.GraphicsDevice);
-
-            //// left
-            //_effect.TransformMatrix = Matrix.Scaling(0, Cuboid.YLength, Cuboid.ZLength) *
-            //                          Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.ZLength, Cuboid.YLength, Cuboid.Forward, Cuboid.Bottom) / 16;
-            //_leftQuad.Draw(game.GraphicsDevice);
-
-            //// back
-            //_effect.TransformMatrix = Matrix.Scaling(Cuboid.XLength, Cuboid.YLength, 0) *
-            //                          Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Backward + 1) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.XLength, Cuboid.YLength, Cuboid.Left, Cuboid.Bottom) / 16;
-            //_backwardQuad.Draw(game.GraphicsDevice);
-            //// forward
-            //_effect.TransformMatrix = Matrix.Scaling(Cuboid.XLength, Cuboid.YLength, 0) *
-            //                          Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
-            //                          viewProj;
-            //_effect.MainTransform = new Vector4(Cuboid.XLength, Cuboid.YLength, Cuboid.Left, Cuboid.Bottom) / 16;
-            //_forwardQuad.Draw(game.GraphicsDevice);
 
             foreach (var face in FacesUtils.AllFaces)
             {
@@ -116,59 +77,61 @@ namespace MCFire.Modules.BoxSelector.Models
                     Cuboid.GetLengthComponent(topFace),
                     Cuboid.GetPositionComponent(leftFace),
                     Cuboid.GetPositionComponent(topFace));
+
                 // TODO: texture scaling on the bottom face is fudged
+
                 // invert in certain edge cases
-                if (face==Faces.Right)
+                if (face.HasSideFaces())
                 {
-                    transform.X = -transform.X;
                     transform.Y = -transform.Y;
+                    if (face == Faces.Right)
+                    {
+                        transform.X = -transform.X;
+                    }
+                    else if (face == Faces.Forward)
+                    {
+                        transform.X = -transform.X;
+                    }
                 }
-                else if (face == Faces.Forward)
-                {
-                    transform.X = -transform.X;
-                    transform.Y = -transform.Y;
-                }
-                Matrix translation;
 
                 switch (face)
                 {
                     case Faces.Left:
                         _effect.TransformMatrix = Matrix.Scaling(0, Cuboid.Height, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left-_zBias, Cuboid.Bottom, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Bottom:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, 0, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom-_zBias, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Forward:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, Cuboid.Height, 0) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward-_zBias) *
                                                   viewProj;
                         break;
                     case Faces.Right:
                         _effect.TransformMatrix = Matrix.Scaling(0, Cuboid.Height, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left+Cuboid.Length, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left+Cuboid.Length+_zBias, Cuboid.Bottom, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Top:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, 0, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom+Cuboid.Height, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom+Cuboid.Height+_zBias, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Backward:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, Cuboid.Height, 0) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward+Cuboid.Width) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward+Cuboid.Width+_zBias) *
                                                   viewProj;
                         break;
                     default:
-                        Debug.Fail("one of FaceUtils.AllFaces isnt set");
-                        _effect.TransformMatrix = new Matrix();
+                        Debug.Assert(false);
                         break;
                 }
 
-                _effect.MainTransform = transform/16; 
+                _effect.MainTransform = transform*_textureScaling; 
 
                 quad.Draw(game.GraphicsDevice);
             }

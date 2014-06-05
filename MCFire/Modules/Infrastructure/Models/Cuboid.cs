@@ -32,7 +32,7 @@ namespace MCFire.Modules.Infrastructure.Models
             Height = Math.Max(cornerOne.Y, cornerTwo.Y) - bottom;
 
             var forward = Math.Min(cornerOne.Z, cornerTwo.Z);
-            Forward= forward;
+            Forward = forward;
             Width = Math.Max(cornerOne.Z, cornerTwo.Z) - forward;
         }
 
@@ -166,13 +166,13 @@ namespace MCFire.Modules.Infrastructure.Models
                 case Faces.Bottom:
                     return Bottom;
                 case Faces.Forward:
-                   return Forward;
+                    return Forward;
                 case Faces.Right:
-                    return Left+Length;
+                    return Left + Length;
                 case Faces.Top:
-                    return Bottom+Height;
+                    return Bottom + Height;
                 case Faces.Backward:
-                    return Forward+Width;
+                    return Forward + Width;
 
                 default:
                     throw new ArgumentOutOfRangeException("faces");
@@ -215,9 +215,9 @@ namespace MCFire.Modules.Infrastructure.Models
     {
         public static bool Within(this Cuboid cuboid, Point3 position)
         {
-            return position.X >= cuboid.Left && position.X <= cuboid.Left + cuboid.Length
-                && position.Y >= cuboid.Bottom && position.Y <= cuboid.Bottom + cuboid.Height
-                && position.Z >= cuboid.Forward && position.Z <= cuboid.Forward + cuboid.Width;
+            return position.X >= cuboid.Left && position.X < cuboid.Left + cuboid.Length
+                && position.Y >= cuboid.Bottom && position.Y < cuboid.Bottom + cuboid.Height
+                && position.Z >= cuboid.Forward && position.Z < cuboid.Forward + cuboid.Width;
         }
     }
 
@@ -298,7 +298,7 @@ namespace MCFire.Modules.Infrastructure.Models
         {
             return (cuboidComponents & All) != 0;
         }
-        
+
         /// <summary>
         /// Returns the face that is visually facing the opposite direction. Cant use bit-flags or be set to None.
         /// </summary>

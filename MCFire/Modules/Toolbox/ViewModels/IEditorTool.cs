@@ -1,12 +1,13 @@
-﻿using System;
-using MCFire.Modules.Editor.Models;
+﻿using JetBrains.Annotations;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
-    public interface IEditorTool : IDisposable
+    public interface IEditorTool
     {
-        void Initialize(EditorGame editor);
-        void Selected();
-        void Unselected();
+        [NotNull]
+        string ToolName { get; }
+        [NotNull]
+        string ToolCategory { get; }
+        bool Selected { get; set; }
     }
 }

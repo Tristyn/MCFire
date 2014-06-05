@@ -6,6 +6,7 @@ namespace MCFire.Modules.Editor.Messages
 {
     public abstract class EditorMessage
     {
+        [NotNull]
         public readonly EditorGame EditorGame;
 
         protected EditorMessage([NotNull] EditorGame editorGame)

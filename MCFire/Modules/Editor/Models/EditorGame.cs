@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using MCFire.Modules.DragDrop.Models;
@@ -89,7 +88,6 @@ namespace MCFire.Modules.Editor.Models
             _basicEffect.World = Matrix.Identity;
             _basicEffect.View = Camera.ViewMatrix;
             _basicEffect.Projection = Camera.ProjectionMatrix;
-
             // draw components
             foreach (var component in _components)
             {

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Windows.Forms;
 using GongSolutions.Wpf.DragDrop;
 using MCFire.Modules.DragDrop.Models;
 using MCFire.Modules.Explorer.Models;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
-using KeyEventHandler = System.Windows.Input.KeyEventHandler;
 
 namespace MCFire.Modules.Editor.Models
 {
@@ -13,6 +11,7 @@ namespace MCFire.Modules.Editor.Models
     {
         protected EditorGame Game { get; private set; }
         // TODO: add an Update that runs off of the game loop (TPL mabey?) that gets used for blocking/long running calls (eg: voxel tracing in BoxSelectorComponent and the meshalyzer)
+        // TODO: perhaps EditorGame, IGameComponents and IEditorTool shouldn't have access to MCFireWorld and code that relies on this gets moved to MCFire.Core 
         public virtual void Update(GameTime time) { }
         public virtual void Draw(GameTime time) { }
 

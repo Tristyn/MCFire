@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Models
 {
@@ -77,6 +80,7 @@ namespace MCFire.Modules.Infrastructure.Models
         /// <summary>
         /// Returns if any faces are positive.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AnyPositive(this Faces faces)
         {
             return (faces & FacesUtils.PositiveFaces) != 0;
@@ -85,14 +89,44 @@ namespace MCFire.Modules.Infrastructure.Models
         /// <summary>
         /// Returns if any faces are negative.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AnyNegative(this Faces faces)
         {
             return (faces & FacesUtils.NegativeFaces) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasSideFaces(this Faces faces)
         {
             return (faces & FacesUtils.SideFace) != 0;
+        }
+
+        /// <summary>
+        /// Returns a unit vector aligned to the axis
+        /// </summary>
+        /// <param name="face"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 GetNormal(this Faces face)
+        {
+            switch (face)
+            {
+                case Faces.Left:
+                    return Vector3.Left;
+                case Faces.Bottom:
+                    return Vector3.Down;
+                case Faces.Forward:
+                    return Vector3.ForwardRH;
+                case Faces.Right:
+                    return Vector3.Right;
+                case Faces.Top:
+                    return Vector3.Up;
+                case Faces.Backward:
+                    return Vector3.BackwardRH;
+                default:
+                    Debug.Fail("When calling GetNormal, face must be set to a single face.");
+                    return Vector3.Left;
+            }
         }
     }
 }

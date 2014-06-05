@@ -1,4 +1,5 @@
 ﻿using System;
+using MCFire.Modules.Infrastructure.Models;
 using SharpDX;
 
 namespace MCFire.Modules.Infrastructure.Extensions
@@ -30,6 +31,27 @@ namespace MCFire.Modules.Infrastructure.Extensions
             if (abs.Y > abs.Z)
                 return vector.Y > 0 ? Vector3.Up : Vector3.Down;
             return vector.Z > 0 ? Vector3.BackwardRH : Vector3.ForwardRH;
+        }
+
+        /// <summary>
+        /// Returns a face based on the direction of a unit vector.
+        /// </summary>
+        public static Faces GetFace(this Vector3 vector)
+        {
+            var abs = vector.Absolute();
+
+            // determine the greatest component of abs, then check if the same component of vector is positive
+            if (abs.X > abs.Y)
+            {
+                if (abs.X > abs.Z)
+                    return vector.X > 0 ? Faces.Right : Faces.Left;
+                return vector.Z > 0 ? Faces.Backward : Faces.Forward;
+            }
+
+            if (abs.Y > abs.Z)
+                return vector.Y > 0 ? Faces.Top :Faces.Bottom;
+            return vector.Z > 0 ? Faces.Backward : Faces.Forward;
+            
         }
 
         public static Vector3 Absolute(this Vector3 vector)

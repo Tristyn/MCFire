@@ -39,19 +39,6 @@ namespace MCFire.Modules.BoxSelector.Models
         }
 
         /// <summary>
-        /// Length of the selection on the X axis (zero based like a list length)
-        /// </summary>
-        public int XLength { get { return Math.Abs(Right - Left) + 1; } } // + 1 because it is technically a collection length
-        /// <summary>
-        /// Height of the selection on the Y axis (zero based like a list length)
-        /// </summary>
-        public int YLength { get { return Math.Abs(Top - Bottom) + 1; } }
-        /// <summary>
-        /// Width of the selection on the Z axis (zero based like a list length)
-        /// </summary>
-        public int ZLength { get { return Math.Abs(Forward - Backward) + 1; } }
-
-        /// <summary>
         /// The X value of the right-most (1,0,0) face of the box.
         /// </summary>
         public int Right { get { return Math.Max(CornerOne.X, CornerTwo.X); } }
@@ -78,7 +65,22 @@ namespace MCFire.Modules.BoxSelector.Models
 
         public Cuboid GetCuboid()
         {
-            return new Cuboid(CornerOne, CornerTwo);
+            // lengths of the cuboid are floored at 1
+            var pos1 = CornerOne;
+            var pos2 = CornerTwo;
+
+            var minX = Math.Min(pos1.X, pos2.X);
+            var minY = Math.Min(pos1.Y, pos2.Y);
+            var minZ = Math.Min(pos1.Z, pos2.Z);
+            var maxX = Math.Max(pos1.X, pos2.X);
+            var maxY = Math.Max(pos1.Y, pos2.Y);
+            var maxZ = Math.Max(pos1.Z, pos2.Z);
+
+            return new Cuboid(
+                minX, minY, minZ,
+                maxX == minX ? 1 : maxX - minX+1,
+                maxY == minY ? 1 : maxY - minY+1,
+                maxZ == minZ ? 1 : maxZ - minZ+1);
         }
 
         /// <summary>

@@ -51,6 +51,26 @@ namespace MCFire.Modules.Infrastructure.Models
             return !left.Equals(right);
         }
 
+        public static Point3 operator +(Point3 left, Point3 right)
+        {
+            return new Point3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+        }
+
+        public static Point3 operator *(Point3 left, Point3 right)
+        {
+            return new Point3(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
+        }
+
+        public static Point3 operator -(Point3 left, Point3 right)
+        {
+            return new Point3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+        }
+
+        public static Point3 operator /(Point3 value, Point3 scale)
+        {
+            return new Point3(value.X / scale.X, value.Y / scale.Y, value.Z / scale.Z);
+        }
+
         public bool Equals(Point3 other)
         {
             return X == other.X && Y == other.Y && Z == other.Z;

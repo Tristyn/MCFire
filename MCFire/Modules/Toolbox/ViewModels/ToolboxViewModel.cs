@@ -1,71 +1,86 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows.Controls;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
-using JetBrains.Annotations;
-using MCFire.Modules.Toolbox.Messages;
-using MCFire.Modules.Toolbox.Models;
 using MCFire.Modules.Toolbox.Services;
 
 namespace MCFire.Modules.Toolbox.ViewModels
 {
     [Export]
-    public class ToolboxViewModel : Tool, IHandle<CurrentToolboxChangedMessage>
+    public class ToolboxViewModel : Tool
     {
-        IEnumerable<IEditorTool> _tools;
+        BindableCollection<ToolCategoryModel> _categories = 
+            new BindableCollection<ToolCategoryModel>();
+
+        [Import] ToolboxService _toolbox;
 
         public ToolboxViewModel()
         {
             DisplayName = "Tools";
+
+            // assign tools to their categories
+            var tools = IoC.Get<ToolboxService>().Tools;
+            var categories = new BindableCollection<ToolCategoryModel>();
+
+            foreach (var tool in tools)
+            {
+                var matchingCat = categories.FirstOrDefault(cat => cat.Name == tool.ToolCategory);
+
+                if (matchingCat == null)
+                {
+                    matchingCat = new ToolCategoryModel();
+                    matchingCat.Name = tool.ToolCategory;
+                    categories.Add(matchingCat);
+                }
+
+                var toolViewModel = new ToolModel(tool);
+                matchingCat.Children.Add(toolViewModel);
+            }
+
+            Categories = categories;
         }
 
-        void IHandle<CurrentToolboxChangedMessage>.Handle(CurrentToolboxChangedMessage message)
+        #region View
+
+        public void ToolSelected(object item)
         {
-            SetTools(message.Toolbox);
+            var tool = item as ToolModel;
+            if (tool == null) return;
+            _toolbox.SetCurrentTool(tool.Tool);
         }
 
-        void SetTools([CanBeNull] EditorToolbox toolbox)
+        public void DeselectItem(ListBox dataContext)
         {
-            Tools = toolbox != null ? toolbox.Tools : Enumerable.Empty<IEditorTool>();
+            dataContext.SelectedIndex = -1;
         }
 
-        [Import]
-        ToolboxService Toolbox
+        public BindableCollection<ToolCategoryModel> Categories
         {
-            // set it to whatever value is present, listen for CurrentToolboxChangedMessages to update
-            set { SetTools(value.CurrentToolbox); }
-        }
-
-        [Import]
-        public IEventAggregator Aggregator
-        {
-            set { value.Subscribe(this); }
-        }
-
-        public IEnumerable<IEditorTool> Tools
-        {
-            get { return _tools; }
+            get { return _categories; }
             private set
             {
-                if (Equals(value, _tools)) return;
-                _tools = value;
-                NotifyOfPropertyChange(() => Tools);
-                NotifyOfPropertyChange(() => NoTools);
+                if (Equals(value, _categories)) return;
+                _categories = value;
+                NotifyOfPropertyChange(() => Categories);
             }
         }
 
-        public bool NoTools { get { return Tools == null || !Tools.Any(); } }
+        #endregion
+
+        #region Gemini
 
         public override double PreferredWidth
         {
-            get { return 50; }
+            get { return 150; }
         }
 
         public override PaneLocation PreferredLocation
         {
             get { return PaneLocation.Left; }
         }
+
+        #endregion
     }
 }

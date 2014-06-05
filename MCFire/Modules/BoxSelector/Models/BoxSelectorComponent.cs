@@ -21,7 +21,8 @@ namespace MCFire.Modules.BoxSelector.Models
     [Export(typeof(IGameComponent))]
     public class BoxSelectorComponent : GameComponentBase
     {
-        BoxVisual _box;
+        TiledBoxVisual _box;
+        [CanBeNull]
         BoxSelection _selection;
         [NotNull]
         Texture2D _gridTexture;
@@ -29,22 +30,21 @@ namespace MCFire.Modules.BoxSelector.Models
         SelectionState _selectionState;
         Ray _faceDragRay;
 
-
+        [Import] BoxSelectorTool _tool;
         [Import]
         IEventAggregator _aggregator;
+        TranslationGizmo _translationGizmo;
 
         public override void LoadContent(EditorGame game)
         {
             base.LoadContent(game);
             var gridTexture = game.LoadContent<Texture2D>("Grid");
+            _translationGizmo = new TranslationGizmo(game);
             if (gridTexture == null)
                 throw new SharpDXException();
             _gridTexture = gridTexture;
-            _box = new BoxVisual(gridTexture);
+            _box = new TiledBoxVisual(gridTexture, 1f / 16, .01f);
             _box.LoadContent(game);
-
-            // TODO: proper state management (Enabled)
-            Enabled = true;
 
             // state
             _selectionState = SelectionState.NotSet;
@@ -58,11 +58,14 @@ namespace MCFire.Modules.BoxSelector.Models
 
         void ClickEnd(object sender, KeyEventArgs e)
         {
-            if (!Enabled) return;
+            if(!_tool.Selected)
+                return;
 
             BlockPosition pos;
             if (!Tasks.TryGetBlockAtScreenCoord(e.Position, out pos))
                 return;
+
+            var selection = _selection;
 
             switch (_selectionState)
             {
@@ -70,12 +73,12 @@ namespace MCFire.Modules.BoxSelector.Models
                     NewSelection(pos, pos, SelectionState.HalfSet);
                     break;
                 case SelectionState.HalfSet:
-                    NewSelection(_selection.CornerOne, pos, SelectionState.Set);
-                    Console.WriteLine(_selection.GetCuboid());
+                case SelectionState.DragMove:
+                    if (selection != null)
+                        NewSelection(selection.CornerOne, pos, SelectionState.Set);
+                    else NewSelection(pos, pos, SelectionState.HalfSet);
                     break;
                 case SelectionState.Set:
-                    // TODO: dragging the selection faces along their normal axes
-                    // if the click missed the BoxSelection, create a new selection.
                     NewSelection(pos, pos, SelectionState.HalfSet);
                     break;
                 default:
@@ -90,12 +93,10 @@ namespace MCFire.Modules.BoxSelector.Models
             var selection = new BoxSelection(pos1, pos2);
             _selection = selection;
             _selectionState = newState;
-
             // notify only if selection is set.
-            if (newState != SelectionState.Set) return;
-
-            // use the selection (on the stack) to avoid modified closure.
-            _aggregator.Publish(new BoxSelectionUpdatedMessage(selection, box => new BlockSelection(selection, Dimension, World)));
+            if (newState == SelectionState.Set)
+                // use selection (on the stack) to avoid modified closure.
+                _aggregator.Publish(new BoxSelectionUpdatedMessage(selection, box => new BlockSelection(selection, Dimension, World)));
         }
 
 
@@ -104,8 +105,11 @@ namespace MCFire.Modules.BoxSelector.Models
             // Drag the face of the selection along its axis
             if (_selectionState != SelectionState.Set) return;
             var selection = _selection;
+            if (selection == null) return;
+
+            var cuboid = selection.GetCuboid();
             var lesser = selection.Lesser;
-            var greater = selection.Greater;
+            var greater = cuboid.Position + cuboid.Dimensions;
             var pos = Camera.Position;
 
             // Calculate if the mouse is over the selection
@@ -117,35 +121,38 @@ namespace MCFire.Modules.BoxSelector.Models
 
             // enumerate faces
             // left
-            Console.WriteLine("Hit at {0}", roundedHit);
-            if (pos.X < roundedHit.X && new Plane(lesser, Vector3.Left).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            if (pos.X < roundedHit.X && Math.Abs(hit.X - lesser.X) < .01 && new Plane(lesser, Vector3.Left).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.Left);
             // right
-            else if (pos.X > roundedHit.X && new Plane(greater, Vector3.Right).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            else if (pos.X > roundedHit.X && Math.Abs(hit.X - greater.X) < .01 && new Plane(greater, Vector3.Right).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.Right);
             // down
-            else if (pos.Y < roundedHit.Y && new Plane(lesser, Vector3.Down).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            else if (pos.Y < roundedHit.Y && Math.Abs(hit.Y - lesser.Y) < .01 && new Plane(lesser, Vector3.Down).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.Down);
             // up
-            else if (pos.Y > roundedHit.Y && new Plane(greater, Vector3.Up).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            else if (pos.Y > roundedHit.Y && Math.Abs(hit.Y - greater.Y) < .01 && new Plane(greater, Vector3.Up).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.Up);
             // forward
-            else if (pos.Z < roundedHit.Z && new Plane(lesser, Vector3.ForwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            else if (pos.Z < roundedHit.Z && Math.Abs(hit.Z - lesser.Z) < .01 && new Plane(lesser, Vector3.ForwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.ForwardRH);
             // back
-            else if (pos.Z > roundedHit.Z && new Plane(greater, Vector3.BackwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
+            else if (pos.Z > roundedHit.Z && Math.Abs(hit.Z - greater.Z) < .01 && new Plane(greater, Vector3.BackwardRH).Intersects(ref roundedHit) == PlaneIntersectionType.Intersecting)
                 _faceDragRay = new Ray(roundedHit, Vector3.BackwardRH);
         }
 
         void DragMove(object sender, KeyEventArgs e)
         {
-            if (!Enabled) return;
+            // update face drag
+            if (!_tool.Selected) return;
+
+            var selection = _selection;
+            if (selection == null) return;
 
             var faceDragRay = _faceDragRay;
-            var pos = Camera.Position;
-            // update face drag
             if (faceDragRay == default(Ray))
                 return;
+
+            var pos = Camera.Position;
 
             // dragPlane is used to hit-test the unpropjected mouse position
             // we need to calculate the dragPlane every DragMove, as Camera.Position can change
@@ -163,49 +170,89 @@ namespace MCFire.Modules.BoxSelector.Models
             var b = faceDragRay.Distance(mouseHit);
             var a = (float)Math.Sqrt(cSquared - b * b);
 
+            // Determine if the drag is moving the face away or towards its center
+            // We need this because direction information is always positive
+            var draggingFromCenter = Vector3.Dot(faceDragRay.Direction, diff) < 0;
+            if (draggingFromCenter)
+                a = -a;
+
             var dragPosWorldSpace = faceDragRay.Position + faceDragRay.Direction * a;
-            var alignedDragDir = faceDragRay.Direction.AlignToClosestAxis();
-            var selection = _selection;
+            var alignedDragDir = faceDragRay.Direction.GetFace();
             var lesser = selection.Lesser;
             var greater = selection.Greater;
 
-            // ReSharper disable CompareOfFloatsByEqualityOperator - AlignToClosestAxis() sets a component to +-one
-            if (alignedDragDir.X == 1)
-                _selection = new BoxSelection(lesser, new BlockPosition((int)dragPosWorldSpace.X, greater.Y, greater.Z));
-            else if (alignedDragDir.X == -1)
-                _selection = new BoxSelection(new BlockPosition((int)dragPosWorldSpace.X, lesser.Y, lesser.Z), greater);
-            else if (alignedDragDir.Y == 1)
-                _selection = new BoxSelection(lesser, new BlockPosition(greater.X, (int)dragPosWorldSpace.Y, greater.Z));
-            else if (alignedDragDir.Y == -1)
-                _selection = new BoxSelection(new BlockPosition(lesser.X, (int)dragPosWorldSpace.Y, lesser.Z), greater);
-            else if (alignedDragDir.Z == 1)
-                _selection = new BoxSelection(lesser, new BlockPosition(greater.X, greater.Y, (int)dragPosWorldSpace.Z));
-            else if (alignedDragDir.Z == -1)
-                _selection = new BoxSelection(new BlockPosition(lesser.X, lesser.Y, (int)dragPosWorldSpace.Z), greater);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+            switch (alignedDragDir)
+            {
+                case Faces.Left:
+                    NewSelection(new BlockPosition((int)dragPosWorldSpace.X, lesser.Y, lesser.Z), greater, SelectionState.DragMove);
+                    break;
+                case Faces.Right:
+                    NewSelection(lesser, new BlockPosition((int)dragPosWorldSpace.X, greater.Y, greater.Z), SelectionState.DragMove);
+                    break;
+                case Faces.Bottom:
+                    NewSelection(new BlockPosition(lesser.X, (int)dragPosWorldSpace.Y, lesser.Z), greater, SelectionState.DragMove);
+                    break;
+                case Faces.Top:
+                    NewSelection(lesser, new BlockPosition(greater.X, (int)dragPosWorldSpace.Y, greater.Z), SelectionState.DragMove);
+                    break;
+                case Faces.Forward:
+                    NewSelection(new BlockPosition(lesser.X, lesser.Y, (int)dragPosWorldSpace.Z), greater, SelectionState.DragMove);
+                    break;
+                case Faces.Backward:
+                    NewSelection(lesser, new BlockPosition(greater.X, greater.Y, (int)dragPosWorldSpace.Z), SelectionState.DragMove);
+                    break;
+                default:
+                    Debug.Fail("Vector3Extensions.GetFace didn't return a valid face");
+                    break;
+            }
         }
 
         private void DragEnd(object sender, KeyEventArgs e)
         {
             _faceDragRay = default(Ray);
+            var selection = _selection;
+            if (selection != null)
+                NewSelection(selection.CornerOne, selection.CornerTwo, SelectionState.Set);
+        }
+
+        bool TryGetGizmoPosition(out Vector3 position)
+        {
+            var selection = _selection;
+            if (selection == null)
+            {
+                position = new Vector3();
+                return false;
+            }
+
+            var cuboid = selection.GetCuboid();
+            position = new Vector3(
+                cuboid.Left + (cuboid.Length / 2) + .5f,
+                cuboid.Bottom + (cuboid.Height / 2) + .5f,
+                cuboid.Forward + (cuboid.Width / 2) + .5f);
+            return true;
         }
 
         public override void Update(GameTime time)
         {
-            if (!Enabled) return;
+            if (!_tool.Selected) return;
 
             BlockPosition pos;
             if (!Tasks.TryGetBlockAtScreenCoord(Mouse.Position, out pos))
                 return;
 
+            // When the drag is half set, 
             switch (_selectionState)
             {
                 case SelectionState.NotSet:
                     _selection = new BoxSelection(pos, pos);
                     break;
                 case SelectionState.HalfSet:
-                    _selection = new BoxSelection(_selection.CornerOne, pos);
+                    var selection = _selection;
+                    if (selection == null) return;
+
+                    NewSelection(selection.CornerOne, pos, SelectionState.HalfSet);
                     break;
+                case SelectionState.DragMove:
                 case SelectionState.Set:
                     break;
                 default:
@@ -215,7 +262,22 @@ namespace MCFire.Modules.BoxSelector.Models
 
         public override void Draw(GameTime time)
         {
-            _box.Cuboid = _selection.GetCuboid();
+            var selection = _selection;
+            if (selection == null) return;
+
+            var cuboid = selection.GetCuboid();
+
+            Vector3 position;
+            if ((cuboid.Length > 1 || cuboid.Height > 1 || cuboid.Width > 1)
+                && TryGetGizmoPosition(out position))
+            {
+                _translationGizmo.Position = position;
+                var dist = Vector3.Distance(position, Camera.Position);
+                _translationGizmo.Scale = Math.Max((dist) / 8, .75f);
+                _translationGizmo.Draw(Game);
+            }
+
+            _box.Cuboid = cuboid;
             _box.Draw(Game);
         }
 
@@ -223,6 +285,7 @@ namespace MCFire.Modules.BoxSelector.Models
         {
             _box.Dispose();
             _gridTexture.Dispose();
+            _translationGizmo.Dispose();
         }
 
         public override void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
@@ -230,22 +293,18 @@ namespace MCFire.Modules.BoxSelector.Models
             if (e.Key != Key.C || System.Windows.Input.Keyboard.Modifiers != ModifierKeys.Control) return;
 
             // Ctrl+C
-            if (!Enabled) return;
+            if (!_tool.Selected) return;
             _aggregator.Publish(new ClipboardCopyEvent(new BlockSelection(_selection, Dimension, World)));
         }
 
         public override int DrawPriority { get { return 500; } }
 
-        /// <summary>
-        /// If this component is enabled.
-        /// </summary>
-        public bool Enabled { get; set; }
-
         private enum SelectionState
         {
             NotSet,
             HalfSet,
-            Set
+            Set,
+            DragMove
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using GongSolutions.Wpf.DragDrop;
+﻿using GongSolutions.Wpf.DragDrop;
 using MCFire.Modules.DragDrop.Models;
 using SharpDX.Toolkit;
 
@@ -38,6 +37,14 @@ namespace MCFire.Modules.Editor.Models
         #endregion
 
         void WpfKeyDown(System.Windows.Input.KeyEventArgs e);
+    }
+
+    /// <summary>
+    /// An extension of IGameComponent, where 
+    /// </summary>
+    public interface IToolComponent
+    {
+        bool ToolEnabled { set; }
     }
 
     namespace MCFire.Modules.Infrastructure.Interfaces
