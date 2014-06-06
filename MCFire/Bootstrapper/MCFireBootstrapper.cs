@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Windows;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 

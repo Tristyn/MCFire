@@ -239,46 +239,6 @@
     <Compile Include="Modules\Explorer\Views\WorldView.xaml.cs">
       <DependentUpon>WorldView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\Files\Commands\IFileExplorerCommand.cs" />
-    <Compile Include="Modules\Files\Content\FileContent.cs" />
-    <Compile Include="Modules\Files\Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Modules\Files\Converters\NullableBoolToPathConverter.cs" />
-    <Compile Include="Modules\Files\Events\FileContentEventArgs.cs" />
-    <Compile Include="Modules\Files\Events\FolderEventArgs.cs" />
-    <Compile Include="Modules\Files\Events\FolderItemExistsChangedEventArgs.cs" />
-    <Compile Include="Modules\Files\Events\FolderItemNameChangedEventArgs.cs" />
-    <Compile Include="Modules\Files\Events\FolderItemRefreshedEventArgs.cs" />
-    <Compile Include="Modules\Files\Messages\FileCreatedMessage.cs" />
-    <Compile Include="Modules\Files\Messages\FileOpenedMessage.cs" />
-    <Compile Include="Modules\Files\Messages\FormatExtensionsChangedMessage.cs" />
-    <Compile Include="Modules\Files\Models\File.cs" />
-    <Compile Include="Modules\Files\Models\Folder.cs" />
-    <Compile Include="Modules\Files\Models\IFile.cs" />
-    <Compile Include="Modules\Files\Models\IFolder.cs" />
-    <Compile Include="Modules\Files\Models\IFolderItem.cs" />
-    <Compile Include="Modules\Files\Models\UnknownFile.cs" />
-    <Compile Include="Modules\Files\Module.cs" />
-    <Compile Include="Modules\Files\Services\FileFactory.cs" />
-    <Compile Include="Modules\Files\Services\FolderService.cs" />
-    <Compile Include="Modules\Files\Services\Format.cs" />
-    <Compile Include="Modules\Files\Services\IFormat.cs" />
-    <Compile Include="Modules\Files\ViewModels\ExplorerViewModel.cs" />
-    <Compile Include="Modules\Files\ViewModels\FolderItemViewModel.cs" />
-    <Compile Include="Modules\Files\ViewModels\IFileExplorerViewModel.cs" />
-    <Compile Include="Modules\Files\ViewModels\NewFolderCommandViewModel.cs" />
-    <Compile Include="Modules\Files\ViewModels\RefreshCommandViewModel.cs" />
-    <Compile Include="Modules\Files\Views\ExplorerView.xaml.cs">
-      <DependentUpon>ExplorerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\Files\Views\FolderItemView.xaml.cs">
-      <DependentUpon>FolderItemView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\Files\Views\NewFolderCommandView.xaml.cs">
-      <DependentUpon>NewFolderCommandView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\Files\Views\RefreshCommandView.xaml.cs">
-      <DependentUpon>RefreshCommandView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Modules\Infrastructure\Controls\AnimatedContentControl.cs" />
     <Compile Include="Modules\Infrastructure\Controls\ExtendedTreeView.cs" />
     <Compile Include="Modules\Infrastructure\Converters\GameTypeToImageUriConverter.cs" />
@@ -1340,22 +1300,6 @@
     <Page Include="Modules\Explorer\Views\WorldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Modules\Files\Views\ExplorerView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Modules\Files\Views\FolderItemView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Modules\Files\Views\NewFolderCommandView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Modules\Files\Views\RefreshCommandView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Modules\Infrastructure\Views\CommandsView.xaml">
       <Generator>MSBuild:Compile</Generator>
