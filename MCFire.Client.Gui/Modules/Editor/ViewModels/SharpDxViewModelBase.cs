@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Windows;
+using Caliburn.Micro;
+using Gemini.Framework;
 using JetBrains.Annotations;
 
 namespace MCFire.Client.Gui.Modules.Editor.ViewModels
@@ -9,7 +14,7 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
         [CanBeNull]
         Game _game;
         SharpDXElement _sharpDxElement;
-
+        // TODO: MCFire.Client cant have a reference to SharpDx, so no SharpDXElement
         /// <summary>
         /// Manages the lifetime of a Game and a SharpDxElement. 
         /// This calls gameFunc.Run(SharpDxElement), and it will call dispose on both objects when the document closes.

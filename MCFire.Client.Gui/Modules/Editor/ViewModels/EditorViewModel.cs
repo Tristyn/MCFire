@@ -1,10 +1,16 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using Caliburn.Micro;
+using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
+using MCFire.Client.Gui.Modules.Editor.Messages;
+using MCFire.Common;
 using MCFire.Graphics.Modules.Editor.Messages;
 using MCFire.Graphics.Modules.Editor.Models;
 using MCFire.Graphics.Modules.Editor.Views;
+using Action = System.Action;
 
-namespace MCFire.Graphics.Modules.Editor.ViewModels
+namespace MCFire.Client.Gui.Modules.Editor.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export]
@@ -24,7 +30,7 @@ namespace MCFire.Graphics.Modules.Editor.ViewModels
             DisplayName = "Editor";
         }
 
-        public bool TryInitializeTo([NotNull] MCFireWorld world, int dimension)
+        public bool TryInitializeTo([NotNull] World world, int dimension)
         {
             if (_view != null)
                 return TryInitializeToInternal(world, dimension);
@@ -34,7 +40,7 @@ namespace MCFire.Graphics.Modules.Editor.ViewModels
             return true;
         }
 
-        bool TryInitializeToInternal([NotNull] MCFireWorld world, int dimension)
+        bool TryInitializeToInternal([NotNull] World world, int dimension)
         {
             if (world == null) throw new ArgumentNullException("world");
 

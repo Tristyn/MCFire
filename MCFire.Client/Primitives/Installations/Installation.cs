@@ -1,11 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using JetBrains.Annotations;
-using MCFire.Client.Services.Explorer;
+using MCFire.Client.Modules.Installations.Game;
+using MCFire.Client.Modules.Installations.Server;
+using MCFire.Common;
 
-namespace MCFire.Client.Modules.Explorer.Models
+namespace MCFire.Client.Primitives.Installations
 {
-    public abstract class Installation : WorldBrowserItem
+    public abstract class Installation:IInstallation
     {
         readonly string _path;
         protected readonly DirectoryInfo Directory;
@@ -16,9 +19,7 @@ namespace MCFire.Client.Modules.Explorer.Models
             Directory = new DirectoryInfo(path);
         }
 
-        public abstract InstallationType Type { get; }
-
-        public abstract ObservableCollection<MCFireWorld> Worlds { get; }
+        public abstract ObservableCollection<World> Worlds { get; }
 
         /// <summary>
         /// Detects if an installation is a server or game, and returns an instance.
@@ -44,7 +45,7 @@ namespace MCFire.Client.Modules.Explorer.Models
             return null;
         }
 
-        public override string Title
+        public virtual string Title
         {
             get { return Directory.Name; }
         }
@@ -54,10 +55,5 @@ namespace MCFire.Client.Modules.Explorer.Models
             get { return _path; }
         }
     }
-
-    public enum InstallationType
-    {
-        Game,
-        Server
-    }
 }
+

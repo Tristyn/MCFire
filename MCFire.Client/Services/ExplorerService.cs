@@ -2,9 +2,11 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using JetBrains.Annotations;
-using MCFire.Client.Modules.Explorer.Models;
+using MCFire.Client.Primitives.Installations;
+using MCFire.Client.Services.Explorer;
+using MCFire.Core.Modules.Infrastructure.Extensions;
 
-namespace MCFire.Client.Modules.Explorer.Services
+namespace MCFire.Client.Services
 {
     [Export(typeof(IWorldExplorerService))]
     public class WorldWorldExplorerService : IWorldExplorerService

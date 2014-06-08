@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using JetBrains.Annotations;
-using MCFire.Client.Modules.Explorer.Models;
+using MCFire.Client.Primitives.Installations;
+using MCFire.Client.Services.Explorer;
 
-namespace MCFire.Client.Modules.Explorer.Services
+namespace MCFire.Client.Services
 {
     public interface IWorldExplorerService
     {

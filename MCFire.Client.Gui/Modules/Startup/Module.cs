@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using Gemini.Framework;
 using MCFire.Client.Gui.Modules.Metro.ViewModels;
+using MCFire.Core.Modules.Startup.Models;
 
 namespace MCFire.Client.Gui.Modules.Startup
 {
@@ -10,6 +12,13 @@ namespace MCFire.Client.Gui.Modules.Startup
     {
         [Import]
         IOverlayHost _overlayHost;
+
+        // create all startup objects
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once ValueParameterNotUsed
+        [ImportMany]
+        IEnumerable<ICreateAtStartup> StartupObjects { set { } }
+
         public override void Initialize()
         {
             MainWindow.Title = "MCFire - Getchyo snacks!";

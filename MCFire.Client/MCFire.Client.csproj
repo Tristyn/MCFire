@@ -82,17 +82,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\IInstallationTypeFactory.cs" />
+    <Compile Include="Modules\Installations\Game\GameInstallation.cs" />
+    <Compile Include="Modules\Installations\Game\GameInstallationFactory.cs" />
+    <Compile Include="Modules\Installations\Server\ServerInstallation.cs" />
+    <Compile Include="Modules\Installations\Server\ServerInstallationFactory.cs" />
+    <Compile Include="Primitives\Installations\IInstallation.cs" />
+    <Compile Include="Primitives\Installations\Installation.cs" />
     <Compile Include="Services\ClipboardService.cs" />
+    <Compile Include="Services\Clipboard\ClipboardCopyMessage.cs" />
     <Compile Include="Services\IClipboardService.cs" />
     <Compile Include="Framework\DragDrop\HandleableDragInfo.cs" />
     <Compile Include="Framework\DragDrop\IHandlableDragInfo.cs" />
     <Compile Include="Services\Explorer\Messages\ChunkMessage.cs" />
     <Compile Include="Services\Explorer\Messages\ChunkModifiedMessage.cs" />
-    <Compile Include="Services\Explorer\GameInstallation.cs" />
-    <Compile Include="Services\Explorer\Installation.cs" />
-    <Compile Include="Services\Explorer\ServerInstallation.cs" />
-    <Compile Include="Services\Explorer\WorldBrowserItem.cs" />
     <Compile Include="Services\ExplorerService.cs" />
+    <Compile Include="Services\IInstallationFactory.cs" />
+    <Compile Include="Services\InstallationFactory.cs" />
     <Compile Include="Services\IWorldExplorerService.cs" />
     <Compile Include="Services\Explorer\Converters\DimensionTypeToImageUriConverter.cs" />
     <Compile Include="Services\Explorer\Converters\DimensionTypeToStringConverter.cs" />
@@ -100,7 +106,7 @@
     <Compile Include="Services\Explorer\Converters\GameTypeToNameConverter.cs" />
     <Compile Include="Services\Explorer\Converters\InstallationToImageUriConverter.cs" />
     <Compile Include="Services\Explorer\Converters\InverseBooleanConverter.cs" />
-    <Compile Include="Services\DimensionType.cs" />
+    <Compile Include="Primitives\DimensionType.cs" />
     <Compile Include="Framework\MCFireDirectories.cs" />
     <Compile Include="Modules\IWindowCommand.cs" />
     <Compile Include="Modules\EditorToolBase.cs" />

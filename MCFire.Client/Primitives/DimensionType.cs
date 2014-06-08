@@ -1,4 +1,4 @@
-﻿namespace MCFire.Client.Modules.Infrastructure.Enums
+﻿namespace MCFire.Client.Primitives
 {
     public enum DimensionType
     {

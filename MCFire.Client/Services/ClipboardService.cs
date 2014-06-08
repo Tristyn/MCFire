@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel.Composition;
+using Caliburn.Micro;
+using MCFire.Client.Services.Clipboard;
+using MCFire.Core.Modules.Startup.Models;
 
-namespace MCFire.Client.Modules.Clipboard.Services
+namespace MCFire.Client.Services
 {
     [Export(typeof(IClipboardService))]
     [Export(typeof(ICreateAtStartup))]
-    class ClipboardService : IClipboardService, IHandle<ClipboardCopyEvent>, ICreateAtStartup
+    class ClipboardService : IClipboardService, IHandle<ClipboardCopyMessage>, ICreateAtStartup
     {
         [Import]
         IEventAggregator Aggregator { set { value.Subscribe(this); } }
 
-        void IHandle<ClipboardCopyEvent>.Handle(ClipboardCopyEvent message)
+        void IHandle<ClipboardCopyMessage>.Handle(ClipboardCopyMessage message)
         {
             Data = message.Data;
         }

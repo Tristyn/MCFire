@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using JetBrains.Annotations;
+using MCFire.Client.Modules;
+using MCFire.Client.Modules.Toolbox.Services;
+using MCFire.Core.Modules.Startup.Models;
 
-namespace MCFire.Client.Modules.Toolbox.Services
+namespace MCFire.Client.Services
 {
     [Export(typeof(IToolboxService))]
     [Export(typeof(ICreateAtStartup))]

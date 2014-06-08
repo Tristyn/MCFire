@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Data;
-using MCFire.Client.Modules.Infrastructure.Enums;
+using MCFire.Client.Primitives;
 
 namespace MCFire.Client.Services.Explorer.Converters
 {

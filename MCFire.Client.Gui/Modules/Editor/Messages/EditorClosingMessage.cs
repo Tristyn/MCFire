@@ -1,7 +1,8 @@
 ﻿using JetBrains.Annotations;
+using MCFire.Graphics.Modules.Editor.Messages;
 using MCFire.Graphics.Modules.Editor.Models;
 
-namespace MCFire.Graphics.Modules.Editor.Messages
+namespace MCFire.Client.Gui.Modules.Editor.Messages
 {
     public class EditorClosingMessage : EditorMessage
     {

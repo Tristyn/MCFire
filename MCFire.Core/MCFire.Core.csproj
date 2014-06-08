@@ -48,7 +48,6 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Primitives\ReaderWriterObjectLock.cs" />
     <Compile Include="Modules\ICreateAtStartup.cs" />
-    <Compile Include="Modules\Startup\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

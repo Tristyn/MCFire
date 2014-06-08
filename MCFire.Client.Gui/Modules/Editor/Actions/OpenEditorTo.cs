@@ -1,6 +1,11 @@
-using MCFire.Graphics.Modules.Editor.ViewModels;
+using System;
+using System.ComponentModel.Composition;
+using Caliburn.Micro;
+using Gemini.Framework.Services;
+using MCFire.Client.Gui.Modules.Editor.ViewModels;
+using MCFire.Common;
 
-namespace MCFire.Graphics.Modules.Editor.Actions
+namespace MCFire.Client.Gui.Modules.Editor.Actions
 {
     public class OpenEditorTo : IResult
     {
@@ -9,10 +14,10 @@ namespace MCFire.Graphics.Modules.Editor.Actions
         [Import]
         IShell _shell;
 
-        readonly MCFireWorld _world;
+        readonly World _world;
         readonly int _dimension;
 
-        public OpenEditorTo(MCFireWorld world, int dimension)
+        public OpenEditorTo(World world, int dimension)
         {
             _world = world;
             _dimension = dimension;
