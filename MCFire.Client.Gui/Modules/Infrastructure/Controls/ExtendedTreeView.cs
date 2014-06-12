@@ -1,4 +1,7 @@
-﻿namespace MCFire.Client.Gui.Modules.Infrastructure.Controls
+﻿using System.Windows;
+using System.Windows.Controls;
+
+namespace MCFire.Client.Gui.Modules.Infrastructure.Controls
 {
     public class ExtendedTreeView : TreeView
     {

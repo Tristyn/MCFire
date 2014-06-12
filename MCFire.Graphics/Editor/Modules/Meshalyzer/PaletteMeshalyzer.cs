@@ -1,4 +1,10 @@
-﻿namespace MCFire.Graphics.Modules.Meshalyzer.Models
+﻿using System.ComponentModel.Composition;
+using MCFire.Common.Coordinates;
+using MCFire.Common.Infrastructure.Extensions;
+using SharpDX;
+using Substrate.Core;
+
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(IMeshalyzer))]

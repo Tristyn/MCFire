@@ -1,9 +1,25 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
+using Caliburn.Micro;
 using JetBrains.Annotations;
+using MCFire.Client.Framework;
+using MCFire.Client.Gui.Properties;
+using MCFire.Client.Modules;
+using MCFire.Client.Primitives.Installations;
+using MCFire.Client.Services;
+using MCFire.Common.Infrastructure.Extensions;
+using NUnrar.Archive;
+using NUnrar.Common;
+using Tether;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace MCFire.Client.Gui.Modules.Startup.ViewModels
 {
@@ -12,9 +28,11 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
     public class ConfigureInstallationsViewModel : PropertyChangedBase, IModalOverlay
     {
         [Import]
-        WorldExplorerService _explorerService;
+        IWorldExplorerService _explorerService;
+        [Import]
+        IInstallationFactory _installationFactory;
 
-        BindableCollection<Installation> _installs;
+        BindableCollection<IInstallation> _installs;
         Timer _refreshTimer;
 
         bool? _minecraftExists;
@@ -51,7 +69,7 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
         [UsedImplicitly]
         public void FindMainInstall()
         {
-            AddGame();
+            AddInstall();
         }
 
         /// <summary>
@@ -60,7 +78,7 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
         /// </summary>
         /// <returns>An installation. Can be null.</returns>
         [CanBeNull]
-        static Installation BrowseForInstallation()
+        IInstallation BrowseForInstallation()
         {
             var dialog = new FolderBrowserDialog
             {
@@ -70,7 +88,7 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
             if (dialog.ShowDialog() != DialogResult.OK)
                 return null;
 
-            var install = Installation.New(dialog.SelectedPath);
+            var install = _installationFactory.Create(dialog.SelectedPath);
             if (install == null)
                 MessageBox.Show("MC Fire did not detect that the specified folder was a minecraft installation.",
                     "Not a Minecraft installation");
@@ -100,28 +118,41 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
             }
         }
 
-        public void AddGame()
+        public void AddInstall()
         {
             var install = BrowseForInstallation();
-            if (install == null) return;
+            if (install == null)
+                return;
 
-            if (!(install is GameInstallation))
-                MessageBox.Show("MC Fire detected that the specified folder was a server installation.");
-
-            _explorerService.TryAddInstallation(install);
+            if( _explorerService.TryAddInstallation(install))
+                return;
+            
+            Debug.Assert(false);
         }
 
-        [UsedImplicitly]
-        public void AddServer()
-        {
-            var install = BrowseForInstallation();
-            if (install == null) return;
+        //public void AddGame()
+        //{
+        //    var install = BrowseForInstallation();
+        //    if (install == null) return;
 
-            if (!(install is ServerInstallation))
-                MessageBox.Show("MC Fire detected that the specified folder was a game installation.");
+        //    if (!(install is GameInstallation))
+        //        MessageBox.Show("MC Fire detected that the specified folder was a server installation.");
 
-            _explorerService.TryAddInstallation(install);
-        }
+        //    _explorerService.TryAddInstallation(install);
+        //}
+
+        //// TODO: Regression since using the new Installation factory thing
+        //[UsedImplicitly]
+        //public void AddServer()
+        //{
+        //    var install = BrowseForInstallation();
+        //    if (install == null) return;
+
+        //    if (!(install is ServerInstallation))
+        //        MessageBox.Show("MC Fire detected that the specified folder was a game installation.");
+
+        //    _explorerService.TryAddInstallation(install);
+        //}
 
         [UsedImplicitly]
         public void RemoveInstall(object dataContext)
@@ -151,11 +182,11 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
             if (newInstall != null)
                 _explorerService.TryAddInstallation(newInstall);
 
-            Installs = _explorerService.Installations.Tether<Installation, Installation, BindableCollection<Installation>>();
+            Installs = _explorerService.Installations.Tether<IInstallation, IInstallation, BindableCollection<IInstallation>>();
         }
 
         [CanBeNull]
-        Installation GetAnyInstallation()
+        IInstallation GetAnyInstallation()
         {
             // if an install has already been added
             var minecraftInstall = _explorerService.Installations.FirstOrDefault();
@@ -170,7 +201,7 @@ namespace MCFire.Client.Gui.Modules.Startup.ViewModels
             return newInstall; // null if it doesn't exist/hasn't been initialized
         }
 
-        public BindableCollection<Installation> Installs
+        public BindableCollection<IInstallation> Installs
         {
             get { return _installs; }
             set

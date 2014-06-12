@@ -1,4 +1,13 @@
-﻿namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels
+﻿using System.ComponentModel.Composition;
+using System.Linq;
+using System.Windows.Controls;
+using Caliburn.Micro;
+using Gemini.Framework;
+using Gemini.Framework.Services;
+using MCFire.Client.Modules;
+using IToolboxService = MCFire.Client.Services.IToolboxService;
+
+namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels
 {
     [Export]
     public class ToolboxViewModel : Tool
@@ -6,7 +15,7 @@
         BindableCollection<ToolCategoryModel> _categories = 
             new BindableCollection<ToolCategoryModel>();
 
-        [Import] ToolboxService _toolbox;
+        [Import] IToolboxService _toolbox;
 
         public ToolboxViewModel()
         {

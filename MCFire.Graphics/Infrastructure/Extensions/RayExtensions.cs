@@ -1,4 +1,6 @@
-﻿namespace MCFire.Graphics.Modules.Infrastructure.Extensions
+﻿using SharpDX;
+
+namespace MCFire.Graphics.Infrastructure.Extensions
 {
     public static class RayExtensions
     {
@@ -16,7 +18,7 @@
         public static Plane ToPlane(this Ray ray, Vector3 point)
         {
             var pointOfIntersection = ray.Position + ray.Direction * Vector3.Dot(ray.Direction, point - ray.Position);
-            return new Plane(pointOfIntersection, Vector3Extensions.ToNormal((point - pointOfIntersection)));
+            return new Plane(pointOfIntersection, (point - pointOfIntersection).ToNormal());
         }
     }
 }

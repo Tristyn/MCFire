@@ -2,8 +2,8 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using Gemini.Framework;
-using MCFire.Client.Gui.Modules.Metro.ViewModels;
-using MCFire.Core.Modules.Startup.Models;
+using MCFire.Client.Services;
+using MCFire.Core.Modules;
 
 namespace MCFire.Client.Gui.Modules.Startup
 {
@@ -11,7 +11,7 @@ namespace MCFire.Client.Gui.Modules.Startup
     class Module:ModuleBase
     {
         [Import]
-        IOverlayHost _overlayHost;
+        IOverlayService _overlayService;
 
         // create all startup objects
         // ReSharper disable once UnusedMember.Local

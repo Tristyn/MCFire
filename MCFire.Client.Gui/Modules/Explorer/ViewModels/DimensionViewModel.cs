@@ -1,8 +1,11 @@
-﻿namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
+﻿using MCFire.Client.Primitives;
+using MCFire.Common;
+
+namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
 {
     public class DimensionViewModel
     {
-        public MCFireWorld World { get; set; }
+        public World World { get; set; }
         public DimensionType Dimension { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MCFire.Core.Modules.Startup.Models
+﻿namespace MCFire.Core.Modules
 {
     /// <summary>
     /// Marks the class that it should be imported by MCFire during preinitialization, 

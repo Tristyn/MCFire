@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System.ComponentModel.Composition;
+using System.IO;
 using MCFire.Client.Primitives.Installations;
 
 namespace MCFire.Client.Modules.Installations.Server
 {
+    [Export(typeof(IInstallationTypeFactory))]
     class ServerInstallationFactory : IInstallationTypeFactory
     {
         public IInstallation Create(string path)

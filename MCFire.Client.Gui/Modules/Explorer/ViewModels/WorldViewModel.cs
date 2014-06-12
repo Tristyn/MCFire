@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Windows.Controls;
+using Caliburn.Micro;
+using MCFire.Client.Gui.Modules.Editor.Actions;
+using MCFire.Client.Primitives;
+using MCFire.Common;
+using Substrate;
 
 namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
 {
     public class WorldViewModel
     {
-        MCFireWorld _model;
+        World _model;
 
         public WorldViewModel()
         {
@@ -27,7 +34,7 @@ namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
             dataContext.SelectedIndex = -1;
         }
 
-        public MCFireWorld Model
+        public World Model
         {
             get { return _model; }
             set

@@ -1,11 +1,11 @@
-﻿using MCFire.Graphics.Modules.Editor.Models.MCFire.Modules.Infrastructure.Interfaces;
+﻿using MCFire.Graphics.Editor.MCFire.Modules.Infrastructure.Interfaces;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     // TODO: with entity in place, could ILoadContent be phased out?
     public interface ILoadContent : ICleanup
     {
-        void LoadContent(EditorGame game);
-        void UnloadContent(EditorGame game);
+        void LoadContent(IEditorGame game);
+        void UnloadContent(IEditorGame game);
     }
 }

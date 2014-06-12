@@ -4,9 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:views="clr-namespace:MCFire.Modules.Infrastructure.Views"
-             xmlns:controls="clr-namespace:MCFire.Modules.Infrastructure.Controls"
-             xmlns:viewModels1="clr-namespace:MCFire.Modules.Explorer.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData WorldExplorerView}">
     <UserControl.Resources>
@@ -16,8 +13,6 @@
 
     <DockPanel>
         <Button Visibility="Collapsed" />
-        <views:CommandsView DockPanel.Dock="Top" 
-                            Commands="{Binding Commands}"/>
 
         <ItemsControl ItemsSource="{Binding Installs}" DockPanel.Dock="Top">
             <ItemsControl.ItemTemplate>

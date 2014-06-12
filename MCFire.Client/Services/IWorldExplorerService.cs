@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using JetBrains.Annotations;
 using MCFire.Client.Primitives.Installations;
-using MCFire.Client.Services.Explorer;
 
 namespace MCFire.Client.Services
 {
@@ -12,8 +11,8 @@ namespace MCFire.Client.Services
         /// </summary>
         /// <param name="install">The install.</param>
         /// <returns>If the install was added sucessfully</returns>
-        bool TryAddInstallation([CanBeNull] Installation install);
+        bool TryAddInstallation([CanBeNull] IInstallation install);
 
-        ObservableCollection<Installation> Installations { get; }
+        ObservableCollection<IInstallation> Installations { get; }
     }
 }

@@ -13,11 +13,6 @@ namespace MCFire.Common.Coordinates
             _chunkZ = chunkZ;
         }
 
-        public static implicit operator ChunkPosition(ChunkPositionDimension value)
-        {
-            return new ChunkPosition(value.ChunkX,value.ChunkZ);
-        }
-
         public static implicit operator ChunkPosition(BlockPosition value)
         {
             return new ChunkPosition(value.X >> 4, value.Z >> 4);

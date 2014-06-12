@@ -1,7 +1,9 @@
-﻿namespace MCFire.Graphics.Modules.Meshalyzer.Models
+﻿using MCFire.Graphics.Editor.MCFire.Modules.Infrastructure.Interfaces;
+
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     public interface IDrawable : ICleanup
     {
-        void Draw(EditorGame game);
+        void Draw(IEditorGame game);
     }
 }

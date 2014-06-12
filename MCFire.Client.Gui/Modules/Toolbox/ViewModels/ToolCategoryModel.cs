@@ -1,4 +1,6 @@
-﻿namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels
+﻿using Caliburn.Micro;
+
+namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels
 {
     public class ToolCategoryModel
     {

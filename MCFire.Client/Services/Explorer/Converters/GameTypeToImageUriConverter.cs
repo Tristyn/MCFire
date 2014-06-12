@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Data;
+using Substrate;
 
 namespace MCFire.Client.Services.Explorer.Converters
 {

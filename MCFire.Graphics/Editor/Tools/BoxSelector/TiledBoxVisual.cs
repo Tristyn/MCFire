@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
+using MCFire.Graphics.Editor.Modules.Meshalyzer;
+using MCFire.Graphics.Primitives;
+using MoreLinq;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
+using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
-namespace MCFire.Graphics.Modules.BoxSelector.Models
+namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
-    class TiledBoxVisual : IDrawable, ILoadContent
+    public class TiledBoxVisual : IDrawable, ILoadContent
     {
         Texture2D _texture;
         [NotNull]
@@ -29,10 +35,10 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
         public TiledBoxVisual([NotNull] Texture2D texture, float textureScaling = 1, float zBias = 0)
         {
             _texture = texture;
-            _textureScaling=textureScaling;
+            _textureScaling = textureScaling;
             _zBias = zBias;
         }
-        public void LoadContent(EditorGame game)
+        public virtual void LoadContent(IEditorGame game)
         {
 
             var effect = new BoxSelectEffect(game.LoadContent<Effect>("BoxSelect"))
@@ -50,7 +56,12 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
             }
         }
 
-        public void Draw(EditorGame game)
+        public void UnloadContent(IEditorGame game)
+        {
+            Dispose();
+        }
+
+        public void Draw(IEditorGame game)
         {
             game.GraphicsDevice.SetBlendState(game.GraphicsDevice.BlendStates.AlphaBlend);
             var viewProj = game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
@@ -91,32 +102,32 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
                 {
                     case Faces.Left:
                         _effect.TransformMatrix = Matrix.Scaling(0, Cuboid.Height, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left-_zBias, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left - _zBias, Cuboid.Bottom, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Bottom:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, 0, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom-_zBias, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom - _zBias, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Forward:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, Cuboid.Height, 0) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward-_zBias) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward - _zBias) *
                                                   viewProj;
                         break;
                     case Faces.Right:
                         _effect.TransformMatrix = Matrix.Scaling(0, Cuboid.Height, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left+Cuboid.Length+_zBias, Cuboid.Bottom, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left + Cuboid.Length + _zBias, Cuboid.Bottom, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Top:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, 0, Cuboid.Width) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom+Cuboid.Height+_zBias, Cuboid.Forward) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom + Cuboid.Height + _zBias, Cuboid.Forward) *
                                                   viewProj;
                         break;
                     case Faces.Backward:
                         _effect.TransformMatrix = Matrix.Scaling(Cuboid.Length, Cuboid.Height, 0) *
-                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward+Cuboid.Width+_zBias) *
+                                                  Matrix.Translation(Cuboid.Left, Cuboid.Bottom, Cuboid.Forward + Cuboid.Width + _zBias) *
                                                   viewProj;
                         break;
                     default:
@@ -124,7 +135,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
                         break;
                 }
 
-                _effect.MainTransform = transform*_textureScaling; 
+                _effect.MainTransform = transform * _textureScaling;
 
                 quad.Draw(game.GraphicsDevice);
             }

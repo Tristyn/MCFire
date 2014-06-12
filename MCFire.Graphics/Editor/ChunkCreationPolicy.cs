@@ -1,4 +1,4 @@
-﻿namespace MCFire.Graphics.Modules.Editor.Models
+﻿namespace MCFire.Graphics.Editor
 {
     public enum ChunkCreationPolicy
     {

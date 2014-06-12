@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     /// <summary>
     /// Enumeration of the six faces of a cube.

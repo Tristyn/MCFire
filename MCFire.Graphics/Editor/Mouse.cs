@@ -1,6 +1,8 @@
 ﻿using System;
+using SharpDX;
+using SharpDX.Toolkit.Input;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public class Mouse : IDisposable
     {
@@ -21,11 +23,10 @@ namespace MCFire.Graphics.Modules.Editor.Models
         {
             var state = _mouse.GetState();
             var pos = new Vector2(state.X, state.Y);
-
             Position = pos;
-            Left.Update(state.Left, pos);
-            Right.Update(state.Right, pos);
-            Middle.Update(state.Middle, pos);
+            Left.Update(state.LeftButton, pos);
+            Right.Update(state.LeftButton, pos);
+            Middle.Update(state.LeftButton, pos);
         }
 
         /// <summary>
@@ -57,67 +58,50 @@ namespace MCFire.Graphics.Modules.Editor.Models
     public class Key
     {
         Vector2 _previousPosition;
-        KeyState _previousState;
+        bool _dragging;
 
         public void Update(ButtonState state, Vector2 position)
         {
             State = state;
-            switch (state)
+            switch (state.Flags)
             {
-                case ButtonState.Pressed:
-                    if (_previousState == KeyState.Chillin)
+                case ButtonStateFlags.Down | ButtonStateFlags.Pressed:
+                    if (Click != null) Click(this, new KeyEventArgs(position, _previousPosition));
+                    if (position != _previousPosition)
                     {
-                        if (Click != null) Click(this, new KeyEventArgs(position, _previousPosition));
-                        _previousState = KeyState.Pressed;
-                        if (position != _previousPosition)
-                        {
-                            if (DragStart != null) DragStart(this, new KeyEventArgs(position, _previousPosition));
-                            _previousState = KeyState.Dragging;
-                        }
+                        _dragging = true;
+                        if (DragStart != null) DragStart(this, new KeyEventArgs(position, _previousPosition));
                     }
-                    if (_previousState == KeyState.Pressed)
+                    break;
+                case ButtonStateFlags.Down:
+                    if (position == _previousPosition)
                     {
-                        if (position != _previousPosition)
-                        {
-                            if (DragStart != null)
-                                DragStart(this, new KeyEventArgs(position, _previousPosition));
-                            _previousState = KeyState.Dragging;
-                        }
-                        else
-                        {
-                            _previousState = KeyState.Pressed;
-                            if(ClickHeld!=null)ClickHeld(this, new KeyEventArgs(position,_previousPosition));
-                        }
+                        ClickHeld(this, new KeyEventArgs(position,_previousPosition));
                     }
-                    if (_previousState == KeyState.Dragging && position != _previousPosition)
+                    else if (_dragging)
                     {
                         if (DragMove != null) DragMove(this, new KeyEventArgs(position, _previousPosition));
-                        _previousState = KeyState.Dragging;
+                    }
+                    else
+                    {
+                        _dragging = true;
+                        if (DragStart != null) DragStart(this, new KeyEventArgs(position, _previousPosition));
                     }
                     break;
 
-                case ButtonState.Released:
-                    if (_previousState == KeyState.Pressed)
+                    case ButtonStateFlags.None|ButtonStateFlags.Released:
+                    if (_dragging)
                     {
-                        if (ClickEnd != null) ClickEnd(this, new KeyEventArgs(position, _previousPosition));
-                        _previousState = KeyState.Released;
+                        _dragging = false;
+                        DragEnd(this, new KeyEventArgs(position, _previousPosition));
                     }
-                    if (_previousState == KeyState.Dragging)
+                    else
                     {
-                        if (DragEnd != null) DragEnd(this, new KeyEventArgs(position, _previousPosition));
-                        // NOTE THE CHILLIN, not EndDragging!
-                        _previousState = KeyState.Chillin;
-                    }
-                    if (_previousState == KeyState.Released)
-                    {
-                        _previousState = KeyState.Chillin;
-                    }
-                    if (_previousState == KeyState.Chillin)
-                    {
-                        _previousState = KeyState.Chillin;
+                        ClickEnd(this, new KeyEventArgs(position,_previousPosition));
                     }
                     break;
             }
+
             _previousPosition = position;
         }
 
@@ -134,14 +118,5 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public event EventHandler<KeyEventArgs> DragMove;
         public event EventHandler<KeyEventArgs> DragEnd;
         public event EventHandler<KeyEventArgs> ClickEnd;
-    }
-
-    public enum KeyState
-    {
-        Pressed,
-        Dragging,
-        Released,
-        EndDragging,
-        Chillin
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     /// <summary>
     /// Describes a custom vertex format structure that contains position information.
@@ -20,7 +22,7 @@ namespace MCFire.Graphics.Modules.Primitives
         /// <summary>
         /// Initializes a new <see cref="T:SharpDX.Toolkit.Graphics.VertexPositionColor"/> instance.
         /// </summary>
-        /// <param name="position">The position of this vertex.</param><param name="color">The color of this vertex.</param>
+        /// <param name="position">The position of this vertex.</param>
         public VertexPosition(Vector3 position)
             :this()
         {
@@ -61,7 +63,7 @@ namespace MCFire.Graphics.Modules.Primitives
 
         public override string ToString()
         {
-            return string.Format((string) "Position: {0}", (object) Position);
+            return string.Format("Position: {0}", Position);
         }
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
+﻿using Caliburn.Micro;
+using MCFire.Client.Primitives.Installations;
+using Tether;
+
+namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
 {
     public class InstallationViewModel
     {
@@ -7,9 +11,9 @@
             Worlds = new BindableCollection<WorldViewModel>();
         }
 
-        Installation _model;
+        IInstallation _model;
 
-        public Installation Model
+        public IInstallation Model
         {
             get { return _model; }
             set

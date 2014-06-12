@@ -1,6 +1,8 @@
 ﻿using System;
+using SharpDX;
+using SharpDX.Serialization;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     [Serializable]
     public struct Point : IEquatable<Point>, IDataSerializable

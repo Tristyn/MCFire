@@ -1,6 +1,7 @@
 ﻿using System;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     /// <summary>
     /// 3D point.

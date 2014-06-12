@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     /// <summary>
     /// Represents a axis-aligned immutable 3D cuboid.

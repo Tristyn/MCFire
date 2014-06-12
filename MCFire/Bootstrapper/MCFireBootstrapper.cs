@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 
@@ -132,6 +136,7 @@ namespace MCFire.Bootstrapper
                 }
                 catch (Exception ex)
                 {
+                    Debug.Assert(false);
                     Console.WriteLine("Failed to load {0}: {1}", fileInfo.Name, ex);
                     MessageBox.Show(ex.ToString());
                 }

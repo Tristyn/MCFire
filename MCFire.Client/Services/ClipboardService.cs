@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using MCFire.Client.Services.Clipboard;
-using MCFire.Core.Modules.Startup.Models;
+using MCFire.Core.Modules;
 
 namespace MCFire.Client.Services
 {

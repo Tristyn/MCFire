@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using MCFire.Common.Coordinates;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// Enumerates through voxel coordinates that it passes through using its origin and direction.
     /// </summary>
-    public class VoxelTracer : IEnumerable<Point3>
+    public class VoxelTracer : IEnumerable<BlockPosition>
     {
         public VoxelTracer(Ray ray)
         {
@@ -16,16 +19,16 @@ namespace MCFire.Graphics.Modules.Editor.Models
 
         // TODO: add options for setting dimension limits
 
-        public IEnumerator<Point3> GetEnumerator()
+        public IEnumerator<BlockPosition> GetEnumerator()
         {
             // an implementation of http://www.cse.yorku.ca/~amana/research/grid.pdf
             var ray = Ray;
             var origin = ray.Position;
             var direction = ray.Direction;
             // Cube containing origin point.
-            var x = (float)Math.Floor((double) origin.X);
-            var y = (float)Math.Floor((double) origin.Y);
-            var z = (float)Math.Floor((double) origin.Z);
+            var x = (float)Math.Floor(origin.X);
+            var y = (float)Math.Floor(origin.Y);
+            var z = (float)Math.Floor(origin.Z);
 
             // direction vector
             var dx = direction.X;
@@ -74,7 +77,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
                         x += stepX;
                         // Adjust tMaxX to the next X-oriented boundary crossing.
                         tMaxX += tDeltaX;
-                        yield return new Point3((int)x, (int)y, (int)z); // TODO: couldnt you have one return right before the end of the loop?
+                        yield return new BlockPosition((int)x, (int)y, (int)z); // TODO: couldnt you have one return right before the end of the loop?
                     }
                     else
                     {
@@ -82,7 +85,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
                             break;
                         z += stepZ;
                         tMaxZ += tDeltaZ;
-                        yield return new Point3((int)x, (int)y, (int)z);
+                        yield return new BlockPosition((int)x, (int)y, (int)z);
                     }
                 }
                 else
@@ -93,7 +96,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
                             break;
                         y += stepY;
                         tMaxY += tDeltaY;
-                        yield return new Point3((int)x, (int)y, (int)z);
+                        yield return new BlockPosition((int)x, (int)y, (int)z);
                     }
                     else
                     {
@@ -103,7 +106,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
                             break;
                         z += stepZ;
                         tMaxZ += tDeltaZ;
-                        yield return new Point3((int)x, (int)y, (int)z);
+                        yield return new BlockPosition((int)x, (int)y, (int)z);
                     }
                 }
             }

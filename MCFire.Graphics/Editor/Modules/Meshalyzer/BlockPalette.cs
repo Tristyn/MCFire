@@ -1,4 +1,6 @@
-﻿namespace MCFire.Graphics.Modules.Meshalyzer.Models
+﻿using SharpDX;
+
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     public static class BlockPalette
     {

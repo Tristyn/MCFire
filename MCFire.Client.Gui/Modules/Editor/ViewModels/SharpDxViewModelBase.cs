@@ -6,13 +6,14 @@ using System.Windows;
 using Caliburn.Micro;
 using Gemini.Framework;
 using JetBrains.Annotations;
+using SharpDX.Toolkit;
 
 namespace MCFire.Client.Gui.Modules.Editor.ViewModels
 {
     public class SharpDxViewModelBase : Document
     {
         [CanBeNull]
-        Game _game;
+        IDisposable _game;
         SharpDXElement _sharpDxElement;
         // TODO: MCFire.Client cant have a reference to SharpDx, so no SharpDXElement
         /// <summary>
@@ -76,7 +77,6 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
 
             if (_game != null)
             {
-                _game.Exit();
                 _game.Dispose();
             }
 

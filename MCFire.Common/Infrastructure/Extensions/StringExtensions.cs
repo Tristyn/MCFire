@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace MCFire.Core.Modules.Infrastructure.Extensions
+namespace MCFire.Common.Infrastructure.Extensions
 {
     public static class StringExtensions
     {

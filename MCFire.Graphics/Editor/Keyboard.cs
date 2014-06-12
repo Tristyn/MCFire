@@ -1,6 +1,8 @@
 ﻿using System;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Input;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public class Keyboard : IDisposable
     {
@@ -27,6 +29,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
             if (_disposed) return;
             _keyboard.Dispose();
             _keyboard = null;
+            _disposed = true;
         }
 
         public KeyboardState State

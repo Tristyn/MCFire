@@ -1,4 +1,7 @@
-﻿namespace MCFire.Core.Modules.Infrastructure.Extensions
+﻿using MCFire.Common.Coordinates;
+using Substrate;
+
+namespace MCFire.Common.Infrastructure.Extensions
 {
     public static class AlphaBlockCollectionExtensions
     {

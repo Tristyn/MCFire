@@ -7,5 +7,6 @@ namespace MCFire.Client.Primitives.Installations
     {
         ObservableCollection<World> Worlds { get; }
         string Title { get; }
+        string Path { get; }
     }
 }

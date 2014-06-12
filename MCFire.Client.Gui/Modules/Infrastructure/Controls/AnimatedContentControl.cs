@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace MCFire.Client.Gui.Modules.Infrastructure.Controls
 {
@@ -56,8 +62,8 @@ namespace MCFire.Client.Gui.Modules.Infrastructure.Controls
             m_mainContent.RenderTransform = newContentTransform;
             m_paintArea.Visibility = Visibility.Visible;
 
-            newContentTransform.BeginAnimation(TranslateTransform.XProperty, CreateAnimation(this.ActualWidth, 0));
-            oldContentTransform.BeginAnimation(TranslateTransform.XProperty, CreateAnimation(0, -this.ActualWidth, (s, e) => m_paintArea.Visibility = Visibility.Hidden));
+            newContentTransform.BeginAnimation(TranslateTransform.XProperty, CreateAnimation(ActualWidth, 0));
+            oldContentTransform.BeginAnimation(TranslateTransform.XProperty, CreateAnimation(0, -ActualWidth, (s, e) => m_paintArea.Visibility = Visibility.Hidden));
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace MCFire.Client.Gui.Modules.Infrastructure.Controls
         {
             if (v == null)
                 throw new ArgumentNullException("v");
-            var target = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            var target = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Pbgra32);
             target.Render(v);
             var brush = new ImageBrush(target);
             brush.Freeze();

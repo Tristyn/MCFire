@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MCFire.Common;
+using MCFire.Common.Coordinates;
+using MCFire.Common.Infrastructure.Extensions;
+using MCFire.Common.Infrastructure.Models.MCFire.Modules.Infrastructure.Models;
+using MCFire.Graphics.Primitives;
+using Substrate.Core;
 
-namespace MCFire.Graphics.Modules.BoxSelector.Models
+namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
     /// <summary>
     /// A generic view of a selection of partitioned chunks.
@@ -12,7 +18,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
         void GetChunks(AccessMode mode, PartionedChunksFunc chunksAction);
         BoxSelection Selection { get; }
         int Dimension { get; }
-        MCFireWorld World { get; }
+        World World { get; }
     }
 
     /// <summary>
@@ -24,7 +30,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
         /// <summary>
         /// Creates a new BoxSelection with the specified selection, dimensions and world.
         /// </summary>
-        public BlockSelection(BoxSelection selection, int dimension, MCFireWorld world)
+        public BlockSelection(BoxSelection selection, int dimension, World world)
         {
             Selection = selection;
             Dimension = dimension;
@@ -33,7 +39,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
 
         public BoxSelection Selection { get; private set; }
         public int Dimension { get; private set; }
-        public MCFireWorld World { get; private set; }
+        public World World { get; private set; }
 
         //public int Dimension { get { return _dimension; } }
 
@@ -48,6 +54,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
                                  select new ChunkPositionDimension(x, z, Dimension);
 
             // TODO: cant edit huge amounts of chunks (its a list, therefor all loaded at once, check MCFireWorld for more comments on this)
+
             World.GetChunks(chunkPositions, mode, chunks => chunksAction(PartitionChunks(chunks, Selection)));
         }
 
@@ -87,13 +94,13 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
 
             var size = chunk.Size();
             // if minimum or maximum are out of bounds, cap them
-            XMin = Math.Min((int) boundaries.Left, 0);
-            YMin = Math.Min((int) boundaries.Bottom, 0);
-            ZMin = Math.Min((int) boundaries.Width, 0);
+            XMin = Math.Min(boundaries.Left, 0);
+            YMin = Math.Min(boundaries.Bottom, 0);
+            ZMin = Math.Min(boundaries.Width, 0);
 
-            XMax = Math.Max((int) (boundaries.Left + boundaries.Length), size.X - 1);
-            YMax = Math.Max((int) (boundaries.Bottom + boundaries.Height), size.Y - 1);
-            ZMax = Math.Max((int) (boundaries.Forward + boundaries.Width), size.Z - 1);
+            XMax = Math.Max(boundaries.Left + boundaries.Length, size.X - 1);
+            YMax = Math.Max(boundaries.Bottom + boundaries.Height, size.Y - 1);
+            ZMax = Math.Max(boundaries.Forward + boundaries.Width, size.Z - 1);
         }
 
         /// <summary>

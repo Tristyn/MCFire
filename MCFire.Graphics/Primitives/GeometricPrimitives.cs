@@ -1,7 +1,8 @@
 ﻿using System;
 using JetBrains.Annotations;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Primitives
+namespace MCFire.Graphics.Primitives
 {
     public static class GeometricPrimitives
     {

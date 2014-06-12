@@ -5,7 +5,7 @@ using MCFire.Common;
 
 namespace MCFire.Client.Modules.Installations.Game
 {
-    public class GameInstallation : Installation
+    class GameInstallation : Installation
     {
         ObservableCollection<World> _worlds;
 

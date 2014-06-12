@@ -1,7 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using JetBrains.Annotations;
+using MCFire.Common.Coordinates;
+using MCFire.Common.Infrastructure.Extensions;
+using MCFire.Common.Infrastructure.Models.MCFire.Modules.Infrastructure.Models;
+using MCFire.Graphics.Primitives;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
+using Substrate;
+using Substrate.Core;
+using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Vector3 = SharpDX.Vector3;
 
-namespace MCFire.Graphics.Modules.Meshalyzer.Models
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     [Export(typeof(IMeshalyzer))]
     public class LightMeshalyzer : MeshalyzerBase
@@ -9,12 +21,12 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
         readonly ChunkPrioritizer _prioritizer = new ChunkPrioritizer();
         VertexLitEffect _vertexLit;
         // TODO: methods become protected and extensible to make inheriting a meshalyzer easier
-        public override void LoadContent(EditorGame game)
+        public void LoadContent(EditorGame game)
         {
             _vertexLit = new VertexLitEffect(game.LoadContent<Effect>(@"VertexLit"));
         }
 
-        public override void UnloadContent(EditorGame game)
+        public void UnloadContent(EditorGame game)
         {
             _vertexLit.Dispose();
         }
@@ -23,7 +35,7 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
         /// Meshalyzes one chunk. Closer chunks are prioritized.
         /// </summary>
         /// <returns>If there are still chunks to be meshalyzed. Sleeping is a good strategy when true is returned.</returns>
-        public override IChunkMesh MeshalyzeNext(EditorGame game)
+        public override IChunkMesh MeshalyzeNext(IEditorGame game)
         {
             ChunkPosition chunkPoint;
             if (!_prioritizer.GetNextDesiredChunk(game.Camera.ChunkPosition, out chunkPoint))
@@ -41,7 +53,7 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
         }
 
         [CanBeNull]
-        Buffer<VertexPositionColor> GenerateMainMesh([NotNull] IChunk chunk, EditorGame game)
+        Buffer<VertexPositionColor> GenerateMainMesh([NotNull] IChunk chunk, IEditorGame game)
         {
             var chunkBlocks = chunk.Blocks;
             var chunkVerticesList = new List<VertexPositionColor>(13000);
@@ -64,7 +76,7 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
                             var xPlusBlock = chunkBlocks.GetBlock(x + 1, y, z);
                             if (xPlusBlock.Info.State == BlockState.NONSOLID || block.Info.State == BlockState.FLUID)
                             {
-                                AddTriangleQuad(new Vector3(x, y, z), GeometricPrimitives.RightQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x + 1, y, z)));
+                                AddTriangleQuad(new SharpDX.Vector3(x, y, z), GeometricPrimitives.RightQuad, chunkVerticesList, GetVertexColor(chunk, new LocalBlockPosition(x, y, z), new LocalBlockPosition(x + 1, y, z)));
                             }
                         }
 
@@ -122,8 +134,8 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
             var bl = chunk.Blocks.GetBlockLight(airPosition);
             var sl = chunk.Blocks.GetSkyLight(airPosition);
             // range 32-255
-            var lum = (byte)(Math.Max((int) bl, (int) sl) * 14 + 32);
-            return new Color(lum, lum, lum, 255);
+            var lum = (byte)(Math.Max( bl, sl) * 14 + 32);
+            return new Color(lum, lum, lum, (byte)255);
         }
 
         static void AddTriangleQuad(Vector3 location, IEnumerable<Vector3> quad, ICollection<VertexPositionColor> triangleMesh, Color color)
@@ -143,9 +155,8 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
     public abstract class MeshalyzerBase : IMeshalyzer
     {
         public virtual void Dispose() { }
-        public virtual void LoadContent(EditorGame game) { }
-        public virtual void UnloadContent(EditorGame game) { }
-
-        public abstract IChunkMesh MeshalyzeNext(EditorGame game);
+        public virtual void LoadContent(IEditorGame game) { }
+        public virtual void UnloadContent(IEditorGame game) { }
+        public abstract IChunkMesh MeshalyzeNext(IEditorGame game);
     }
 }

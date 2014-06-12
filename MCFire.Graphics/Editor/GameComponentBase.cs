@@ -1,10 +1,16 @@
 ﻿using System;
+using GongSolutions.Wpf.DragDrop;
+using MCFire.Common;
+using MCFire.Common.Infrastructure.DragDrop;
+using MCFire.Graphics.Modules.Editor.Models;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public abstract class GameComponentBase : IGameComponent
     {
-        protected EditorGame Game { get; private set; }
+        protected IEditorGame Game { get; private set; }
         // TODO: add an Update that runs off of the game loop (TPL mabey?) that gets used for blocking/long running calls (eg: voxel tracing in BoxSelectorComponent and the meshalyzer)
         // TODO: perhaps EditorGame, IGameComponents and IEditorTool shouldn't have access to MCFireWorld and code that relies on this gets moved to MCFire.Core 
         public virtual void Update(GameTime time) { }
@@ -14,7 +20,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public virtual int DrawPriority { get { return 100; } }
         public virtual void Dispose() { }
 
-        public virtual void LoadContent(EditorGame game)
+        public void LoadContent(IEditorGame game)
         {
             if (Game != null)
                 throw new InvalidOperationException("GameComponent.Game can not be set twice.");
@@ -28,9 +34,13 @@ namespace MCFire.Graphics.Modules.Editor.Models
             Mouse = game.Mouse;
             Tasks = game.Tasks;
             SharpDxElement = game.SharpDxElement;
+
+            LoadContent();
         }
 
-        public virtual void UnloadContent(EditorGame game) { }
+        protected virtual void LoadContent(){}
+
+        public virtual void UnloadContent() { }
 
         #region Drag Drop
         #region DragSource
@@ -76,7 +86,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
 
         protected virtual Tasks Tasks { get; private set; }
 
-        protected virtual MCFireWorld World { get; private set; }
+        protected virtual World World { get; private set; }
         protected virtual int Dimension { get; private set; }
         protected virtual GraphicsDevice GraphicsDevice { get; private set; }
 

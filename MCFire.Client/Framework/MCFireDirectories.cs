@@ -11,6 +11,6 @@ namespace MCFire.Client.Framework
 
         public static readonly string MinecraftAppdata = Path.Combine(Appdata, ".minecraft");
 
-        public static readonly string Install = Path.GetDirectoryName(new Uri(typeof(App).Assembly.GetName().CodeBase).LocalPath);
+        public static readonly string Install = Path.GetDirectoryName(new Uri(typeof(MCFireDirectories).Assembly.GetName().CodeBase).LocalPath);
     }
 }

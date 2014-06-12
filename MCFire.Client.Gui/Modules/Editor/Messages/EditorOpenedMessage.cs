@@ -1,11 +1,11 @@
 ﻿using JetBrains.Annotations;
-using MCFire.Graphics.Modules.Editor.Models;
+using MCFire.Graphics.Editor;
 
-namespace MCFire.Graphics.Modules.Editor.Messages
+namespace MCFire.Client.Gui.Modules.Editor.Messages
 {
     public class EditorOpenedMessage : EditorMessage
     {
-        public EditorOpenedMessage([NotNull] EditorGame editorViewModel) : base(editorViewModel)
+        public EditorOpenedMessage([NotNull] IEditorGameFacade editorViewModel) : base(editorViewModel)
         {
         }
     }

@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Diagnostics;
 using JetBrains.Annotations;
+using MCFire.Graphics.Primitives;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
+using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
-namespace MCFire.Graphics.Modules.BoxSelector.Models
+namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
     public class TranslationGizmo : IDisposable
     {
         [CanBeNull]
         Mesh<VertexPosition> _arrowMesh;
         FullColorEffect _effect;
-        readonly EditorGame _game;
+        readonly IEditorGame _game;
 
-        public TranslationGizmo([NotNull] EditorGame game)
+        public TranslationGizmo([NotNull] IEditorGame game)
         {
             if (game == null) throw new ArgumentNullException("game");
             _game = game;
@@ -19,7 +23,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
             LoadContent(game);
         }
 
-        void LoadContent(EditorGame game)
+        void LoadContent(IEditorGame game)
         {
             var arrowDesc = new TruncatedConeDescription(
                 new ConeSection(0, 0),
@@ -28,13 +32,14 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
                 new ConeSection(.10f, 2f / 3),
                 new ConeSection(0, 1f));
 
-            var arrowBuffer = Buffer.Vertex.New(game.GraphicsDevice, new TruncatedConeBuilder().Build(arrowDesc));
-            var effect = new FullColorEffect(game.Content.Load<Effect>("FullColor"));
+            var arrowMesh = new TruncatedConeBuilder().Build(arrowDesc);
+            var arrowBuffer = Buffer.Vertex.New(game.GraphicsDevice,arrowMesh);
+            var effect = new FullColorEffect(game.LoadContent<Effect>("FullColor"));
             _effect = effect;
             _arrowMesh = new Mesh<VertexPosition>(arrowBuffer, effect.Effect);
         }
 
-        public void Draw(EditorGame game)
+        public void Draw(IEditorGame game)
         {
             var arrowMesh = _arrowMesh;
             if (arrowMesh == null) Debug.Fail("content has't been loaded, yet draw was called.");
@@ -62,10 +67,9 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
             arrowMesh.Draw(game.GraphicsDevice);
         }
 
-        public void UnloadContent(EditorGame game)
+        public void UnloadContent(IEditorGame game)
         {
-            if (_arrowMesh != null)
-                _arrowMesh.Dispose();
+            Dispose();
         }
 
         public void Dispose()

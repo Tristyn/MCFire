@@ -1,4 +1,11 @@
-﻿namespace MCFire.Graphics.Modules.Editor.Models
+﻿using System.Linq;
+using MCFire.Common.Coordinates;
+using MCFire.Graphics.Editor;
+using SharpDX;
+using SharpDX.Toolkit;
+using Substrate;
+
+namespace MCFire.Graphics.Modules.Editor.Models
 {
     /// <summary>
     /// High level common tasks when using an EditorGame

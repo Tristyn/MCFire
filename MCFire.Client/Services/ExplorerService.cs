@@ -1,17 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using MCFire.Client.Primitives.Installations;
-using MCFire.Client.Services.Explorer;
-using MCFire.Core.Modules.Infrastructure.Extensions;
+using MCFire.Common.Infrastructure.Extensions;
 
 namespace MCFire.Client.Services
 {
     [Export(typeof(IWorldExplorerService))]
     public class WorldWorldExplorerService : IWorldExplorerService
     {
-        readonly ObservableCollection<Installation> _installations = new ObservableCollection<Installation>();
+        readonly ObservableCollection<IInstallation> _installations = new ObservableCollection<IInstallation>();
         // TODO: the app shouldn't rely on if an MCFireWorld is found in WorldExporerService, it should:
         // TODO: 1) discover worlds found in an installation folder for use by the rest of the app
         // TODO: 2) save MCFireWorlds on shutdown
@@ -40,7 +40,7 @@ namespace MCFire.Client.Services
         /// </summary>
         /// <param name="install">The install.</param>
         /// <returns>If the install was added sucessfully</returns>
-        public bool TryAddInstallation([CanBeNull] Installation install)
+        public bool TryAddInstallation(IInstallation install)
         {
             if (install == null) return false;
 
@@ -51,6 +51,6 @@ namespace MCFire.Client.Services
             return true;
         }
 
-        public ObservableCollection<Installation> Installations { get { return _installations; } }
+        public ObservableCollection<IInstallation> Installations { get { return _installations; } }
     }
 }

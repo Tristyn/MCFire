@@ -1,7 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public class VertexLitEffect : EffectWrapper
     {

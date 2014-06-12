@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using JetBrains.Annotations;
+using MCFire.Graphics.Primitives;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.BoxSelector.Models
+namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
     /// <summary>
     /// Creates truncated cone geometry for use as 3D model.
@@ -45,7 +48,7 @@ namespace MCFire.Graphics.Modules.BoxSelector.Models
 
                 // start at the last item
                 var prevAngle = tesselationAngles.Last();
-                for (int j = 0; j < tesselation; j++)
+                for (var j = 0; j < tesselation; j++)
                 {
                     var angle = tesselationAngles[j];
                     buffer[++bufferIndex] = GetVertex(prevSection, angle);

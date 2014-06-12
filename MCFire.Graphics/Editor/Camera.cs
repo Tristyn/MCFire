@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using MCFire.Graphics.Modules.Editor.Extensions;
+using System.Windows.Input;
+using MCFire.Common.Coordinates;
+using MCFire.Graphics.Infrastructure.Extensions;
+using SharpDX;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Graphics;
+using Keys = SharpDX.Toolkit.Input.Keys;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public class Camera : IDisposable
     {
@@ -144,7 +150,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
         void PerspectiveDragMove(object s, KeyEventArgs e)
         {
             // perspective drag
-            var change = (new Vector2(.5f) - e.Position) * new Vector2(GraphicsDeviceExtensions.AspectRatio(_game.GraphicsDevice), 1);
+            var change = (new Vector2(.5f) - e.Position) * new Vector2(_game.GraphicsDevice.AspectRatio(), 1);
             Pan(change * 2);
             _mouse.SetPosition(new Vector2(.5f));
         }
@@ -152,7 +158,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
         void PerspectiveDragEnd(object s, KeyEventArgs e)
         {
             _sharpDx.ReleaseMouseCapture();
-            System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
+            System.Windows.Input.Mouse.OverrideCursor =Cursors.Arrow;
         }
 
         #endregion
@@ -298,7 +304,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public ChunkPosition ChunkPosition
         {
             // implicit casting converts it into a chunk coord
-            get { return (BlockPosition) _position; }
+            get { return new BlockPosition((int)_position.X,(int)Position.Y,(int)Position.Z); }
         }
 
         public Vector3 Direction

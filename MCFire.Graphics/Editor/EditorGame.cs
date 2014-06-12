@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
+using MCFire.Common;
+using MCFire.Common.Infrastructure.DragDrop;
+using MCFire.Graphics.Modules.Editor.Models;
+using SharpDX;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Input;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// A SharpDx Game used to render a minecraft world.
     /// </summary>
-    public sealed class EditorGame : Game, IDragSource, IDropTarget
+    public sealed class EditorGame : Game, IEditorGame, IEditorGameFacade
     {
         readonly IEnumerable<IGameComponent> _components;
         // rendering
@@ -19,8 +28,6 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public SpriteFont Font { get; private set; }
         Texture ErrorTexture { get; set; }
 
-        public Level Level { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorGame" /> class.
         /// </summary>
@@ -28,15 +35,14 @@ namespace MCFire.Graphics.Modules.Editor.Models
         /// <param name="components">The game component services.</param>
         /// <param name="world">The Minecraft world to use as a data source.</param>
         /// <param name="dimension">The dimension of the world.</param>
-        public EditorGame([NotNull] SharpDXElement sharpDxElement, [NotNull] IEnumerable<IGameComponent> components, [NotNull] MCFireWorld world,
+        public EditorGame([NotNull] SharpDXElement sharpDxElement, [NotNull] IEnumerable<IGameComponent> components, [NotNull] World world,
             int dimension)
         {
             _components = (from component in components
-                orderby component.DrawPriority
-                select component).ToArray();
+                           orderby component.DrawPriority
+                           select component).ToArray();
             World = world;
             Dimension = dimension;
-
             ToDisposeContent(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
             Content.RootDirectory = @"Modules/Editor/Content";
@@ -86,8 +92,8 @@ namespace MCFire.Graphics.Modules.Editor.Models
             // Draw debug
             SpriteBatch.Begin();
             SpriteBatch.DrawString(Font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
-            SpriteBatch.DrawString(Font, String.Format((string) "Camera: {0}", (object) Camera.Position), new Vector2(0, 15), Color.Black);
-            SpriteBatch.DrawString(Font, String.Format((string) "LookAt: {0}", (object) Camera.Direction), new Vector2(0, 30), Color.Black);
+            SpriteBatch.DrawString(Font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
+            SpriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
             SpriteBatch.End();
 
             // Handle base.Draw
@@ -135,12 +141,18 @@ namespace MCFire.Graphics.Modules.Editor.Models
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
         {
-            return ToDisposeContent<T>(Content.Load<T>(assetName));
+            return ToDisposeContent(Content.Load<T>(assetName));
         }
 
         public new T ToDisposeContent<T>(T asset) where T : IDisposable
         {
             return base.ToDisposeContent(asset);
+        }
+
+        protected override void Dispose(bool disposeManagedResources)
+        {
+            Exit();
+            base.Dispose(disposeManagedResources);
         }
 
         #endregion
@@ -220,7 +232,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public SharpDXElement SharpDxElement { get; private set; }
 
         [NotNull]
-        public MCFireWorld World { get; private set; }
+        public World World { get; private set; }
 
         public int Dimension { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }

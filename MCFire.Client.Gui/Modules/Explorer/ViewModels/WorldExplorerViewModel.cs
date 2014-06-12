@@ -1,5 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
+using Caliburn.Micro;
+using Gemini.Framework;
+using Gemini.Framework.Services;
+using MCFire.Client.Primitives.Installations;
+using MCFire.Client.Services;
+using Tether;
 
 namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
 {
@@ -27,22 +34,17 @@ namespace MCFire.Client.Gui.Modules.Explorer.ViewModels
         }
 
         [Import]
-        WorldExplorerService Service
+        IWorldExplorerService Service
         {
             set
             {
-                Installs = value.Installations.Tether<InstallationViewModel, Installation, BindableCollection<InstallationViewModel>>(
+                Installs = value.Installations.Tether<InstallationViewModel, IInstallation, BindableCollection<InstallationViewModel>>(
                     model => new InstallationViewModel { Model = model },
                     (model, viewModel) => viewModel.Model == model);
             }
         }
 
         public BindableCollection<InstallationViewModel> Installs { get; set; }
-
-        public WorldItemViewModel SelectedItem { get; set; }
-
-        [ImportMany]
-        public IEnumerable<IWorldExplorerCommand> Commands { get; private set; }
 
         public override double PreferredWidth
         {

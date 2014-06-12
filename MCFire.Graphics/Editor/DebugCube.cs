@@ -1,7 +1,10 @@
 ﻿using System;
 using JetBrains.Annotations;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
+using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// An object that can draw a 2x2x2 cube at the position specified.

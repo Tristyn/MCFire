@@ -5,10 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:viewModels="clr-namespace:MCFire.Modules.Startup.ViewModels"
-             xmlns:converters="clr-namespace:MCFire.Modules.Infrastructure.Converters"
              xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
              xmlns:controls1="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+             xmlns:converters="clr-namespace:MCFire.Client.Services.Explorer.Converters;assembly=MCFire.Client"
              mc:Ignorable="d" cal:Message.Attach="[Event Loaded] = [Action Loaded]" d:DataContext="{d:DesignData ConfigureInstallationsViewModel}">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -115,13 +114,15 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <!--<StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="1">-->
-                    <Button Content="Add a Minecraft installation" x:Name="AddGame" Margin="3,6"
+                    <!--<Button Content="Add a Minecraft installation" x:Name="AddGame" Margin="3,6"
                                 ToolTip="Browse for a folder where a Minecraft installation is." Grid.Column="0" HorizontalAlignment="Right"/>
                     <Button Content="Add a Server installation" x:Name="AddServer" Margin="3,6"
-                                ToolTip="Browse for a folder where a Minecraft server is." Grid.Column="1" HorizontalAlignment="Left"/>
+                                ToolTip="Browse for a folder where a Minecraft server is." Grid.Column="1" HorizontalAlignment="Left"/>-->
                     <!--</StackPanel>-->
+                    <Button Content="Add a Minecraft or server installation" x:Name="AddInstall"
+                            ToolTip="Browse for a folder where a Minecraft installation is."/>
                 </Grid>
-                <TextBlock Text="MC Fire can edit from multiple minecraft installations at once." 
+                <TextBlock Text="MC Fire can edit from multiple minecraft and server installations at once." 
                                HorizontalAlignment="Center" DockPanel.Dock="Bottom"/>
 
             </DockPanel>

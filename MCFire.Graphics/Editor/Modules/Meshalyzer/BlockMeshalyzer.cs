@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
+using Substrate;
+using Vector3 = SharpDX.Vector3;
 
-namespace MCFire.Graphics.Modules.Meshalyzer.Models
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     public abstract class BlockMeshalyzer
     {

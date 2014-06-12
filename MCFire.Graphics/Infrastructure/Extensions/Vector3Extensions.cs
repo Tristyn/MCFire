@@ -1,6 +1,8 @@
 ﻿using System;
+using MCFire.Graphics.Primitives;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Infrastructure.Extensions
+namespace MCFire.Graphics.Infrastructure.Extensions
 {
     public static class Vector3Extensions
     {
@@ -54,7 +56,7 @@ namespace MCFire.Graphics.Modules.Infrastructure.Extensions
 
         public static Vector3 Absolute(this Vector3 vector)
         {
-            return new Vector3(Math.Abs((float) vector.X), Math.Abs((float) vector.Y), Math.Abs((float) vector.Z));
+            return new Vector3(Math.Abs(vector.X), Math.Abs(vector.Y), Math.Abs(vector.Z));
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace MCFire.Graphics.Modules.Infrastructure.Extensions
         /// <returns></returns>
         public static Vector3 Round(this Vector3 vector)
         {
-            return new Vector3((float)Math.Round((double) vector.X), (float)Math.Round((double) vector.Y), (float)Math.Round((double) vector.Z));
+            return new Vector3((float)Math.Round(vector.X), (float)Math.Round(vector.Y), (float)Math.Round(vector.Z));
         }
     }
 }

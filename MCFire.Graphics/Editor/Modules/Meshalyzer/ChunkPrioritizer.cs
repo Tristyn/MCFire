@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using MCFire.Common.Coordinates;
 
-namespace MCFire.Graphics.Modules.Meshalyzer.Models
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     /// <summary>
     /// An object that is queried to return the closest ungenerated chunk.
@@ -63,7 +66,7 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
                 var relativePos = position - _previousPosition;
 
                 // if outside of view distance, ignore it.
-                if (Math.Abs((int) relativePos.ChunkX) > ViewDistance || Math.Abs((int) relativePos.ChunkZ) > ViewDistance)
+                if (Math.Abs(relativePos.ChunkX) > ViewDistance || Math.Abs(relativePos.ChunkZ) > ViewDistance)
                     return;
 
                 for (int i = 0; i < _closestChunks.Length; i++)
@@ -97,10 +100,10 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
             var shiftedChunks = new bool[_viewDistance * 2 + 1, _viewDistance * 2 + 1];
 
             // shift the array in the opposite way the observer is going.
-            var minX = Math.Max((int) difference.ChunkX, 0);
-            var minY = Math.Max((int) difference.ChunkZ, 0);
-            var maxX = _generatedChunks.GetLength(0) + Math.Min((int) difference.ChunkX, 0);
-            var maxY = _generatedChunks.GetLength(1) + Math.Min((int) difference.ChunkZ, 0);
+            var minX = Math.Max(difference.ChunkX, 0);
+            var minY = Math.Max(difference.ChunkZ, 0);
+            var maxX = _generatedChunks.GetLength(0) + Math.Min(difference.ChunkX, 0);
+            var maxY = _generatedChunks.GetLength(1) + Math.Min(difference.ChunkZ, 0);
             for (var i = minX; i < maxX; i++)
             {
                 for (var j = minY; j < maxY; j++)

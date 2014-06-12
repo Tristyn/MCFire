@@ -1,7 +1,11 @@
 ﻿using System;
 using JetBrains.Annotations;
+using MCFire.Common.Coordinates;
+using MCFire.Graphics.Editor.Modules.Meshalyzer;
+using SharpDX;
+using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// Used by the EditorGame, contains all information required to render and interact with chunks.
@@ -26,7 +30,7 @@ namespace MCFire.Graphics.Modules.Editor.Models
                 _mesh = new Mesh<VertexPositionColor>(mainBuffer, _vertexLitEffect.Effect);
         }
 
-        public void Draw(EditorGame game)
+        public void Draw(IEditorGame game)
         {
             if (_disposed)
                 throw new ObjectDisposedException("VisualChunk");

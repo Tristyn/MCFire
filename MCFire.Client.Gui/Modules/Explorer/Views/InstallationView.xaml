@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:converters="clr-namespace:MCFire.Modules.Infrastructure.Converters"
              xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+             xmlns:converters="clr-namespace:MCFire.Client.Services.Explorer.Converters;assembly=MCFire.Client"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>

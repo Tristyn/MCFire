@@ -4,8 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Client.Modules;
-using MCFire.Client.Modules.Toolbox.Services;
-using MCFire.Core.Modules.Startup.Models;
+using MCFire.Core.Modules;
 
 namespace MCFire.Client.Services
 {

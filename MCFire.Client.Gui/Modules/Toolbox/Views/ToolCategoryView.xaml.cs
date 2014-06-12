@@ -3,7 +3,7 @@
     /// <summary>
     /// Interaction logic for ToolCategoryView.xaml
     /// </summary>
-    public partial class ToolCategoryView : UserControl
+    public partial class ToolCategoryView
     {
         public ToolCategoryView()
         {

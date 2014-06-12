@@ -1,66 +1,101 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
 using Caliburn.Micro;
+using Gemini.Framework;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using MCFire.Client.Gui.Modules.Editor.Messages;
+using MCFire.Client.Gui.Modules.Editor.Views;
 using MCFire.Common;
-using MCFire.Graphics.Modules.Editor.Messages;
-using MCFire.Graphics.Modules.Editor.Models;
-using MCFire.Graphics.Modules.Editor.Views;
+using MCFire.Common.Infrastructure.DragDrop;
+using MCFire.Graphics.Editor;
+using SharpDX.Toolkit;
 using Action = System.Action;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace MCFire.Client.Gui.Modules.Editor.ViewModels
 {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export]
-    public class EditorViewModel : SharpDxViewModelBase, IDragSource, IDropTarget
+    public class EditorViewModel : Document, IDragSource, IDropTarget
     {
         [CanBeNull]
         EditorView _view;
         [CanBeNull]
-        EditorGame _game;
+        IEditorGameFacade _game;
         [CanBeNull]
         Action _viewGained;
         [Import]
         IEventAggregator _aggregator;
+        SharpDXElement _sharpDxElement;
 
         public EditorViewModel()
         {
             DisplayName = "Editor";
         }
 
-        public bool TryInitializeTo([NotNull] World world, int dimension)
-        {
-            if (_view != null)
-                return TryInitializeToInternal(world, dimension);
-
-            // we dont have the view yet. when we do, this will be called
-            _viewGained = () => TryInitializeToInternal(world, dimension);
-            return true;
-        }
-
-        bool TryInitializeToInternal([NotNull] World world, int dimension)
+        public void TryInitializeTo([NotNull] World world, int dimension)
         {
             if (world == null) throw new ArgumentNullException("world");
-
-            var view = _view;
+            var view = GetView() as EditorView;
             if (view == null)
-                return false;
+            {
+                Debug.Assert(false);
+                DisplayName = "Failed to initialize editor, Sorry :(";
+                return;
+            }
 
             DisplayName = "Starting Up - Editor";
-            if (!RunGame(() =>
-            {
-                var game = new EditorGame(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension);
-                _game = game;
-                _aggregator.Publish(new EditorOpenedMessage(game));
-                _aggregator.Publish(new EditorGainedFocusMessage(game));
-                return game;
-            }, view.SharpDx))
-                return false;
+
+            var game = new EditorGameFactory().Create(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension);
+            _game = game;
+            var sharpDxElement = _view.SharpDx;
+            _sharpDxElement = view.SharpDx;
+            Deactivated += ExitGame;
+
+            // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
+            // but that can be triggered by avalondock, while the control should still be kept alive.
+            // We can't prevent disposing because SharpDxElement is sealed, and the methods are private.
+            // The only option then is to remove the event handler via reflection.
+            // We select the method with the matching name and remove it.
+            var handlers = GetRoutedEventHandlers(sharpDxElement, FrameworkElement.UnloadedEvent);
+            var sharpDxElementDisposer = handlers.FirstOrDefault(b => b.Handler.Method.Name == "HandleUnloaded");
+            sharpDxElement.RemoveHandler(FrameworkElement.UnloadedEvent, sharpDxElementDisposer.Handler);
+            _game = game;
+            _aggregator.Publish(new EditorOpenedMessage(game));
+            _aggregator.Publish(new EditorGainedFocusMessage(game));
 
             DisplayName = String.Format("{0} - Editor", world.Title);
-            return true;
+        }
+
+        /// <summary>
+        /// I HAVE SOWN THE SEEDS OF SIN, THIS IS MY PUNISHMENT. Creds to Mauricio Rojas for this slick and dirty code.
+        /// returns all event handlers subscribed to the specified routed event in the specified element.
+        /// </summary>
+        /// <param name="element">The UI element on which the routed event is defined.</param>
+        /// <param name="routedEvent">The routed event for which to retrieve the event handlers.</param>
+        static IEnumerable<RoutedEventHandlerInfo> GetRoutedEventHandlers([NotNull] UIElement element,
+            [NotNull] RoutedEvent routedEvent)
+        {
+            // Get the EventHandlersStore instance which holds event handlers for the specified element.
+            // The EventHandlersStore class is declared as internal.
+            var eventHandlersStoreProperty = typeof(UIElement).GetProperty(
+                "EventHandlersStore", BindingFlags.Instance | BindingFlags.NonPublic);
+            var eventHandlersStore = eventHandlersStoreProperty.GetValue(element, null);
+
+            // Invoke the GetRoutedEventHandlers method on the EventHandlersStore instance 
+            // for getting an array of the subscribed event handlers.
+            var getRoutedEventHandlers = eventHandlersStore.GetType().GetMethod(
+                "GetRoutedEventHandlers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var routedEventHandlers = (RoutedEventHandlerInfo[])getRoutedEventHandlers.Invoke(
+                eventHandlersStore, new object[] { routedEvent });
+
+            return routedEventHandlers;
         }
 
         protected override void OnViewLoaded(object view)
@@ -77,12 +112,15 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
             };
         }
 
-        protected override void ExitGame(object sender, DeactivationEventArgs e)
+        private void ExitGame(object sender, DeactivationEventArgs e)
         {
             var game = _game;
-            if (e.WasClosed&&game!=null)
-                _aggregator.Publish(new EditorClosingMessage(game));
-            base.ExitGame(sender, e);
+            if (!e.WasClosed || game == null)
+                return;
+
+            // todo: all of these EditorMessages shouldn't exist
+            _aggregator.Publish(new EditorClosingMessage(game));
+            game.Dispose();
         }
 
         public void WpfKeyDown(KeyEventArgs e)

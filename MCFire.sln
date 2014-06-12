@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire", "MCFire\MCFire.csproj", "{28074F5E-4369-4210-8008-F1CF2D3A2CC6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate (NET4)", "Substrate\Substrate (NET4).csproj", "{7264A1C4-AB4A-4437-B252-7379B98B5509}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{302926BA-FB54-4217-9EAC-7CA238C4E4BE}"
@@ -28,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Client", "MCFire.Cli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire.Client.Gui", "MCFire.Client.Gui\MCFire.Client.Gui.csproj", "{33005321-DE5E-4511-80F2-B39FAFC12A3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCFire", "MCFire\MCFire.csproj", "{E1ADD5E4-D0AF-436F-A16A-0405B582744C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,14 +36,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Editor|Any CPU.ActiveCfg = Editor|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Editor|Any CPU.Build.0 = Editor|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.FirstRun|Any CPU.ActiveCfg = FirstRun|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.FirstRun|Any CPU.Build.0 = FirstRun|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28074F5E-4369-4210-8008-F1CF2D3A2CC6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Editor|Any CPU.ActiveCfg = Release|Any CPU
@@ -108,6 +100,14 @@ Global
 		{33005321-DE5E-4511-80F2-B39FAFC12A3E}.FirstRun|Any CPU.Build.0 = Release|Any CPU
 		{33005321-DE5E-4511-80F2-B39FAFC12A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33005321-DE5E-4511-80F2-B39FAFC12A3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Editor|Any CPU.ActiveCfg = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Editor|Any CPU.Build.0 = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.FirstRun|Any CPU.ActiveCfg = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.FirstRun|Any CPU.Build.0 = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1ADD5E4-D0AF-436F-A16A-0405B582744C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

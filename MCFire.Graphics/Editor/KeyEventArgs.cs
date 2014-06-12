@@ -1,6 +1,7 @@
 ﻿using System;
+using SharpDX;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     public class KeyEventArgs : EventArgs
     {

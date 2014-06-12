@@ -1,4 +1,6 @@
-﻿namespace MCFire.Graphics.Modules.Editor.Extensions
+﻿using SharpDX.Toolkit.Graphics;
+
+namespace MCFire.Graphics.Infrastructure.Extensions
 {
     public static class GraphicsDeviceExtensions
     {

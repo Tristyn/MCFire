@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using MCFire.Client.Modules;
 
 namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels
 {

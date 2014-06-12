@@ -2,8 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using MCFire.Common;
+using MCFire.Common.Coordinates;
+using MCFire.Common.Infrastructure.Extensions;
+using MCFire.Common.Infrastructure.Models.MCFire.Modules.Infrastructure.Models;
+using Substrate;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// Raytraces through chunks and returns block informaton that the ray intersects.
@@ -16,9 +21,9 @@ namespace MCFire.Graphics.Modules.Editor.Models
         readonly int _dimension;
 
         [NotNull]
-        readonly MCFireWorld _world;
+        readonly World _world;
 
-        public ChunkTracer([NotNull] VoxelTracer tracer, int dimension, [NotNull] MCFireWorld world)
+        public ChunkTracer([NotNull] VoxelTracer tracer, int dimension, [NotNull] World world)
         {
             if (tracer == null) throw new ArgumentNullException("tracer");
             if (world == null) throw new ArgumentNullException("world");
@@ -31,7 +36,8 @@ namespace MCFire.Graphics.Modules.Editor.Models
         public IEnumerator<IChunkTraceData> GetEnumerator()
         {
             // fields
-            var currentChunkPos = (ChunkPosition)(BlockPosition)_tracer.Ray.Position;
+            var rayPos = _tracer.Ray.Position;
+            var currentChunkPos = (ChunkPosition)new BlockPosition((int)rayPos.X, (int)rayPos.Y, (int)rayPos.Z);
             var enumerator = _tracer.GetEnumerator();
             enumerator.MoveNext();
 

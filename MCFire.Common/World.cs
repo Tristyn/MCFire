@@ -23,14 +23,15 @@ namespace MCFire.Common
         readonly Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>> _chunkAccess
             = new Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>>();
         // TODO: MCFireWorld is not a MEF component, so the aggregator needs to go.
-        [NotNull]
-        readonly IEventAggregator _aggregator = IoC.Get<IEventAggregator>();
+        //[NotNull]
+        //readonly IEventAggregator _aggregator = IoC.Get<IEventAggregator>();
         [CanBeNull]
         ChunkSize? _chunkSize;
 
         private World(NbtWorld world)
         {
-            _directory = new DirectoryInfo(path);
+            _nbtWorld = world;
+            _directory = new DirectoryInfo(world.Path);
         }
 
         public static World Open(string path)
@@ -105,8 +106,10 @@ namespace MCFire.Common
             chunkLock.Access(mode, chunkFunction);
 
             // notify the chunk has changed if the mode is write
-            if (mode == AccessMode.ReadWrite)
-                _aggregator.Publish(new ChunkModifiedMessage(new ChunkPositionDimensionWorld(pos, this)));
+
+            // TODO: another way to notify of change
+            //if (mode == AccessMode.ReadWrite)
+                //_aggregator.Publish(new ChunkModifiedMessage(new ChunkPositionDimensionWorld(pos, this)));
         }
 
         public void GetChunks(IEnumerable<ChunkPositionDimension> positions, AccessMode mode, ChunksFunc chunksFunc)
@@ -204,10 +207,13 @@ namespace MCFire.Common
         }
 
         [NotNull]
-        public override string Title
+        public string Title
         {
             get { return _directory.Name; }
         }
     }
 
+    public delegate void ChunksFunc(List<IChunk> chunks);
+
+    public delegate void ChunkRefFunc(IChunk chunk, IChunk south, IChunk north, IChunk west, IChunk east);
 }

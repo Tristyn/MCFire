@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using SharpDX.Toolkit.Graphics;
 
-namespace MCFire.Graphics.Modules.Editor.Models
+namespace MCFire.Graphics.Editor
 {
     /// <summary>
     /// A simple wrapper for a SharpDx vertex buffer, its Effect and VertexInputLayout.
@@ -43,7 +43,6 @@ namespace MCFire.Graphics.Modules.Editor.Models
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <remarks>
         /// Unlike XNA, a Mesh is not bound to a specific Effect. The effect must have been setup prior calling this method.
-        /// This method is only responsible to setup the VertexBuffer, IndexBuffer and call the appropriate <see cref="SharpDX.Toolkit.Graphics.SharpDX.Toolkit.Graphics.GraphicsDevice.DrawIndexed(SharpDX.Toolkit.Graphics.PrimitiveType,int,int,int)ef="SharpDX.Toolkit.Graphics.GraphicsDevice"/>.
         /// </remarks>
         public void Draw([NotNull] GraphicsDevice graphicsDevice)
         {

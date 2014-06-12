@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace MCFire.Graphics.Modules.Meshalyzer.Models
+namespace MCFire.Graphics.Editor.Modules.Meshalyzer
 {
     public interface IMeshalyzer : ILoadContent
     {
@@ -9,6 +9,6 @@ namespace MCFire.Graphics.Modules.Meshalyzer.Models
         /// </summary>
         /// <returns>A drawable part of the world. Null denotes that no more work is to be done.</returns>
         [CanBeNull]
-        IChunkMesh MeshalyzeNext([NotNull] EditorGame game);
+        IChunkMesh MeshalyzeNext([NotNull] IEditorGame game);
     }
 }
