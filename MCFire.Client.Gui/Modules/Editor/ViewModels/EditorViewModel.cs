@@ -32,7 +32,6 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
         Action _viewGained;
         [Import]
         IEventAggregator _aggregator;
-        SharpDXElement _sharpDxElement;
 
         public EditorViewModel()
         {
@@ -42,20 +41,24 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
         public void TryInitializeTo([NotNull] World world, int dimension)
         {
             if (world == null) throw new ArgumentNullException("world");
-            var view = GetView() as EditorView;
-            if (view == null)
-            {
-                Debug.Assert(false);
-                DisplayName = "Failed to initialize editor, Sorry :(";
-                return;
-            }
+            var view = _view;
+            if (view != null)
+                Initialize(world, dimension);
+            else
+                // we dont have the view yet. when we do, this will be called.
+                _viewGained = () => Initialize(world, dimension);
+        }
+
+        void Initialize([NotNull] World world, int dimension)
+        {
+            var view = _view;
 
             DisplayName = "Starting Up - Editor";
 
-            var game = new EditorGameFactory().Create(view.SharpDx, IoC.GetAll<IGameComponent>(), world, dimension);
+            var sharpDxElement = view.SharpDx;
+            var game = new EditorGameFactory().Create(sharpDxElement, IoC.GetAll<IGameComponent>(), world, dimension);
             _game = game;
-            var sharpDxElement = _view.SharpDx;
-            _sharpDxElement = view.SharpDx;
+
             Deactivated += ExitGame;
 
             // this is an extremely dirty hack. SharpDxElement will dispose when Unloaded is called,
@@ -104,6 +107,7 @@ namespace MCFire.Client.Gui.Modules.Editor.ViewModels
             if (_view == null) return;
 
             if (_viewGained != null) _viewGained();
+            _viewGained = null;
             _view.GotFocus += delegate
             {
                 var game = _game;

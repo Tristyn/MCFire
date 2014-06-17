@@ -4,8 +4,8 @@
 					 xmlns:mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 					 xmlns:cal="http://www.caliburnproject.org" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:converters="clr-namespace:MCFire.Client.Services.Explorer.Converters;assembly=MCFire.Client"
                      xmlns:controls="clr-namespace:MCFire.Client.Gui.Modules.Infrastructure.Controls"
+                     xmlns:converters="clr-namespace:MCFire.Client.Resources.Converters;assembly=MCFire.Client"
                      mc:Ignorable="d"
                      Title="{Binding Title}"
 					 Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
@@ -20,7 +20,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/accents/blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
-                <ResourceDictionary Source="/MCFire;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/MCFire.Client.Gui;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/MCFire.Client.Gui;component/Themes/Animations.xaml"/>
                 <ResourceDictionary>
                     <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
                     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />

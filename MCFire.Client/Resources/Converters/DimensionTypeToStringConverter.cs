@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using MCFire.Client.Primitives;
 
-namespace MCFire.Client.Services.Explorer.Converters
+namespace MCFire.Client.Resources.Converters
 {
     [ValueConversion(typeof(DimensionType), typeof(string))]
     public class DimensionTypeToStringConverter : IValueConverter

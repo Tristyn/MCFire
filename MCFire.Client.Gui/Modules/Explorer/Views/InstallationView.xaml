@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
-             xmlns:converters="clr-namespace:MCFire.Client.Services.Explorer.Converters;assembly=MCFire.Client"
+             xmlns:converters="clr-namespace:MCFire.Client.Resources.Converters;assembly=MCFire.Client"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Icons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MCFire.Client;component/Resources/Icons.xaml" />
                 <ResourceDictionary>
                     <converters:InstallationToImageUriConverter x:Key="InstallationToImageUriConverter" />
                 </ResourceDictionary>

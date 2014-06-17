@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using MCFire.Common;
 using MCFire.Common.Coordinates;
 using MCFire.Common.Infrastructure.Extensions;
@@ -30,7 +31,7 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
         /// <summary>
         /// Creates a new BoxSelection with the specified selection, dimensions and world.
         /// </summary>
-        public BlockSelection(BoxSelection selection, int dimension, World world)
+        public BlockSelection([NotNull] BoxSelection selection, int dimension, [NotNull] World world)
         {
             Selection = selection;
             Dimension = dimension;
@@ -47,14 +48,12 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
         {
             var lesserChunk = (ChunkPosition)Selection.Lesser;
             var greaterChunk = (ChunkPosition)Selection.Greater;
-
             // create an enumerator from every chunk that is within the selection
-            var chunkPositions = from x in Enumerable.Range(lesserChunk.ChunkX, greaterChunk.ChunkX)
-                                 from z in Enumerable.Range(lesserChunk.ChunkZ, greaterChunk.ChunkZ)
+            var chunkPositions = from x in Enumerable.Range(lesserChunk.ChunkX, greaterChunk.ChunkX - lesserChunk.ChunkX + 1)
+                                 from z in Enumerable.Range(lesserChunk.ChunkZ, greaterChunk.ChunkZ - lesserChunk.ChunkZ + 1)
                                  select new ChunkPositionDimension(x, z, Dimension);
 
             // TODO: cant edit huge amounts of chunks (its a list, therefor all loaded at once, check MCFireWorld for more comments on this)
-
             World.GetChunks(chunkPositions, mode, chunks => chunksAction(PartitionChunks(chunks, Selection)));
         }
 
@@ -64,11 +63,16 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
             return chunks.Select(chunk => new ChunkPartition(chunk, cuboid));
         }
 
+        public override string ToString()
+        {
+            return String.Format("{0}, Dimension: {1}, World: {2}", Selection, Dimension, World);
+        }
+
         // TODO: edit chunks inside selection
         // TODO: GetChunks method that can access infinite chunks at once, enumerates them and assumes that they wont be accessed after being enumerated over
     }
 
-    public delegate void PartionedChunksFunc(IEnumerable<IChunkPartition> chunkPortions);
+    public delegate void PartionedChunksFunc(IEnumerable<IChunkPartition> chunkPartitions);
 
 
     /// <summary>
@@ -88,26 +92,29 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
 
     internal class ChunkPartition : IChunkPartition
     {
-        public ChunkPartition(IChunk chunk, Cuboid boundaries)
+        public ChunkPartition([NotNull] IChunk chunk, Cuboid boundaries)
         {
             Chunk = chunk;
 
             var size = chunk.Size();
-            // if minimum or maximum are out of bounds, cap them
-            XMin = Math.Min(boundaries.Left, 0);
-            YMin = Math.Min(boundaries.Bottom, 0);
-            ZMin = Math.Min(boundaries.Width, 0);
+            var position = chunk.Position();
+            var lesserCorner = new BlockPosition(position, new LocalBlockPosition(0, 0, 0), size);
 
-            XMax = Math.Max(boundaries.Left + boundaries.Length, size.X - 1);
-            YMax = Math.Max(boundaries.Bottom + boundaries.Height, size.Y - 1);
-            ZMax = Math.Max(boundaries.Forward + boundaries.Width, size.Z - 1);
+            // if minimum or maximum are out of bounds, cap them
+            XMin = Math.Max(boundaries.Left - lesserCorner.X, 0);
+            YMin = Math.Max(boundaries.Bottom - lesserCorner.Y, 0);
+            ZMin = Math.Max(boundaries.Forward - lesserCorner.Z, 0);
+
+            XMax = Math.Min(boundaries.Left + boundaries.Length - lesserCorner.X, size.X);
+            YMax = Math.Min(boundaries.Bottom + boundaries.Height - lesserCorner.Y, size.Y);
+            ZMax = Math.Min(boundaries.Forward + boundaries.Width - lesserCorner.Z, size.Z);
         }
 
         /// <summary>
         /// A chunk portion with no constraints.
         /// </summary>
         /// <param name="chunk">The chunk to portion.</param>
-        public ChunkPartition(IChunk chunk)
+        public ChunkPartition([NotNull] IChunk chunk)
         {
             Chunk = chunk;
             var size = chunk.Size();
@@ -118,7 +125,7 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
             YMax = size.Y;
             ZMax = size.Z;
         }
-
+        // TODO: comment, mention max properties are collection lengths (+1)
         public int XMin { get; private set; }
         public int XMax { get; private set; }
         public int YMin { get; private set; }

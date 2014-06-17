@@ -12,11 +12,12 @@ namespace MCFire.Common.Infrastructure.Models
         /// </summary>
         public class ReaderWriterObjectLock<T>
         {
-            readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
             private readonly T _resource;
+            private ReaderWriterLockSlim _readerWriterLock;
             // TODO: internal
             public ReaderWriterObjectLock([CanBeNull]T resource)
             {
+                _readerWriterLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
                 _resource = resource;
             }
 
@@ -27,23 +28,23 @@ namespace MCFire.Common.Infrastructure.Models
                     case AccessMode.Read:
                         try
                         {
-                            ReaderWriterLock.EnterUpgradeableReadLock();
+                            _readerWriterLock.EnterUpgradeableReadLock();
                             interactFunc.Invoke(Resource);
                         }
                         finally
                         {
-                            ReaderWriterLock.ExitUpgradeableReadLock();
+                            _readerWriterLock.ExitUpgradeableReadLock();
                         }
                         break;
                     case AccessMode.ReadWrite:
                         try
                         {
-                            ReaderWriterLock.EnterWriteLock();
+                            _readerWriterLock.EnterWriteLock();
                             interactFunc.Invoke(Resource);
                         }
                         finally
                         {
-                            ReaderWriterLock.ExitWriteLock();
+                            _readerWriterLock.ExitWriteLock();
                         }
                         break;
                     default:
@@ -61,53 +62,26 @@ namespace MCFire.Common.Infrastructure.Models
                     case AccessMode.Read:
                         try
                         {
-                            ReaderWriterLock.EnterUpgradeableReadLock();
+                            _readerWriterLock.EnterUpgradeableReadLock();
                             return _resource;
                         }
                         finally
                         {
-                            ReaderWriterLock.ExitUpgradeableReadLock();
+                            _readerWriterLock.ExitUpgradeableReadLock();
                         }
                     case AccessMode.ReadWrite:
                         try
                         {
-                            ReaderWriterLock.EnterWriteLock();
+                            _readerWriterLock.EnterWriteLock();
                             return _resource;
                         }
                         finally
                         {
-                            ReaderWriterLock.ExitWriteLock();
+                            _readerWriterLock.ExitWriteLock();
                         }
                     default:
                         throw new ArgumentOutOfRangeException("accessMode");
                 }
-            }
-
-            /// <summary>
-            /// Ends access to the resource.
-            /// </summary>
-            /// <param name="accessMode"></param>
-            public void EndAccess(AccessMode accessMode)
-            {
-                switch (accessMode)
-                {
-                    case AccessMode.Read:
-                        ReaderWriterLock.ExitUpgradeableReadLock();
-                        break;
-                    case AccessMode.ReadWrite:
-                        ReaderWriterLock.ExitWriteLock();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("accessMode");
-                }
-            }
-
-            /// <summary>
-            /// Returns the internal lock
-            /// </summary>
-            public ReaderWriterLockSlim ReaderWriterLock
-            {
-                get { return _readerWriterLock; }
             }
 
             /// <summary>

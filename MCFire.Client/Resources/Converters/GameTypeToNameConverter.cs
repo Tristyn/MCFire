@@ -2,23 +2,21 @@
 using System.Windows.Data;
 using Substrate;
 
-namespace MCFire.Client.Services.Explorer.Converters
+namespace MCFire.Client.Resources.Converters
 {
     [ValueConversion(typeof(GameType), typeof(string))]
-    public class GameTypeToImageUriConverter : IValueConverter
+    public class GameTypeToNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null) 
-                return @"pack://application:,,,/MCFire;component/Resources/UnknownBlock.png"; 
             switch ((GameType)value)
             {
                 case GameType.SURVIVAL:
-                    return @"pack://application:,,,/MCFire;component/Resources/CraftingTable.png";
+                    return @"Survival World";
                 case GameType.CREATIVE:
-                    return @"pack://application:,,,/MCFire;component/Resources/CommandBlock.png";
+                    return @"Creative World";
                 default:
-                    return @"pack://application:,,,/MCFire;component/Resources/UnknownBlock.png";
+                    return @"Unknown World";
             }
         }
 

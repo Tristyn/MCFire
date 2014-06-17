@@ -10,6 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <toolkit:SharpDXElement MinWidth="1" MinHeight="1" x:Name="SharpDx" SendResizeDelay="00:00:00.50"
                             SendResizeToGame="True" Focusable="True" 
-                            cal:Message.Attach="[Event KeyDown] = [Action WpfKeyDown($eventArgs)]"
+                            cal:Message.Attach="
+                            [Event KeyDown] = [Action WpfKeyDown($eventArgs)]"
                             dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DragHandler="{Binding}" dd:DragDrop.DropHandler="{Binding}"/>
 </UserControl>

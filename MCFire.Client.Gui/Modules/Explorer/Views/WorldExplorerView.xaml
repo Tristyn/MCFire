@@ -8,12 +8,13 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignData WorldExplorerView}">
     <UserControl.Resources>
         <!--Tree View Button-->
-        <ResourceDictionary Source="/Resources\TreeView.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MCFire.Client;component/Resources/TreeView.xaml" />
     </UserControl.Resources>
 
     <DockPanel>
         <Button Visibility="Collapsed" />
-
+        <!--TODO: it would look much better if an installation would be an expander, and its worlds are items. 
+        When the user opens the world, MC Fire asks for what dimension-->
         <ItemsControl ItemsSource="{Binding Installs}" DockPanel.Dock="Top">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

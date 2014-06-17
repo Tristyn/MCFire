@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Common.Coordinates;
 using MCFire.Common.Infrastructure.Models.MCFire.Modules.Infrastructure.Models;
+using MoreLinq;
 using Substrate;
 using Substrate.Core;
 
@@ -28,8 +30,10 @@ namespace MCFire.Common
         [CanBeNull]
         ChunkSize? _chunkSize;
 
-        private World(NbtWorld world)
+        private World([NotNull] NbtWorld world)
         {
+            if (world == null) throw new ArgumentNullException("world");
+
             _nbtWorld = world;
             _directory = new DirectoryInfo(world.Path);
         }
@@ -109,7 +113,7 @@ namespace MCFire.Common
 
             // TODO: another way to notify of change
             //if (mode == AccessMode.ReadWrite)
-                //_aggregator.Publish(new ChunkModifiedMessage(new ChunkPositionDimensionWorld(pos, this)));
+            //_aggregator.Publish(new ChunkModifiedMessage(new ChunkPositionDimensionWorld(pos, this)));
         }
 
         public void GetChunks(IEnumerable<ChunkPositionDimension> positions, AccessMode mode, ChunksFunc chunksFunc)
@@ -120,15 +124,10 @@ namespace MCFire.Common
                 locks = GetChunkLocks(positions);
             }
 
-            try
-            {
-                // ToList to call Access immediately
-                chunksFunc.Invoke(locks.Select(chunkLock => chunkLock.Access(mode)).ToList());
-            }
-            finally
-            {
-                locks.ForEach(chunkLock => chunkLock.EndAccess(mode));
-            }
+            // ToList to call Access immediately
+            var chunks = locks.Select(chunkLock => chunkLock.Access(mode)).Where(chunk => chunk != null).ToList();
+            
+            chunksFunc(chunks);
         }
 
         /// <summary>

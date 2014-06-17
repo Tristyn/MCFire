@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:viewModels="clr-namespace:MCFire.Client.Gui.Modules.Explorer.ViewModels"
-             xmlns:converters="clr-namespace:MCFire.Client.Services.Explorer.Converters;assembly=MCFire.Client"
+             xmlns:converters="clr-namespace:MCFire.Client.Resources.Converters;assembly=MCFire.Client"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModels:WorldViewModel}">
     <UserControl.Resources>

@@ -14,6 +14,7 @@ using MCFire.Graphics.Primitives;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using Substrate.ImportExport;
 using KeyEventArgs = MCFire.Graphics.Editor.KeyEventArgs;
 
 namespace MCFire.Client.Modules.EditorModules.BoxSelector
@@ -31,14 +32,14 @@ namespace MCFire.Client.Modules.EditorModules.BoxSelector
         SelectionState _selectionState;
         Ray _faceDragRay;
 
-        [Import] BoxSelectorTool _tool;
+        [Import]
+        BoxSelectorTool _tool;
         [Import]
         IEventAggregator _aggregator;
         TranslationGizmo _translationGizmo;
 
         protected override void LoadContent()
         {
-            base.LoadContent(Game);
             var gridTexture = Game.LoadContent<Texture2D>("Grid");
             _translationGizmo = new TranslationGizmo(Game);
             if (gridTexture == null)
@@ -59,7 +60,7 @@ namespace MCFire.Client.Modules.EditorModules.BoxSelector
 
         void ClickEnd(object sender, KeyEventArgs e)
         {
-            if(!_tool.Selected)
+            if (!_tool.Selected)
                 return;
 
             BlockPosition pos;
@@ -208,7 +209,7 @@ namespace MCFire.Client.Modules.EditorModules.BoxSelector
             }
         }
 
-        private void DragEnd(object sender, KeyEventArgs e)
+        void DragEnd(object sender, KeyEventArgs e)
         {
             _faceDragRay = default(Ray);
             var selection = _selection;
@@ -291,10 +292,10 @@ namespace MCFire.Client.Modules.EditorModules.BoxSelector
 
         public override void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key != System.Windows.Input.Key.C || System.Windows.Input.Keyboard.Modifiers != ModifierKeys.Control) return;
-
             // Ctrl+C
+            if (e.Key != System.Windows.Input.Key.C || System.Windows.Input.Keyboard.Modifiers != ModifierKeys.Control) return;
             if (!_tool.Selected) return;
+            
             _aggregator.Publish(new ClipboardCopyMessage(new BlockSelection(_selection, Dimension, World)));
         }
 

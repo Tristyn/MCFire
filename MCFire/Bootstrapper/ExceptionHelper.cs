@@ -12,7 +12,7 @@ namespace MCFire.Bootstrapper
 {
     public static class ExceptionHelper
     {
-        public static void UnhandledUIException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        public static void UnhandledUiException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             var errorMessage = string.Format("An application error occurred. We recommend that you save your work and restart the application. \n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close)");
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
@@ -21,7 +21,7 @@ namespace MCFire.Bootstrapper
             }
 
             // log it
-            var exceptionType = ExceptionHelper.WriteExceptionDetails(e.Exception);
+            var exceptionType = WriteExceptionDetails(e.Exception);
             var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
             var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
                 String.Format(@"Exception {0} {1}.txt", date, e.Exception.GetType()));
@@ -41,7 +41,8 @@ namespace MCFire.Bootstrapper
             var date = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
             var logPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase),
                 String.Format(@"Exception {0} {1}.txt", date, e.GetType()));
-            logPath = Path.GetInvalidPathChars().Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
+            logPath = Path.GetInvalidPathChars()
+                .Aggregate(logPath, (current, c) => current.Replace(c.ToString(), string.Empty));
             File.WriteAllText(new Uri(logPath).LocalPath, exceptionType);
 
             Process.Start(logPath);
@@ -49,8 +50,8 @@ namespace MCFire.Bootstrapper
 
         public static string WriteExceptionDetails(Exception exception)
         {
-            var builder = new StringBuilder(200);
-            WriteExceptionDetails(exception,builder);
+            var builder = new StringBuilder(600);
+            WriteExceptionDetails(exception, builder);
             return builder.ToString();
         }
 
@@ -60,7 +61,7 @@ namespace MCFire.Bootstrapper
         /// <param name="exception">The exception to convert to a string</param>
         /// <param name="builderToFill">The StringBuilder that the message will be written to</param>
         /// <param name="level">The amount of indentation characters to use</param>
-        public static void WriteExceptionDetails(Exception exception, StringBuilder builderToFill, int level=0)
+        public static void WriteExceptionDetails(Exception exception, StringBuilder builderToFill, int level = 0)
         {
             var indent = new string(' ', level);
 

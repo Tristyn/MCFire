@@ -63,7 +63,7 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
 
         public void Draw(IEditorGame game)
         {
-            game.GraphicsDevice.SetBlendState(game.GraphicsDevice.BlendStates.AlphaBlend);
+            game.GraphicsDevice.SetBlendState(game.GraphicsDevice.BlendStates.NonPremultiplied);
             var viewProj = game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
 
             // CullNone, if the camera is inside the selection.

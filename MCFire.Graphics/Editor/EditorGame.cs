@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using MCFire.Common;
 using MCFire.Common.Infrastructure.DragDrop;
 using MCFire.Graphics.Modules.Editor.Models;
+using MCFire.Graphics.Properties;
 using SharpDX;
 using SharpDX.Toolkit;
+using SharpDX.Toolkit.Content;
 using SharpDX.Toolkit.Graphics;
 using SharpDX.Toolkit.Input;
 
@@ -45,7 +48,7 @@ namespace MCFire.Graphics.Editor
             Dimension = dimension;
             ToDisposeContent(new GraphicsDeviceManager(this));
             SharpDxElement = sharpDxElement;
-            Content.RootDirectory = @"Modules/Editor/Content";
+            Content.RootDirectory = @"Editor\Content";
         }
 
         #region Components
@@ -105,7 +108,7 @@ namespace MCFire.Graphics.Editor
         protected override void LoadContent()
         {
             GraphicsDevice = base.GraphicsDevice;
-            ErrorTexture = ToDisposeContent(Content.Load<Texture2D>("Error"));
+            ErrorTexture = ToDispose(Texture2D.Load(GraphicsDevice, new MemoryStream(Resources.Error)));
 
             // rendering
             SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -141,7 +144,37 @@ namespace MCFire.Graphics.Editor
 
         public T LoadContent<T>(string assetName) where T : class,IDisposable
         {
-            return ToDisposeContent(Content.Load<T>(assetName));
+            /* TODO: A content system where textures, audio, effects, models and fonts can be loaded anywhere.
+             * The game would compile them (.fx, .png, .xml) into .tkb and seamlessly recompile if the source changes.
+             * If errors occur, the old version is used and a message is overlayed detailing the error.
+             * Compiled output is saved to %appdata%\MC Fire.
+             * Reverse engineer SharpDX.Toolkit.EffectCompilerSystem
+             */
+            try
+            {
+                return Content.Load<T>(assetName);
+            }
+            catch (AssetNotFoundException)
+            {
+                // check if the content exists, if it does, copy it with the extension .tkb
+                var path = Path.GetFullPath(@"./Editor/Content/");
+                var files = Directory.GetFiles(path, assetName + ".*");
+                foreach (var file in files)
+                {
+                    var extension = Path.GetExtension(file);
+
+                    if (extension == "tkb")
+                        continue;
+
+                    var tkbPath = Path.ChangeExtension(file, "tkb");
+                    File.Copy(file, tkbPath);
+                    return Content.Load<T>(tkbPath);
+                }
+
+                if (typeof(T) == typeof(Texture2D))
+                    return ErrorTexture as T;
+                throw new AssetNotFoundException();
+            }
         }
 
         public new T ToDisposeContent<T>(T asset) where T : IDisposable

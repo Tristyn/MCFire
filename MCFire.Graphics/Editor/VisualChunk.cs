@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using MCFire.Common.Coordinates;
 using MCFire.Graphics.Editor.Modules.Meshalyzer;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
@@ -14,18 +13,19 @@ namespace MCFire.Graphics.Editor
     /// </summary>
     public class VisualChunk : IChunkMesh
     {
+        // TODO: this class has changed from a renderable wrapper of a minecraft chunk, to a renderable wrapper of an arbitrary block volume.
         [CanBeNull]
         Mesh<VertexPositionColor> _mesh;
         [CanBeNull]
         VertexLitEffect _vertexLitEffect;
         bool _disposed;
 
-        public VisualChunk(ChunkPosition position, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
+        public VisualChunk(Vector3 modelOrigin, [NotNull] VertexLitEffect vertexLitEffect, [CanBeNull] Buffer<VertexPositionColor> mainBuffer = null)
         {
             if (vertexLitEffect == null) throw new ArgumentNullException("vertexLitEffect");
 
             _vertexLitEffect = vertexLitEffect;
-            Position = position;
+            ModelOrigin = modelOrigin;
             if (mainBuffer != null)
                 _mesh = new Mesh<VertexPositionColor>(mainBuffer, _vertexLitEffect.Effect);
         }
@@ -38,7 +38,7 @@ namespace MCFire.Graphics.Editor
             if (_vertexLitEffect == null)
                 return;
 
-            _vertexLitEffect.TransformMatrix = Matrix.Translation(Position.ChunkX * 16, 0, Position.ChunkZ * 16) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
+            _vertexLitEffect.TransformMatrix = Matrix.Translation(ModelOrigin.X, ModelOrigin.Y, ModelOrigin.Z) * game.Camera.ViewMatrix * game.Camera.ProjectionMatrix;
             if (_mesh != null)
                 _mesh.Draw(game.GraphicsDevice);
         }
@@ -50,6 +50,6 @@ namespace MCFire.Graphics.Editor
             _disposed = true;
         }
 
-        public ChunkPosition Position { get; private set; }
+        public Vector3 ModelOrigin { get; private set; }
     }
 }

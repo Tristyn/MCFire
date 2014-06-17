@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
@@ -69,7 +65,12 @@ namespace MCFire.Bootstrapper
             catch (DirectoryNotFoundException) { }
 
             // add priority MCFire assemblies.
-            assemblies.AddRange(base.SelectAssemblies());
+            assemblies.Add(typeof(Common.Library).Assembly);
+            assemblies.Add(typeof(Core.Library).Assembly);
+            assemblies.Add(typeof(Graphics.Library).Assembly);
+            assemblies.Add(typeof(Client.Library).Assembly);
+            assemblies.Add(typeof(Client.Gui.Library).Assembly);
+            assemblies.Add(GetType().Assembly);
             return assemblies;
         }
 
@@ -113,7 +114,7 @@ namespace MCFire.Bootstrapper
 
             // only output errors if in release
 #if !DEBUG
-            Dispatcher.CurrentDispatcher.UnhandledException += ExceptionHelper.UnhandledUIException;
+            Dispatcher.CurrentDispatcher.UnhandledException += ExceptionHelper.UnhandledUiException;
             AppDomain.CurrentDomain.UnhandledException += ExceptionHelper.UnhandledException;
 #endif
 
@@ -125,7 +126,8 @@ namespace MCFire.Bootstrapper
 
             // Add all assemblies to AssemblySource, excluding assimp.dll because i dont like it specifically
             var rootDir = new DirectoryInfo(@"./");
-            foreach (var fileInfo in rootDir.GetFiles("*.dll").Where(info => !ignoredAssembies.Contains(info.Name)))
+            var rootFiles = rootDir.GetFiles("*.dll").Where(info => !ignoredAssembies.Contains(info.Name)).ToList();
+            foreach (var fileInfo in rootFiles)
             {
                 try
                 {
@@ -134,11 +136,8 @@ namespace MCFire.Bootstrapper
                         .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly).Where(assembly => !AssemblySource.Instance.Contains(assembly));
                     AssemblySource.Instance.AddRange(parts);
                 }
-                catch (Exception ex)
+                catch (BadImageFormatException ex)
                 {
-                    Debug.Assert(false);
-                    Console.WriteLine("Failed to load {0}: {1}", fileInfo.Name, ex);
-                    MessageBox.Show(ex.ToString());
                 }
             }
 

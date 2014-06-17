@@ -40,7 +40,7 @@ namespace MCFire.Client.Modules.Installations.Game
             get
             {
                 var title= base.Title;
-                return title.ToLowerInvariant() == ".minecraft" ? "Mine Craft" : title;
+                return title.ToLowerInvariant() == ".minecraft" ? "Minecraft" : title;
             }
         }
     }

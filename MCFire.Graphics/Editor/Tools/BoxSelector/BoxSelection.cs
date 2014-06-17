@@ -6,6 +6,7 @@ namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
     public class BoxSelection
     {
+        // TODO: this should be a struct
         public BoxSelection(BlockPosition cornerOne, BlockPosition cornerTwo)
         {
             CornerOne = cornerOne;

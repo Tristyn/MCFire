@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro">
@@ -117,6 +118,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MCFire.Client.Gui\MCFire.Client.Gui.csproj">
+      <Project>{33005321-de5e-4511-80f2-b39fafc12a3e}</Project>
+      <Name>MCFire.Client.Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCFire.Client\MCFire.Client.csproj">
+      <Project>{f2f65a31-e3f1-4f73-93e2-e9e395f1260e}</Project>
+      <Name>MCFire.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCFire.Common\MCFire.Common.csproj">
+      <Project>{480a40b7-f8d6-4105-aeb3-68b75fa81e42}</Project>
+      <Name>MCFire.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCFire.Core\MCFire.Core.csproj">
+      <Project>{6c5ef8e7-a261-4504-95ff-2fa064767eb9}</Project>
+      <Name>MCFire.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCFire.Graphics\MCFire.Graphics.csproj">
+      <Project>{8f1d0056-bc80-4241-b540-86796b735167}</Project>
+      <Name>MCFire.Graphics</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
