@@ -10,6 +10,7 @@ using System.Security;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
+using MCFire.Client;
 
 namespace MCFire.Bootstrapper
 {
@@ -29,7 +30,7 @@ namespace MCFire.Bootstrapper
             // get assemblies in mods folder
             try
             {
-                var modsPath = Path.GetFullPath(@"./.MODS/");
+                var modsPath = MCFireDirectories.AppdataMods;
                 //create mods folder if it doesnt exist, then walk its subdirectories
                 Directory.CreateDirectory(modsPath);
                 foreach (var directoryInfo in WalkDirectoryTree(new DirectoryInfo(modsPath)))
@@ -117,7 +118,6 @@ namespace MCFire.Bootstrapper
             Dispatcher.CurrentDispatcher.UnhandledException += ExceptionHelper.UnhandledUiException;
             AppDomain.CurrentDomain.UnhandledException += ExceptionHelper.UnhandledException;
 #endif
-
             var ignoredAssembies = new[]
             {
                 "Assimp32.dll",

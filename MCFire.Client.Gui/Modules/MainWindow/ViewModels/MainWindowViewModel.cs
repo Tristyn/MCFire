@@ -4,8 +4,9 @@ using System.ComponentModel.Composition;
 using Caliburn.Micro;
 using Gemini.Framework.Services;
 using JetBrains.Annotations;
-using MCFire.Client.Modules;
+using MCFire.Client.Components;
 using MCFire.Client.Services;
+using MCFire.Client.Services.Overlay;
 
 namespace MCFire.Client.Gui.Modules.MainWindow.ViewModels
 {

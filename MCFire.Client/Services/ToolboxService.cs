@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using JetBrains.Annotations;
-using MCFire.Client.Modules;
-using MCFire.Core.Modules;
+using MCFire.Client.Components;
+using MCFire.Common.Components;
+using MCFire.Graphics.Components;
 
 namespace MCFire.Client.Services
 {

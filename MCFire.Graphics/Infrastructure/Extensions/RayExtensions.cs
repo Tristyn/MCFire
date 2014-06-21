@@ -13,7 +13,7 @@ namespace MCFire.Graphics.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Returns a plane that the ray travels along, with its normal facing point.
+        /// Returns a plane that the ray traverses, with its normal intersecting the point.
         /// </summary>
         public static Plane ToPlane(this Ray ray, Vector3 point)
         {

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using MCFire.Common.Coordinates;
-using MCFire.Common.Infrastructure.Models.MCFire.Modules.Infrastructure.Models;
-using MoreLinq;
+using MCFire.Common.MCFire.Modules.Infrastructure.Models;
 using Substrate;
 using Substrate.Core;
 
@@ -24,9 +22,7 @@ namespace MCFire.Common
         [NotNull]
         readonly Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>> _chunkAccess
             = new Dictionary<ChunkPositionDimension, ReaderWriterObjectLock<IChunk>>();
-        // TODO: MCFireWorld is not a MEF component, so the aggregator needs to go.
-        //[NotNull]
-        //readonly IEventAggregator _aggregator = IoC.Get<IEventAggregator>();
+
         [CanBeNull]
         ChunkSize? _chunkSize;
 
@@ -46,6 +42,88 @@ namespace MCFire.Common
 
             var mcfire = new World(world);
             return mcfire;
+        }
+
+        // TODO: comment it up so that plebs know how to dougie
+        // TODO: universal undo (Do(), Undo())
+        // TODO: access tracking; output in the UI, also for going read-only we have to block new accesses and wait on running ones.
+
+        /* TODO: Modify substrate to use cached scratch memory to reduce garbage compaction
+         * Caching byte[] (4kb and other sizes) is the main priority, but caching tag nodes is good too.
+         * byte[] pool: https://stackoverflow.com/questions/15726214/scratch-memory-in-a-managed-environment
+         * Careful of memory leaks if using a singleton and with ICopyable<T>.Copy() ...
+         */
+
+        // TODO: all out object pooling https://stackoverflow.com/questions/2510975/c-sharp-object-pooling-pattern-implementation
+
+        // TODO: Substrate: deterministic discovery of dimensions instead of guessing with int
+
+        #region Chunks
+
+        public void GetChunk(ChunkPositionDimension pos, AccessMode mode, [NotNull] Action<IChunk> chunkFunction)
+        {
+            // get the resource and its lock
+            var chunkLock = GetChunkLock(pos);
+
+            // run the func
+            chunkLock.Access(mode, chunkFunction);
+
+            // notify the chunk has changed if the mode is write
+            var chunksEvent = ChunksModified;
+            if (mode != AccessMode.ReadWrite || chunksEvent == null)
+                return;
+
+            chunksEvent(this, new ChunksModifiedEventArgs(new[] {pos}));
+        }
+
+        public void GetChunks([NotNull] IEnumerable<ChunkPositionDimension> positions, AccessMode mode, [NotNull] ChunksFunc chunksFunc)
+        {
+            List<ReaderWriterObjectLock<IChunk>> locks;
+            lock (_chunkAccessLock)
+            {
+                locks = GetChunkLocks(positions);
+            }
+
+            // ToList to call Access immediately
+            var chunks = locks.Select(chunkLock => chunkLock.Access(mode)).Where(chunk => chunk != null).ToList();
+
+            chunksFunc(chunks);
+
+            // notify the chunk has changed if the mode is write
+            var chunksEvent = ChunksModified;
+            if (mode != AccessMode.ReadWrite || chunksEvent == null)
+                return;
+
+            chunksEvent(this, new ChunksModifiedEventArgs(positions));
+        }
+
+        /// <summary>
+        /// Returns a chunk and its 4 neighbours
+        /// </summary>
+        public void GetChunkRef(ChunkPositionDimension pos, AccessMode mode, [NotNull] ChunkRefFunc chunkRefFunc)
+        {
+            var positions = new[]
+            {
+                pos,
+                new ChunkPositionDimension(pos.ChunkX + 1, pos.ChunkZ, pos.Dimension),
+                new ChunkPositionDimension(pos.ChunkX - 1, pos.ChunkZ, pos.Dimension),
+                new ChunkPositionDimension(pos.ChunkX, pos.ChunkZ + 1, pos.Dimension),
+                new ChunkPositionDimension(pos.ChunkX, pos.ChunkZ - 1, pos.Dimension)
+            };
+
+            // translate the ChunksFunc to a ChunkRefFunc and call it.
+            GetChunks(positions, mode, chunks =>
+            {
+                var chunksList = chunks.ToList();
+                chunkRefFunc(chunksList[0], chunksList[1], chunksList[2], chunksList[3], chunksList[4]);
+            });
+
+            // notify the chunk has changed if the mode is write
+            var chunksEvent = ChunksModified;
+            if (mode == AccessMode.ReadWrite || chunksEvent == null)
+                return;
+
+            chunksEvent(this, new ChunksModifiedEventArgs(positions));
         }
 
         /// <summary>
@@ -98,58 +176,9 @@ namespace MCFire.Common
             }
         }
 
-        // TODO: comment it up so that plebs know how to dougie
-        // TODO: universal undo (Do(), Undo())
-        // TODO: access tracking; output in the UI, also for going read-only we have to block new accesses and wait on running ones.
-        public void GetChunk(ChunkPositionDimension pos, AccessMode mode, Action<IChunk> chunkFunction)
-        {
-            // get the resource and its lock
-            var chunkLock = GetChunkLock(pos);
+        public event EventHandler<ChunksModifiedEventArgs> ChunksModified;
 
-            // run the func
-            chunkLock.Access(mode, chunkFunction);
-
-            // notify the chunk has changed if the mode is write
-
-            // TODO: another way to notify of change
-            //if (mode == AccessMode.ReadWrite)
-            //_aggregator.Publish(new ChunkModifiedMessage(new ChunkPositionDimensionWorld(pos, this)));
-        }
-
-        public void GetChunks(IEnumerable<ChunkPositionDimension> positions, AccessMode mode, ChunksFunc chunksFunc)
-        {
-            List<ReaderWriterObjectLock<IChunk>> locks;
-            lock (_chunkAccessLock)
-            {
-                locks = GetChunkLocks(positions);
-            }
-
-            // ToList to call Access immediately
-            var chunks = locks.Select(chunkLock => chunkLock.Access(mode)).Where(chunk => chunk != null).ToList();
-            
-            chunksFunc(chunks);
-        }
-
-        /// <summary>
-        /// Returns a chunk and its 4 neighbours
-        /// </summary>
-        public void GetChunkRef(ChunkPositionDimension pos, AccessMode mode, ChunkRefFunc chunkRefFunc)
-        {
-            var positions = new[]
-            {
-                pos,
-                new ChunkPositionDimension(pos.ChunkX+1,pos.ChunkZ,pos.Dimension),
-                new ChunkPositionDimension(pos.ChunkX-1,pos.ChunkZ,pos.Dimension),
-                new ChunkPositionDimension(pos.ChunkX,pos.ChunkZ+1,pos.Dimension),
-                new ChunkPositionDimension(pos.ChunkX,pos.ChunkZ-1,pos.Dimension)
-            };
-            // translate the ChunksFunc to a ChunkRefFunc and call it.
-            GetChunks(positions, mode, chunks =>
-            {
-                var chunksList = chunks.ToList();
-                chunkRefFunc(chunksList[0], chunksList[1], chunksList[2], chunksList[3], chunksList[4]);
-            });
-        }
+        #endregion
 
         // TODO: method to access an massive amounts of chunks while using little memory. (GetChunks returns a list)
 
@@ -183,32 +212,20 @@ namespace MCFire.Common
             }
         }
 
-        [CanBeNull]
-        public ChunkSize? ChunkSize
-        {
-            get
-            {
-                if (_chunkSize != null)
-                    return _chunkSize.Value;
-                // TODO: this is all sorts of bad, there needs to be a system to determine a chunks size using an NbtWorld only
-                var world = NbtWorld;
-                if (world == null)
-                    return null;
-
-                lock (_chunkAccessLock)
-                    foreach (var chunk in world.GetChunkManager().Where(chunk => chunk != null))
-                        return _chunkSize = new ChunkSize(chunk);
-
-                // no chunks exist
-                // TODO: catastrophic state, also worldwide constants like ChunkSize should be available in NbtWorld
-                return null;
-            }
-        }
-
         [NotNull]
         public string Title
         {
             get { return _directory.Name; }
+        }
+    }
+
+    public class ChunksModifiedEventArgs : EventArgs
+    {
+        public IEnumerable<ChunkPositionDimension> ModifiedChunks { get; private set; }
+
+        public ChunksModifiedEventArgs(IEnumerable<ChunkPositionDimension> modifiedChunks)
+        {
+            ModifiedChunks = modifiedChunks;
         }
     }
 

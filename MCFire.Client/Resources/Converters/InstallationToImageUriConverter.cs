@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Data;
-using MCFire.Client.Modules.Installations.Game;
-using MCFire.Client.Modules.Installations.Server;
+using MCFire.Client.Components.InstallationTypeFactory;
 
 namespace MCFire.Client.Resources.Converters
 {

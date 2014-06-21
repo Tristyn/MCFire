@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
-using MCFire.Client.Modules;
+using MCFire.Client.Components;
+using MCFire.Graphics.Components;
 
 namespace MCFire.Client.Services
 {

@@ -13,6 +13,7 @@ using MCFire.Client.Gui.Modules.Editor.Messages;
 using MCFire.Client.Gui.Modules.Editor.Views;
 using MCFire.Common;
 using MCFire.Common.Infrastructure.DragDrop;
+using MCFire.Graphics.Components;
 using MCFire.Graphics.Editor;
 using SharpDX.Toolkit;
 using Action = System.Action;

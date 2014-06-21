@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using SharpDX;
 using SharpDX.Toolkit.Graphics;
 
@@ -15,22 +14,5 @@ namespace MCFire.Graphics.Editor
         }
 
         public Matrix TransformMatrix { set { _transformMatrix.SetValue(value); } }
-    }
-    // TODO: shouldnt effects load themselves, and those who inherit EffectWrapper have a parameterless constructor
-    public abstract class EffectWrapper : IDisposable
-    {
-        public readonly Effect Effect;
-
-        protected EffectWrapper([NotNull] Effect effect)
-        {
-            if (effect == null) throw new ArgumentNullException("effect");
-
-            Effect = effect;
-        }
-
-        public void Dispose()
-        {
-            Effect.Dispose();
-        }
     }
 }

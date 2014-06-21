@@ -33,8 +33,9 @@ float4 PSLightLevel(ProjectionOut input) : SV_TARGET
 	//float4 color = Texture.Sample(PointSampler, input.position);
 
 	// apply luminance
-	float4 color = 1;
-	color.rgb *= input.color.rgb;
+	/*float4 color;
+	color.rgb = input.color.rgb;
+	color.a = 1;*/
 
 	return input.color;
 }

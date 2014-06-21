@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
-using MCFire.Graphics.Editor.Modules.Meshalyzer;
 using MCFire.Graphics.Primitives;
 using MoreLinq;
 using SharpDX;
@@ -11,7 +10,7 @@ using Buffer = SharpDX.Toolkit.Graphics.Buffer;
 
 namespace MCFire.Graphics.Editor.Tools.BoxSelector
 {
-    public class TiledBoxVisual : IDrawable, ILoadContent
+    public class TiledBoxVisual : ILoadContent, IDisposable
     {
         Texture2D _texture;
         [NotNull]

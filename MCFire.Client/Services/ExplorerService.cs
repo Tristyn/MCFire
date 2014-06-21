@@ -17,6 +17,7 @@ namespace MCFire.Client.Services
         // TODO: 2) save MCFireWorlds on shutdown
         // TODO: 3) MCFireWorlds should operate without being added to the service (operate after being removed too)
         // TODO: 4) MCFireWorlds should have clear guarantees when 2 operate on the same world (or when Minecraft open)
+        // TODO: 5) Move IWorldExplorerService to MCFire.Common
 
         public WorldWorldExplorerService()
         {

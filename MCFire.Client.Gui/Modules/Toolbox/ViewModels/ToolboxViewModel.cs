@@ -4,7 +4,8 @@ using System.Windows.Controls;
 using Caliburn.Micro;
 using Gemini.Framework;
 using Gemini.Framework.Services;
-using MCFire.Client.Modules;
+using MCFire.Client.Components;
+using MCFire.Graphics.Components;
 using IToolboxService = MCFire.Client.Services.IToolboxService;
 
 namespace MCFire.Client.Gui.Modules.Toolbox.ViewModels

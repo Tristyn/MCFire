@@ -1,4 +1,4 @@
-﻿using MCFire.Client.Modules;
+﻿using MCFire.Client.Services.Overlay;
 
 namespace MCFire.Client.Services
 {

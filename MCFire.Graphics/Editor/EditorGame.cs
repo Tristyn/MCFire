@@ -6,7 +6,7 @@ using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using MCFire.Common;
 using MCFire.Common.Infrastructure.DragDrop;
-using MCFire.Graphics.Modules.Editor.Models;
+using MCFire.Graphics.Components;
 using MCFire.Graphics.Properties;
 using SharpDX;
 using SharpDX.Toolkit;
@@ -21,6 +21,7 @@ namespace MCFire.Graphics.Editor
     /// </summary>
     public sealed class EditorGame : Game, IEditorGame, IEditorGameFacade
     {
+        // TODO: Disable update/draw loop while in a transient state. calling something like Mouse.GetState() while editor has detached from a window, but hasn't attached to its new one will crash.
         readonly IEnumerable<IGameComponent> _components;
         // rendering
         BasicEffect _basicEffect;
@@ -53,13 +54,16 @@ namespace MCFire.Graphics.Editor
 
         #region Components
 
-        [CanBeNull]
         public TComponent GetComponent<TComponent>()
             where TComponent : class
         {
-            return (from component in _components
-                    where component is TComponent
-                    select component).FirstOrDefault() as TComponent;
+            // ReSharper disable once LoopCanBeConvertedToQuery 
+            foreach (var component in _components)
+            {
+                if (component is TComponent)
+                    return component as TComponent;
+            }
+            return null;
         }
 
         #endregion
@@ -69,7 +73,6 @@ namespace MCFire.Graphics.Editor
             Keyboard.Update();
             Mouse.Update();
             Camera.Update(gameTime);
-            Tasks.Update(gameTime);
 
             foreach (var component in _components)
             {
@@ -92,12 +95,14 @@ namespace MCFire.Graphics.Editor
                 component.Draw(gameTime);
             }
 
+#if DEBUG
             // Draw debug
             SpriteBatch.Begin();
             SpriteBatch.DrawString(Font, String.Format("Controls: WASD to move, QE to control yaw, RF to control pitch"), new Vector2(0, 0), Color.Black);
             SpriteBatch.DrawString(Font, String.Format("Camera: {0}", Camera.Position), new Vector2(0, 15), Color.Black);
             SpriteBatch.DrawString(Font, String.Format("LookAt: {0}", Camera.Direction), new Vector2(0, 30), Color.Black);
             SpriteBatch.End();
+#endif
 
             // Handle base.Draw
             base.Draw(gameTime);
@@ -123,7 +128,6 @@ namespace MCFire.Graphics.Editor
             var camera = ToDispose(new Camera(this) { Position = new Vector3(0, 0, -5), Fov = MathUtil.PiOverTwo });
             camera.IdleRotate(new Vector3(0, 82, 4), 43, MathUtil.Pi / 16, .44f);
             Camera = camera;
-            Tasks = new Tasks(this);
 
             foreach (var component in _components)
             {
@@ -193,9 +197,9 @@ namespace MCFire.Graphics.Editor
         #region Drag Drop
 
         #region Drag Source
-
         public void StartDrag(IDragInfo dragInfo)
         {
+            // TODO: take a drag info facade with just the info GameComponents need so MCFire.Graphics is more portable.
             var info = new HandleableDragInfo(dragInfo);
             foreach (var component in _components)
             {
@@ -247,6 +251,16 @@ namespace MCFire.Graphics.Editor
 
         #endregion
 
+        public void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+            // TODO: use a KeyEventArgs wrapper with only the info you need so MCFire.Common.Graphics isn't dependant on Windows
+            foreach (var component in _components)
+            {
+                component.WpfKeyDown(e);
+                if (e.Handled) return;
+            }
+        }
+
         [NotNull]
         public Camera Camera { get; private set; }
 
@@ -255,9 +269,6 @@ namespace MCFire.Graphics.Editor
 
         [NotNull]
         public Keyboard Keyboard { get; private set; }
-
-        [NotNull]
-        public Tasks Tasks { get; private set; }
 
         public new GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -269,14 +280,5 @@ namespace MCFire.Graphics.Editor
 
         public int Dimension { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
-
-        public void WpfKeyDown(System.Windows.Input.KeyEventArgs e)
-        {
-            foreach (var component in _components)
-            {
-                component.WpfKeyDown(e);
-                if (e.Handled) return;
-            }
-        }
     }
 }

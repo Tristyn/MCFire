@@ -1,4 +1,7 @@
 ﻿using System;
+using JetBrains.Annotations;
+using MCFire.Common;
+using MCFire.Graphics.Editor.Tools.BoxSelector;
 
 namespace MCFire.Graphics.Primitives
 {
@@ -18,7 +21,7 @@ namespace MCFire.Graphics.Primitives
             Height = height;
             Width = width;
         }
-
+        // TODO: cuboid components should use floats. theres some subtle breaking changes though.
         public Cuboid(Point3 cornerOne, Point3 cornerTwo)
             : this()
         {
@@ -213,6 +216,16 @@ namespace MCFire.Graphics.Primitives
 
     public static class CuboidExtensions
     {
+        public static Cuboid GetCuboid(this BoxSelection box)
+        {
+            // lengths of the cuboid are floored at 1
+            var left = box.Left;
+            var bot = box.Bottom;
+            var forward = box.Forward;
+
+            return new Cuboid(left, bot, forward, box.Right - left + 1, box.Top -bot+ 1, box.Backward - forward + 1);
+        }
+
         public static bool Within(this Cuboid cuboid, Point3 position)
         {
             return position.X >= cuboid.Left && position.X < cuboid.Left + cuboid.Length

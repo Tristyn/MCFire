@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using MCFire.Common.Coordinates;
+using MCFire.Common.Processing;
 using MCFire.Graphics.Infrastructure.Extensions;
 using SharpDX;
 using SharpDX.Toolkit;
@@ -72,7 +73,7 @@ namespace MCFire.Graphics.Editor
             PositionKeyboard(deltaTime);
             PerspectiveKeyboard(deltaTime);
 
-            if(_velocity!=Vector3.Zero)
+            if (_velocity != Vector3.Zero)
                 _idleRotate = false;
 
             _velocity *= _slowDown;
@@ -91,7 +92,7 @@ namespace MCFire.Graphics.Editor
             // move forward, back
             if (keystate.IsKeyDown(Keys.W))
             {
-                _velocity += Direction*_acceleration*deltaTime;
+                _velocity += Direction * _acceleration * deltaTime;
             }
 
             if (keystate.IsKeyDown(Keys.S))
@@ -121,7 +122,7 @@ namespace MCFire.Graphics.Editor
             _idleRotateTime += (float)time.ElapsedGameTime.TotalSeconds * _idleRotateSpeed;
 
             // calculate the negative direction based on time
-            var dir = new Vector3(0,-_idleRotatePitch, 1);
+            var dir = new Vector3(0, -_idleRotatePitch, 1);
             dir.Normalize();
             var rot = Quaternion.RotationYawPitchRoll(_idleRotateTime, 0, 0);
             var direction = Vector3.Transform(dir, rot);
@@ -158,7 +159,7 @@ namespace MCFire.Graphics.Editor
         void PerspectiveDragEnd(object s, KeyEventArgs e)
         {
             _sharpDx.ReleaseMouseCapture();
-            System.Windows.Input.Mouse.OverrideCursor =Cursors.Arrow;
+            System.Windows.Input.Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         #endregion
@@ -232,15 +233,30 @@ namespace MCFire.Graphics.Editor
         /// </summary>
         /// <param name="screenCoords">Normalized (0 to 1) screen coordinates</param>
         /// <returns>A tracer that can enumerate through blocks, entities, ect.</returns>
-        public IEnumerable<IChunkTraceData> RayTraceScreenPoint(Vector2 screenCoords)
+        public ChunkTracer RayTraceScreenPoint(Vector2 screenCoords)
         {
             if (_disposed)
                 throw new ObjectDisposedException("Camera");
 
             // translate screen coord into world space
             var ray = ScreenPointToRay(screenCoords);
+            var p = ray.Position;
+            var d = ray.Direction;
 
-            return new ChunkTracer(new VoxelTracer(ray), _game.Dimension, _game.World);
+            return new ChunkTracer(new VoxelTracer(
+                new Substrate.Vector3 { X = p.X, Y = p.Y, Z = p.Z },
+                new Substrate.Vector3 { X = d.X, Y = d.Y, Z = d.Z }),
+                _game.Dimension, _game.World);
+        }
+
+        /// <summary>
+        /// Sugar that returns if the mouse is over a block in the editor, and the coordinate of that block.
+        /// </summary>
+        public bool TryGetBlockAtMousePosition(out BlockPosition position)
+        {
+            var mouseRay = RayTraceScreenPoint(_game.Mouse.Position);
+            return ChunkTracer.TryHitTestBlock(CollisionBehaviour.Editor, mouseRay, out position);
+
         }
 
         public Vector3 UnprojectScreenCoord(Vector3 screenCoords)
@@ -263,8 +279,8 @@ namespace MCFire.Graphics.Editor
 
             // translate vectors into world space by unprojecting them.
             var customViewport = new ViewportF(0, 0, _graphicsDevice.BackBuffer.Width, _graphicsDevice.BackBuffer.Height, _nearZClip, _farZClip);
-            var nearWorldCoord = customViewport.Unproject(new Vector3(screenCoords,_nearZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
-            var farWorldCoord = customViewport.Unproject(new Vector3(screenCoords,_farZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            var nearWorldCoord = customViewport.Unproject(new Vector3(screenCoords, _nearZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
+            var farWorldCoord = customViewport.Unproject(new Vector3(screenCoords, _farZClip), ProjectionMatrix, ViewMatrix, Matrix.Identity);
             var dir = (farWorldCoord - nearWorldCoord).ToNormal();
             return new Ray(nearWorldCoord, dir);
         }
@@ -304,7 +320,7 @@ namespace MCFire.Graphics.Editor
         public ChunkPosition ChunkPosition
         {
             // implicit casting converts it into a chunk coord
-            get { return new BlockPosition((int)_position.X,(int)Position.Y,(int)Position.Z); }
+            get { return new BlockPosition((int)_position.X, (int)Position.Y, (int)Position.Z); }
         }
 
         public Vector3 Direction

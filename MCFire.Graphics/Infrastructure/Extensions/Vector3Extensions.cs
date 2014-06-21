@@ -1,4 +1,5 @@
 ﻿using System;
+using MCFire.Common.Coordinates;
 using MCFire.Graphics.Primitives;
 using SharpDX;
 
@@ -66,6 +67,11 @@ namespace MCFire.Graphics.Infrastructure.Extensions
         public static Vector3 Round(this Vector3 vector)
         {
             return new Vector3((float)Math.Round(vector.X), (float)Math.Round(vector.Y), (float)Math.Round(vector.Z));
+        }
+
+        public static Vector3 AsVector3(this BlockPosition pos)
+        {
+            return new Vector3(pos.X,pos.Y,pos.Z);
         }
     }
 }

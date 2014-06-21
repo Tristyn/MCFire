@@ -1,4 +1,4 @@
-﻿using MCFire.Graphics.Editor.MCFire.Modules.Infrastructure.Interfaces;
+﻿using MCFire.Common;
 
 namespace MCFire.Graphics.Editor
 {

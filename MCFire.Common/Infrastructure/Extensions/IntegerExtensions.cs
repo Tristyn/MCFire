@@ -1,4 +1,6 @@
-﻿namespace MCFire.Common.Infrastructure.Extensions
+﻿using System.Diagnostics;
+
+namespace MCFire.Common.Infrastructure.Extensions
 {
     public static class IntegerExtensions
     {
@@ -13,6 +15,15 @@
         {
             var r = x % m;
             return r < 0 ? r + m : r;
+        }
+
+        /// <summary>
+        /// Clamps the integer inclusively within floor and ceiling.
+        /// </summary>
+        public static int Clamp(this int x, int floor, int ceil)
+        {
+            Debug.Assert(floor<=ceil);
+            return x < floor ? floor : x > ceil ? ceil : x;
         }
     }
 }

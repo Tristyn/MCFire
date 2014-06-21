@@ -2,8 +2,7 @@
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using MCFire.Client.Modules.Installations.Game;
-using MCFire.Client.Modules.Installations.Server;
+using MCFire.Client.Components.InstallationTypeFactory;
 using MCFire.Common;
 
 namespace MCFire.Client.Primitives.Installations

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using JetBrains.Annotations;
+using MCFire.Client.Components;
 using MCFire.Client.Gui.Modules.Startup.ViewModels;
-using MCFire.Client.Modules;
 using MCFire.Client.Services;
 
 namespace MCFire.Client.Gui.Modules.Explorer.ViewModels

@@ -115,17 +115,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\BoxSelectorGlueComponent.cs" />
+    <Compile Include="Components\GameInstallationFactory.cs" />
+    <Compile Include="Components\IInstallationTypeFactory.cs" />
+    <Compile Include="Components\InstallationTypeFactory\GameInstallation.cs" />
+    <Compile Include="Components\InstallationTypeFactory\ServerInstallation.cs" />
+    <Compile Include="Components\IWindowCommand.cs" />
+    <Compile Include="Components\ServerInstallationFactory.cs" />
     <Compile Include="Library.cs" />
-    <Compile Include="Modules\EditorModules\BoxSelector\BoxSelectionUpdatedMessage.cs" />
-    <Compile Include="Modules\EditorModules\BoxSelector\BoxSelectorComponent.cs" />
-    <Compile Include="Modules\EditorModules\MeshalyzerComponent\MeshalyzerComponent.cs" />
-    <Compile Include="Modules\EditorTools\BoxSelector\BoxSelectorTool.cs" />
-    <Compile Include="Modules\IInstallationTypeFactory.cs" />
-    <Compile Include="Modules\IModalOverlay.cs" />
-    <Compile Include="Modules\Installations\Game\GameInstallation.cs" />
-    <Compile Include="Modules\Installations\Game\GameInstallationFactory.cs" />
-    <Compile Include="Modules\Installations\Server\ServerInstallation.cs" />
-    <Compile Include="Modules\Installations\Server\ServerInstallationFactory.cs" />
+    <Compile Include="MCFireDirectories.cs" />
     <Compile Include="Primitives\Installations\IInstallation.cs" />
     <Compile Include="Primitives\Installations\Installation.cs" />
     <Compile Include="Resources\Converters\DimensionTypeToImageUriConverter.cs" />
@@ -137,19 +135,14 @@
     <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\Clipboard\ClipboardCopyMessage.cs" />
     <Compile Include="Services\IClipboardService.cs" />
-    <Compile Include="Services\Explorer\Messages\ChunkMessage.cs" />
-    <Compile Include="Services\Explorer\Messages\ChunkModifiedMessage.cs" />
     <Compile Include="Services\ExplorerService.cs" />
     <Compile Include="Services\IInstallationFactory.cs" />
     <Compile Include="Services\InstallationFactory.cs" />
     <Compile Include="Services\IOverlayService.cs" />
     <Compile Include="Services\IWorldExplorerService.cs" />
     <Compile Include="Primitives\DimensionType.cs" />
-    <Compile Include="Framework\MCFireDirectories.cs" />
-    <Compile Include="Modules\IWindowCommand.cs" />
-    <Compile Include="Modules\EditorToolBase.cs" />
-    <Compile Include="Modules\IEditorTool.cs" />
     <Compile Include="Services\IToolboxService.cs" />
+    <Compile Include="Services\Overlay\IModalOverlay.cs" />
     <Compile Include="Services\ToolboxService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -1113,6 +1106,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using JetBrains.Annotations;
-using MCFire.Client.Modules;
+using MCFire.Client.Components;
 using MCFire.Client.Primitives.Installations;
 
 namespace MCFire.Client.Services
